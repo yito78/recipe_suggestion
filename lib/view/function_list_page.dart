@@ -17,9 +17,12 @@ class FunctionListPage extends StatelessWidget {
         body: Column(
           children: [
             FutureBuilder<List>(
-              future: _fetchRecipesData(),
+              future: _fetchRecipesData(context),
               builder: (BuildContext context, snapshot) {
                 if (snapshot.hasError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("データ取得に失敗しました。再取得ボタンで再度データ取得してください。"),)
+                  );
                   return _button(context, SuggestedRecipePage(), const Text("1週間のレシピ一覧"), false);
                 } else {
                   if (snapshot.data == null || snapshot.data?.length == 0) {
@@ -83,9 +86,9 @@ class FunctionListPage extends StatelessWidget {
   //
   // 戻り値::recipesコレクションデータ
   //
-  Future<List> _fetchRecipesData() async{
+  Future<List> _fetchRecipesData(context) async{
     Firebase firebase = Firebase();
-    List<Map<String, dynamic>> data = await firebase.searchAllRecipes();
+    List<Map<String, dynamic>> data = await firebase.searchAllRecipes(context);
 
     return data;
   }
