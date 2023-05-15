@@ -17,27 +17,34 @@ class FunctionListPage extends StatelessWidget {
         body: Column(
           children: [
             FutureBuilder<List>(
-              future: _fetchRecipesData(context),
-              builder: (BuildContext context, snapshot) {
-                if (snapshot.hasError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("データ取得に失敗しました。再取得ボタンで再度データ取得してください。"),)
-                  );
-                  return _button(context, SuggestedRecipePage(), const Text("1週間のレシピ一覧"), false);
-                } else {
-                  if (snapshot.data == null || snapshot.data?.length == 0) {
-                    // recipesコレクションにデータがない場合、ボタン非活性にする
-                    return _button(context, SuggestedRecipePage(), const Text("1週間のレシピ一覧"), false);
+                future: _fetchRecipesData(),
+                builder: (BuildContext context, snapshot) {
+                  if (snapshot.hasError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("データ取得に失敗しました。再取得ボタンで再度データ取得してください。"),)
+                    );
+                    return _button(
+                        context, SuggestedRecipePage(), const Text("1週間のレシピ一覧"),
+                        false);
                   } else {
-                    return _button(context, SuggestedRecipePage(), const Text("1週間のレシピ一覧"), true);
+                    if (snapshot.data == null || snapshot.data?.length == 0) {
+                      // recipesコレクションにデータがない場合、ボタン非活性にする
+                      return _button(context, SuggestedRecipePage(),
+                          const Text("1週間のレシピ一覧"), false);
+                    } else {
+                      return _button(context, SuggestedRecipePage(),
+                          const Text("1週間のレシピ一覧"), true);
+                    }
                   }
                 }
-              }
             ),
             _button(context, RecipeListPage(), const Text("登録レシピ一覧")),
             _button(context, ImportCsvPage(), const Text("CSVファイルデータ登録")),
           ],
         ),
+        // firestoreデータ再取得ボタン
+        floatingActionButton: _floatingActionButton(context),
       ),
     );
   }
@@ -54,7 +61,9 @@ class FunctionListPage extends StatelessWidget {
   //
   Widget _button(context, page, text, [bool isActived = true]) {
     // 横幅定義用データ
-    var screenSize = MediaQuery.of(context).size;
+    var screenSize = MediaQuery
+        .of(context)
+        .size;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15.0),
@@ -86,10 +95,30 @@ class FunctionListPage extends StatelessWidget {
   //
   // 戻り値::recipesコレクションデータ
   //
-  Future<List> _fetchRecipesData(context) async{
+  Future<List> _fetchRecipesData() async {
     Firebase firebase = Firebase();
-    List<Map<String, dynamic>> data = await firebase.searchAllRecipes(context);
+    List<Map<String, dynamic>> data = await firebase.searchAllRecipes();
 
     return data;
+  }
+
+  //
+  // firestoreからのデータ再取得ボタン
+  // 画面描画時、firestoreからデータ取得失敗時を想定し、ボタン設置
+  //
+  // 戻り値::FloatingActionButtun Widget
+  //
+  Widget _floatingActionButton(context) {
+    return FloatingActionButton(
+      onPressed: () async {
+        await _fetchRecipesData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('データを再取得しました'),
+          ),
+        );
+      },
+      child: const Icon(Icons.refresh),
+    );
   }
 }

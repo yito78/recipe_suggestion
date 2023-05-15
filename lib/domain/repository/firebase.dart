@@ -6,11 +6,9 @@ class Firebase {
   //
   // recipesコレクションに登録されたデータを全件取得する
   //
-  // context::BuildContextオブジェクト
-  //
   // 戻り値::recipesコレクションのデータ
   //
-  Future<List<Map<String, dynamic>>> searchAllRecipes(context) async {
+  Future<List<Map<String, dynamic>>> searchAllRecipes() async {
     // recipesコレクションのデータ
     List<Map<String, dynamic>> recipesData = [];
 
