@@ -22,7 +22,10 @@ class Firebase {
         // データ格納
         recipesData.add(data);
       });
-    }).catchError((e) => print("${e}"));
+    }).catchError((e) {
+      // TODO アナリティクスにログを出力に差し替える
+      print("${e}");
+    });
 
     return recipesData;
   }

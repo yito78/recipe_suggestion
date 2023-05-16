@@ -1,14 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/domain/repository/firebase.dart';
+import 'package:recipe_suggestion/provider/recipes_data.dart';
 import 'package:recipe_suggestion/view/import_csv_page.dart';
 import 'package:recipe_suggestion/view/recipe_list_page.dart';
 import 'package:recipe_suggestion/view/suggested_recipe_page.dart';
 
-class FunctionListPage extends StatelessWidget {
+class FunctionListPage extends ConsumerWidget {
   const FunctionListPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // recipesデータの監視
+    final recipesWatch = ref.watch(recipesDataNotifierProvider);
+
+    // 監視データからデータ抽出
+    AsyncValue<List<Map<String, dynamic>>> fetchedRecipesData =
+        recipesWatch.when(
+      data: (d) {
+        return AsyncValue.data(d);
+      },
+      // TODO アナリティクスへ差し替え
+      error: (e, s) {
+        return AsyncValue.error(e, s);
+      },
+      loading: () {
+        return AsyncValue.loading();
+      }
+    );
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -16,25 +36,29 @@ class FunctionListPage extends StatelessWidget {
         ),
         body: Column(
           children: [
-            FutureBuilder<List>(
-              future: _fetchRecipesData(),
-              builder: (BuildContext context, snapshot) {
-                if (snapshot.hasError) {
+            // 部分的に再レンダリング
+            Consumer(
+              builder: (BuildContext context,
+                        WidgetRef ref,
+                        Widget? child) {
+                final recipeWatch = ref.watch(recipesDataNotifierProvider);
+                List<dynamic> list = [];
+                recipeWatch.value?.forEach((element) {
+                  list.add(element);
+                });
+                if (list.isEmpty) {
                   return _button(context, SuggestedRecipePage(), const Text("1週間のレシピ一覧"), false);
                 } else {
-                  if (snapshot.data == null || snapshot.data?.length == 0) {
-                    // recipesコレクションにデータがない場合、ボタン非活性にする
-                    return _button(context, SuggestedRecipePage(), const Text("1週間のレシピ一覧"), false);
-                  } else {
-                    return _button(context, SuggestedRecipePage(), const Text("1週間のレシピ一覧"), true);
-                  }
+                  return _button(context, SuggestedRecipePage(), const Text("1週間のレシピ一覧"));
                 }
-              }
-            ),
+            }),
             _button(context, RecipeListPage(), const Text("登録レシピ一覧")),
             _button(context, ImportCsvPage(), const Text("CSVファイルデータ登録")),
           ],
         ),
+        // firestoreデータ再取得ボタン
+        floatingActionButton:
+            _floatingActionButton(context, fetchedRecipesData, ref),
       ),
     );
   }
@@ -83,10 +107,36 @@ class FunctionListPage extends StatelessWidget {
   //
   // 戻り値::recipesコレクションデータ
   //
-  Future<List> _fetchRecipesData() async{
+  Future<List> _fetchRecipesData() async {
     Firebase firebase = Firebase();
     List<Map<String, dynamic>> data = await firebase.searchAllRecipes();
 
     return data;
+  }
+
+  //
+  // firestoreからのデータ再取得ボタン
+  // 画面描画時、firestoreからデータ取得失敗時を想定し、ボタン設置
+  //
+  // context::BuilderContextオブジェクト
+  // fetchedRecipesData::firestoreデータ
+  // ref::recipeデータの監視データ
+  //
+  // 戻り値::FloatingActionButtun Widget
+  //
+  Widget _floatingActionButton(context, fetchedRecipesData, ref) {
+    Firebase firebase = Firebase();
+    return FloatingActionButton(
+      onPressed: () async {
+        final recipeNotifier = ref.read(recipesDataNotifierProvider.notifier);
+        recipeNotifier.fetchRecipeDataState();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('データを再取得しました'),
+          ),
+        );
+      },
+      child: const Icon(Icons.refresh),
+    );
   }
 }
