@@ -13,7 +13,7 @@ class RecipesDataNotifier extends _$RecipesDataNotifier {
   }
 
   // レシピデータ更新処理
-  void fetchRecipeDataState() async{
+  fetchRecipeDataState() async{
     state = AsyncValue.data(await _fetchAllRecipesData());
   }
 
