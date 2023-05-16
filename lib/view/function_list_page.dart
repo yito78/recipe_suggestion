@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/domain/repository/firebase.dart';
 import 'package:recipe_suggestion/provider/recipes_data.dart';
+import 'package:recipe_suggestion/utils/log.dart';
 import 'package:recipe_suggestion/view/import_csv_page.dart';
 import 'package:recipe_suggestion/view/recipe_list_page.dart';
 import 'package:recipe_suggestion/view/suggested_recipe_page.dart';
@@ -11,6 +12,8 @@ class FunctionListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    _outputAccessLog();
+
     // recipesデータの監視
     final recipesWatch = ref.watch(recipesDataNotifierProvider);
 
@@ -20,8 +23,8 @@ class FunctionListPage extends ConsumerWidget {
       data: (d) {
         return AsyncValue.data(d);
       },
-      // TODO アナリティクスへ差し替え
       error: (e, s) {
+        _outputErrorLog(e, s);
         return AsyncValue.error(e, s);
       },
       loading: () {
@@ -103,18 +106,6 @@ class FunctionListPage extends ConsumerWidget {
   }
 
   //
-  // firestore recipesコレクションデータ取得
-  //
-  // 戻り値::recipesコレクションデータ
-  //
-  Future<List> _fetchRecipesData() async {
-    Firebase firebase = Firebase();
-    List<Map<String, dynamic>> data = await firebase.searchAllRecipes();
-
-    return data;
-  }
-
-  //
   // firestoreからのデータ再取得ボタン
   // 画面描画時、firestoreからデータ取得失敗時を想定し、ボタン設置
   //
@@ -138,5 +129,24 @@ class FunctionListPage extends ConsumerWidget {
       },
       child: const Icon(Icons.refresh),
     );
+  }
+
+  //
+  // 機能にアクセスされたことをアナリティクスログとして出力する
+  //
+  _outputAccessLog() {
+    Log log = Log();
+    log.accessLog(runtimeType.toString());
+  }
+
+  //
+  // エラー発生内容をアナリティクスログとして出力する
+  //
+  // e::エラークラス
+  // s::スタックトレース
+  //
+  _outputErrorLog(e, s) {
+    Log log = Log();
+    log.errorLog(runtimeType.toString(), e, s);
   }
 }
