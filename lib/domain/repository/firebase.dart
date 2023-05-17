@@ -29,4 +29,23 @@ class Firebase {
 
     return recipesData;
   }
+
+  Future<List<Map<String, dynamic>>> searchAllCategories() async{
+    // recipesコレクションのデータ
+    List<Map<String, dynamic>> categoriesData = [];
+
+    await FirebaseFirestore.instance
+        .collection("categories")
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        categoriesData.add(data);
+      });
+    }).catchError((e) {
+      print(e);
+    });
+
+    return categoriesData;
+  }
 }
