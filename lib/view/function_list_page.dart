@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:recipe_suggestion/domain/repository/firebase.dart';
 import 'package:recipe_suggestion/provider/recipes_data.dart';
 import 'package:recipe_suggestion/utils/log.dart';
 import 'package:recipe_suggestion/view/import_csv_page.dart';
@@ -116,7 +115,6 @@ class FunctionListPage extends ConsumerWidget {
   // 戻り値::FloatingActionButtun Widget
   //
   Widget _floatingActionButton(context, fetchedRecipesData, ref) {
-    Firebase firebase = Firebase();
     return FloatingActionButton(
       onPressed: () async {
         final recipeNotifier = ref.read(recipesDataNotifierProvider.notifier);
