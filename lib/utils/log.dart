@@ -21,7 +21,7 @@ class Log {
   //
   errorLog(className, [errorClass, stackTrace]) {
     FirebaseAnalytics.instance.logEvent(
-      name: "$className",
+      name: "Error $className",
       parameters: {
         "error class": "$errorClass",
         "trace log": "$stackTrace",
