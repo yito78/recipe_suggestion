@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/provider/categories_data.dart';
 import 'package:recipe_suggestion/utils/log.dart';
+import 'package:recipe_suggestion/view/recipe_list_delete_modal_page.dart';
 import 'package:recipe_suggestion/view/recipe_list_edit_modal_page.dart';
 
 import '../provider/recipes_data.dart';
@@ -135,7 +136,7 @@ class RecipeListPage extends ConsumerWidget {
             showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return RecipeListEditModalPage(recipeAndCategoryList: recipeCategoryList, categoryDataList: categoryList);
+                  return RecipeListDeleteModalPage(recipeAndCategoryList: recipeCategoryList, categoryDataList: categoryList);
                 }
             );
           },

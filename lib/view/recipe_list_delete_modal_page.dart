@@ -1,28 +1,35 @@
 import 'package:flutter/material.dart';
 
-// 登録済みレシピ一覧画面の編集ボタンクリック時のモーダル画面クラス
-class RecipeListEditModalPage extends StatefulWidget {
+// 登録済みレシピ一覧画面の削除ボタンクリック時のモーダル画面クラス
+class RecipeListDeleteModalPage extends StatefulWidget {
   List<String> recipeAndCategoryList;
   List<Map<String, dynamic>> categoryDataList;
 
-  RecipeListEditModalPage({Key? key, required this.recipeAndCategoryList, required this.categoryDataList })
+  RecipeListDeleteModalPage(
+      {Key? key, required this.recipeAndCategoryList, required this.categoryDataList })
       : super(key: key);
 
   @override
-  State<RecipeListEditModalPage> createState() =>
-      _RecipeListEditModalPageState();
+  State<RecipeListDeleteModalPage> createState() =>
+      _RecipeListDeleteModalPageState();
 }
 
-class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
-  List<Map<String, dynamic>> ctgList = [];
-  int? defaultDropdownValue;
+class _RecipeListDeleteModalPageState extends State<RecipeListDeleteModalPage> {
+  String categoryLabel = "";
+  String recipeLabel = "";
   TextEditingController recipeTextFieldValue = TextEditingController();
+
+  var deleteExplainText = '''
+  削除してもよろしいでしょうか
+  その場合、削除ボタンをクリック
+  してください
+  ''';
 
   @override
   void initState() {
     super.initState();
-    ctgList = widget.categoryDataList;
-    defaultDropdownValue = ctgList[0]["category_id"];
+    categoryLabel = widget.recipeAndCategoryList[0];
+    recipeLabel = widget.recipeAndCategoryList[1];
     recipeTextFieldValue.text = widget.recipeAndCategoryList[1];
   }
 
@@ -32,7 +39,7 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
     var screenSize = MediaQuery.of(context).size;
 
     return AlertDialog(
-      title: Center(child: Text("レシピ編集")),
+      title: Center(child: Text("レシピ削除")),
       content: Container(
         height: screenSize.height * 0.3,
         child: Column(
@@ -46,20 +53,9 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
                     child: Text("カテゴリ名"),
                   ),
                 ),
-                DropdownButton<int?>(
-                  value: defaultDropdownValue,
-                  items: ctgList.map((item) {
-                    return DropdownMenuItem<int?>(
-                      value: item["category_id"],
-                      child: Text(item["name"]),
-                    );
-                  }).toList(),
-                  onChanged: (int? value) {
-                    setState(() {
-                      defaultDropdownValue = value!;
-                    });
-                  },
-                ),
+                Container(
+                  child: Text(categoryLabel),
+                )
               ],
             ),
             Row(
@@ -71,14 +67,17 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
                     child: Text("レシピ名"),
                   ),
                 ),
-                SizedBox(
-                  width: screenSize.width * 0.40,
-                  child: TextFormField(
-                    controller: recipeTextFieldValue,
-                  ),
+                Container(
+                  child: Text(recipeLabel),
                 )
               ],
             ),
+            SizedBox(
+              height: screenSize.height * 0.05,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: Container(alignment: Alignment.centerLeft, child: Text(deleteExplainText)),),
           ],
         ),
       ),
@@ -90,9 +89,9 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: ElevatedButton(
                 onPressed: () {
-                  // 更新ボタンが押された時の処理
+                  // 削除ボタンが押された時の処理
                 },
-                child: Text("更新"),
+                child: Text("削除"),
               ),
             ),
             Padding(
