@@ -55,7 +55,7 @@ class RecipeListPage extends ConsumerWidget {
       categoryList.add(data);
     });
 
-    List<Map<String, dynamic>> sortedRecipeList = _sort(recipeList, categoryList);
+    List<Map<String, dynamic>> sortedRecipeList = _sort(recipeList, categoryList.length);
 
     // カテゴリ名を抽出し、レシピ名とセットでデータを取得する
     List<List<String>> recipeCategoryList = [];
@@ -70,28 +70,36 @@ class RecipeListPage extends ConsumerWidget {
           : ListView.builder(
               itemCount: recipeCategoryList.length,
               itemBuilder: (BuildContext context, int index) {
-                return Row(
+                return Column(
                   children: [
-                    // カテゴリ名
-                    SizedBox(
-                      width: 80.0,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text("${recipeCategoryList[index][0]}"),
-                      ),
+                    Row(
+                      children: [
+                        // カテゴリ名
+                        SizedBox(
+                          width: screenSize.width * 0.20,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Text("${recipeCategoryList[index][0]}"),
+                          ),
+                        ),
+                        // レシピ名
+                        SizedBox(
+                          width: screenSize.width * 0.425,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Text("${recipeCategoryList[index][1]}"),
+                          ),
+                        ),
+                        // ボタンオブジェクトを右寄せするため
+                        const Expanded(child: SizedBox()),
+                        _editButton("編集", context, recipeCategoryList[index], categoryList),
+                        _deleteButton("削除", context, recipeCategoryList[index], categoryList),
+                      ],
                     ),
-                    // レシピ名
-                    SizedBox(
-                      width: screenSize.width * 0.425,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text("${recipeCategoryList[index][1]}"),
-                      ),
+                    const Divider(
+                      height: 0.5,
+                      color: Colors.grey,
                     ),
-                    // ボタンオブジェクトを右寄せするため
-                    const Expanded(child: SizedBox()),
-                    _editButton("編集", context, recipeCategoryList[index], categoryList),
-                    _deleteButton("削除", context, recipeCategoryList[index], categoryList),
                   ],
                 );
               }),
@@ -196,12 +204,15 @@ class RecipeListPage extends ConsumerWidget {
 
   //
   // レシピ一覧情報をソートする
-  // ソートキー：
+  //   第一ソートキー : カテゴリID
+  //   第二ソートキー : レシピ名
+  // dartのsortメソッドの仕様上、文字種が混在している場合、文字種内でのみソートを実施
+  // (utf8の文字コードでソートしている)
   //
+  // recipeList::レシピ情報(1次元配列)
+  // categoryListLength::カテゴリ数
   //
-  //
-  //
-  List<Map<String, dynamic>> _sort(List<Map<String, dynamic>> recipeList, categoryList) {
+  List<Map<String, dynamic>> _sort(List<Map<String, dynamic>> recipeList, categoryListLength) {
     // 第一ソートキー : カテゴリIDでソート
     recipeList.sort((a, b) {
       final sortByCategory = a["category"].compareTo(b["category"]);
@@ -220,7 +231,7 @@ class RecipeListPage extends ConsumerWidget {
       loopCount += 1;
 
       // カテゴリIDごとにデータを仕分けする
-      if ((categoryId + 1) == categoryList.length) {
+      if ((categoryId + 1) == categoryListLength) {
         // 1つめのデータ専用処理
         if (lastCategoryInitFlg == false) {
           // 初回のみの実行のため、flg切り替え
