@@ -55,9 +55,11 @@ class RecipeListPage extends ConsumerWidget {
       categoryList.add(data);
     });
 
+    List<Map<String, dynamic>> sortedRecipeList = _sort(recipeList, categoryList);
+
     // カテゴリ名を抽出し、レシピ名とセットでデータを取得する
     List<List<String>> recipeCategoryList = [];
-    _mergeRecipeNameCategoryName(recipeCategoryList, recipeList, categoryList);
+    _mergeRecipeNameCategoryName(recipeCategoryList, sortedRecipeList, categoryList);
 
     return Scaffold(
       appBar: AppBar(
@@ -190,5 +192,70 @@ class RecipeListPage extends ConsumerWidget {
     });
 
     return recipeCategoryList;
+  }
+
+  //
+  // レシピ一覧情報をソートする
+  // ソートキー：
+  //
+  //
+  //
+  //
+  List<Map<String, dynamic>> _sort(List<Map<String, dynamic>> recipeList, categoryList) {
+    // 第一ソートキー : カテゴリIDでソート
+    recipeList.sort((a, b) {
+      final sortByCategory = a["category"].compareTo(b["category"]);
+      return sortByCategory;
+    });
+
+    // 第二ソート処理で使用する変数群
+    int loopCount = 0;
+    int categoryId = 0;
+    bool lastCategoryInitFlg = true;
+    List<List<Map<String, dynamic>>> sortedRecipeList = [];
+    List<Map<String, dynamic>> tmpList = [];
+
+    // 第二ソートキー : レシピ名でソート
+    recipeList.forEach((data) {
+      loopCount += 1;
+
+      // カテゴリIDごとにデータを仕分けする
+      if ((categoryId + 1) == categoryList.length) {
+        // 1つめのデータ専用処理
+        if (lastCategoryInitFlg == false) {
+          // 初回のみの実行のため、flg切り替え
+          lastCategoryInitFlg = true;
+          tmpList.sort((a, b) => a["name"].compareTo(b["name"]));
+          sortedRecipeList.add(tmpList);
+          tmpList = [];
+          // 初めのデータをロストさせないための処理
+          tmpList.add(data);
+        }
+
+        // 2つめ以降のデータ追加処理
+        tmpList.add(data);
+
+        // 最後のデータについては、sortedRecipeListデータ格納を実施
+        if (recipeList.length == loopCount) {
+          tmpList.sort((a, b) => a["name"].compareTo(b["name"]));
+          sortedRecipeList.add(tmpList);
+        }
+      } else if (categoryId == data["category"]) {
+        tmpList.add(data);
+        // 最後のカテゴリID群用の処理
+      } else {
+        tmpList.sort((a, b) => a["name"].compareTo(b["name"]));
+        sortedRecipeList.add(tmpList);
+        tmpList = [];
+        // 初めのデータをロストさせないための処理
+        tmpList.add(data);
+        categoryId += 1;
+      }
+    });
+
+    // 2次元配列を1次元配列に変換
+    List<Map<String, dynamic>> sortedData = sortedRecipeList.expand((row) => row).toList();
+
+    return sortedData;
   }
 }
