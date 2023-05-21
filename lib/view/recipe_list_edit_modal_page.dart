@@ -21,8 +21,9 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
   @override
   void initState() {
     super.initState();
+    print("@@@@@@@@@@${widget.categoryDataList}");
     ctgList = widget.categoryDataList;
-    defaultDropdownValue = ctgList[0]["category_id"];
+    defaultDropdownValue = _fetchCategoryId(ctgList, widget.recipeAndCategoryList[0]);
     recipeTextFieldValue.text = widget.recipeAndCategoryList[1];
   }
 
@@ -32,7 +33,7 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
     var screenSize = MediaQuery.of(context).size;
 
     return AlertDialog(
-      title: Center(child: Text("レシピ編集")),
+      title: const Center(child: Text("レシピ編集")),
       content: Container(
         height: screenSize.height * 0.3,
         child: Column(
@@ -40,10 +41,10 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
             Row(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Container(
                     width: screenSize.width * 0.20,
-                    child: Text("カテゴリ名"),
+                    child: const Text("カテゴリ名"),
                   ),
                 ),
                 DropdownButton<int?>(
@@ -65,10 +66,10 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
             Row(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Container(
                     width: screenSize.width * 0.20,
-                    child: Text("レシピ名"),
+                    child: const Text("レシピ名"),
                   ),
                 ),
                 SizedBox(
@@ -92,7 +93,7 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
                 onPressed: () {
                   // 更新ボタンが押された時の処理
                 },
-                child: Text("更新"),
+                child: const Text("更新"),
               ),
             ),
             Padding(
@@ -102,12 +103,25 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
                   // 閉じるボタンが押された時の処理
                   Navigator.of(context).pop();
                 },
-                child: Text("キャンセル"),
+                child: const Text("キャンセル"),
               ),
             ),
           ],
         )
       ],
     );
+  }
+
+  _fetchCategoryId(List<Map<String, dynamic>> ctgList, String recipeAndCategoryList) {
+    int categoryId = 0;
+
+    ctgList.forEach((data) {
+      if (data["name"] == recipeAndCategoryList) {
+        categoryId = data["category_id"];
+        return;
+      }
+    });
+
+    return categoryId;
   }
 }

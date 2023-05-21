@@ -63,10 +63,10 @@ class RecipeListPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text("登録済レシピ一覧")),
+        title: const Center(child: Text("登録済レシピ一覧")),
       ),
       body: recipeCategoryList.isEmpty
-          ? Text("レシピデータを登録してください")
+          ? const Text("レシピデータを登録してください")
           : ListView.builder(
               itemCount: recipeCategoryList.length,
               itemBuilder: (BuildContext context, int index) {
@@ -115,19 +115,26 @@ class RecipeListPage extends ConsumerWidget {
   // recipeCategoryList::カテゴリ、レシピ名の1次元配列
   //
   Widget _editButton(String text, context, recipeCategoryList, categoryList) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5.0),
-        child: ElevatedButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return RecipeListEditModalPage(recipeAndCategoryList: recipeCategoryList, categoryDataList: categoryList);
-              }
-            );
-          },
-          child: Text(text),
-        )
+    return ElevatedButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return RecipeListEditModalPage(recipeAndCategoryList: recipeCategoryList, categoryDataList: categoryList);
+            }
+          );
+        },
+        child: const Icon(Icons.edit, size: 20.0, color: Colors.blue,),
+        style: ButtonStyle(
+          minimumSize: MaterialStateProperty.all<Size>(const Size(20, 20)),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0), // 角の丸さを指定
+            ),
+          ),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.white24),
+          elevation: MaterialStateProperty.all<double>(0),
+        ),
     );
   }
 
@@ -139,19 +146,26 @@ class RecipeListPage extends ConsumerWidget {
   // recipeCategoryList::カテゴリ、レシピ名の1次元配列
   //
   Widget _deleteButton(String text, context, recipeCategoryList, categoryList) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5.0),
-        child: ElevatedButton(
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return RecipeListDeleteModalPage(recipeAndCategoryList: recipeCategoryList, categoryDataList: categoryList);
-                }
-            );
-          },
-          child: Text(text),
-        )
+    return ElevatedButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return RecipeListDeleteModalPage(recipeAndCategoryList: recipeCategoryList, categoryDataList: categoryList);
+              }
+          );
+        },
+        child: const Icon(Icons.delete, size: 20.0, color: Colors.blue,),
+        style: ButtonStyle(
+          minimumSize: MaterialStateProperty.all<Size>(const Size(20, 20)),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0), // 角の丸さを指定
+            ),
+          ),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.white24),
+          elevation: MaterialStateProperty.all<double>(0),
+        ),
     );
   }
 
