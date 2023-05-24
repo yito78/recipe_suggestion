@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_suggestion/domain/repository/firebase.dart';
 
 // 登録済みレシピ一覧画面の登録ボタンクリック時のモーダル画面クラス
 class RecipeListRegisterModalPage extends StatefulWidget {
@@ -17,11 +18,12 @@ class _RecipeListRegisterModalPageState extends State<RecipeListRegisterModalPag
   int? defaultDropdownValue;
   TextEditingController recipeTextFieldValue = TextEditingController();
 
+
   @override
   void initState() {
     super.initState();
     ctgList = widget.categoryDataList;
-    defaultDropdownValue = _fetchCategoryId(ctgList);
+    defaultDropdownValue = 0;
   }
 
   @override
@@ -72,7 +74,7 @@ class _RecipeListRegisterModalPageState extends State<RecipeListRegisterModalPag
                 SizedBox(
                   width: screenSize.width * 0.40,
                   child: TextFormField(
-                    // controller: recipeTextFieldValue,
+                    controller: recipeTextFieldValue,
                   ),
                 )
               ],
@@ -89,6 +91,7 @@ class _RecipeListRegisterModalPageState extends State<RecipeListRegisterModalPag
               child: ElevatedButton(
                 onPressed: () {
                   // 更新ボタンが押された時の処理
+                  _insert(context);
                 },
                 child: const Text("更新"),
               ),
@@ -109,16 +112,12 @@ class _RecipeListRegisterModalPageState extends State<RecipeListRegisterModalPag
     );
   }
 
-  _fetchCategoryId(List<Map<String, dynamic>> ctgList) {
-    int categoryId = 0;
-
-    ctgList.forEach((data) {
-      if (data["category_id"] == 0) {
-        categoryId = data["category_id"];
-        return;
-      }
-    });
-
-    return categoryId;
+  //
+  // firebaseにデータ登録する
+  //
+  void _insert(context) {
+    Firebase firebase = Firebase();
+    firebase.insertRecipes(recipeTextFieldValue.text, defaultDropdownValue);
+    Navigator.of(context).pop();
   }
 }

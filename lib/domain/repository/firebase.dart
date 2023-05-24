@@ -48,4 +48,26 @@ class Firebase {
 
     return categoriesData;
   }
+
+  //
+  // recipesコレクションに入力データを登録する
+  //
+  // name::レシピ名
+  // category::カテゴリID
+  //
+  Future insertRecipes(name, category) async {
+    final Map<String, dynamic> data = {
+      "name": name,
+      "category": category,
+    };
+
+    await FirebaseFirestore.instance..collection('recipes').add(data);
+
+    // await FirebaseFirestore.instance.runTransaction((transaction) async {
+    //   await transaction.set(
+    //       FirebaseFirestore.instance.collection('recipes').doc(name),
+    //       data
+    //   );
+    // });
+  }
 }
