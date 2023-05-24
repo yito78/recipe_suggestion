@@ -61,13 +61,16 @@ class Firebase {
       "category": category,
     };
 
-    await FirebaseFirestore.instance..collection('recipes').add(data);
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      await transaction.set(
+          FirebaseFirestore.instance.collection("recipes").doc("${category}_$name"),
+          data
+      );
 
-    // await FirebaseFirestore.instance.runTransaction((transaction) async {
-    //   await transaction.set(
-    //       FirebaseFirestore.instance.collection('recipes').doc(name),
-    //       data
-    //   );
-    // });
+      await transaction.set(
+          FirebaseFirestore.instance.collection("index").doc("$category").collection("recipes").doc(name),
+          data
+      );
+    });
   }
 }
