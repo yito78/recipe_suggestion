@@ -56,18 +56,41 @@ class Firebase {
   // category::カテゴリID
   //
   Future insertRecipes(name, category) async {
+    final batch = FirebaseFirestore.instance.batch();
     final Map<String, dynamic> data = {
       "name": name,
       "category": category,
     };
 
+    // final Map<String, dynamic> data2 = {
+    //   "name": "天ぷら2",
+    //   "category": category,
+    // };
+    //
+    // batch.set(
+    //     FirebaseFirestore.instance.collection("index").doc("$category").collection("recipes").doc(name),
+    //     data
+    // );
+    //
+    // batch.set(
+    //     FirebaseFirestore.instance.collection("recipes").doc("${category}_$name"),
+    //     data
+    // );
+    //
+    // await batch.commit().then(
+    //         (_) => print("成功")
+    // ).catchError(
+    //         (e) => print("@@@@@@@@@@@$e")
+    // );
+
     await FirebaseFirestore.instance.runTransaction((transaction) async {
-      await transaction.set(
+
+      transaction.set(
           FirebaseFirestore.instance.collection("recipes").doc("${category}_$name"),
           data
       );
 
-      await transaction.set(
+      transaction.set(
           FirebaseFirestore.instance.collection("index").doc("$category").collection("recipes").doc(name),
           data
       );

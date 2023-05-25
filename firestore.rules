@@ -5,22 +5,32 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
-    match /index/{document=**} {
+    match /index/{category} {
       allow read, write: if true;
     }
+
+    // match /index/{category}/recipes/{name} {
+    //   allow read, write: if true;
+    //   // allow read, write: if checkIndex(request.resource.data.category, request.resource.data.name);
+
+    //   function checkIndex(category, name){
+    //       // return existsAfter(/databases/$(database)/documents/index/$(category)/recipes/$(name));
+    //       return true;
+    //   }
+    // }
 
     match /recipes/{document=**} {
       allow read: if true;
 
       // カテゴリIDが許可された値であるかチェック
       function checkCategory(document){
-          return exists(/databases/$(database)/documents/categories/$(document));
+          return existsAfter(/databases/$(database)/documents/categories/$(document));
       }
 
       // カテゴリIDとレシピ名の組み合わせで、既に登録済みかチェック
       // 登録済みの場合、false
       function checkDuplication(category, name){
-          return !exists(/databases/$(database)/documents/index/$(category)/recipes/$(name));
+          return !existsAfter(/databases/$(database)/documents/index/$(category)/recipes/$(name));
       }
 
       // カテゴリIDの存在チェック、データ重複チェック
