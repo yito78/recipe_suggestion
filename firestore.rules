@@ -10,7 +10,7 @@ service cloud.firestore {
     }
 
     match /recipes/{document=**} {
-      allow read: if true;
+      allow read, delete: if true;
 
       // カテゴリIDが許可された値であるかチェック
       function checkCategory(document){

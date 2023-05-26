@@ -67,7 +67,7 @@ class RecipeListPage extends ConsumerWidget {
     ///
     /// モーダル画面でfirestoreにデータ操作した際に、
     /// 一覧画面に最新情報を表示するためにfirestoreからデータ再取得する処理
-    /// 
+    ///
     regetRecipeData() {
       // データ作成処理
       final recipeNotifier = ref.read(recipesDataNotifierProvider.notifier);
@@ -95,6 +95,50 @@ class RecipeListPage extends ConsumerWidget {
         },
         tooltip: "データ登録",
         child: const Icon(Icons.add),
+      );
+    }
+
+    //
+    // 編集ボタンウィジェット
+    //
+    // text::ボタン表示用テキスト
+    // context::BuilderContextクラスのオブジェクト
+    // recipeCategoryList::カテゴリ、レシピ名の1次元配列
+    //
+    Widget _editButton(String text, context, recipeCategoryList, categoryList) {
+      return ElevatedButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return RecipeListEditModalPage(
+                    recipeAndCategoryList: recipeCategoryList,
+                    categoryDataList: categoryList);
+              }
+          ).then((value) {
+            if (value != null) {
+              print("更新ボタンをクリックしました");
+              regetRecipeData();
+            } else {
+              print("閉じるボタンをクリックしました");
+            }
+          });
+        },
+        child: const Icon(
+          Icons.edit,
+          size: 20.0,
+          color: Colors.blue,
+        ),
+        style: ButtonStyle(
+          minimumSize: MaterialStateProperty.all<Size>(const Size(20, 20)),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0), // 角の丸さを指定
+            ),
+          ),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.white24),
+          elevation: MaterialStateProperty.all<double>(0),
+        ),
       );
     }
 
@@ -153,42 +197,6 @@ class RecipeListPage extends ConsumerWidget {
               ],
             ),
       floatingActionButton: _insertButton(context, categoryList),
-    );
-  }
-
-  //
-  // 編集ボタンウィジェット
-  //
-  // text::ボタン表示用テキスト
-  // context::BuilderContextクラスのオブジェクト
-  // recipeCategoryList::カテゴリ、レシピ名の1次元配列
-  //
-  Widget _editButton(String text, context, recipeCategoryList, categoryList) {
-    return ElevatedButton(
-      onPressed: () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return RecipeListEditModalPage(
-                  recipeAndCategoryList: recipeCategoryList,
-                  categoryDataList: categoryList);
-            });
-      },
-      child: const Icon(
-        Icons.edit,
-        size: 20.0,
-        color: Colors.blue,
-      ),
-      style: ButtonStyle(
-        minimumSize: MaterialStateProperty.all<Size>(const Size(20, 20)),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0), // 角の丸さを指定
-          ),
-        ),
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.white24),
-        elevation: MaterialStateProperty.all<double>(0),
-      ),
     );
   }
 
