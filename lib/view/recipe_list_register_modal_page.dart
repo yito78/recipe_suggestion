@@ -118,6 +118,6 @@ class _RecipeListRegisterModalPageState extends State<RecipeListRegisterModalPag
   void _insert(context) {
     Firebase firebase = Firebase();
     firebase.insertRecipes(recipeTextFieldValue.text, defaultDropdownValue);
-    Navigator.of(context).pop();
+    Navigator.of(context).pop("@@@");
   }
 }

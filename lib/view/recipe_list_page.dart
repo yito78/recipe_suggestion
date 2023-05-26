@@ -64,6 +64,40 @@ class RecipeListPage extends ConsumerWidget {
     _mergeRecipeNameCategoryName(
         recipeCategoryList, sortedRecipeList, categoryList);
 
+    ///
+    /// モーダル画面でfirestoreにデータ操作した際に、
+    /// 一覧画面に最新情報を表示するためにfirestoreからデータ再取得する処理
+    /// 
+    regetRecipeData() {
+      // データ作成処理
+      final recipeNotifier = ref.read(recipesDataNotifierProvider.notifier);
+      recipeNotifier.fetchRecipeDataState();
+    }
+
+    Widget _insertButton(context, categoryList) {
+      return FloatingActionButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return RecipeListRegisterModalPage(
+                  categoryDataList: categoryList
+                );
+              }
+          ).then((value) {
+            if (value != null) {
+              print("更新ボタンがクリックされました");
+              regetRecipeData();
+            } else {
+              print("閉じるボタンがクリックされました");
+            }
+          });
+        },
+        tooltip: "データ登録",
+        child: const Icon(Icons.add),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text("登録済レシピ一覧")),
@@ -191,21 +225,6 @@ class RecipeListPage extends ConsumerWidget {
         backgroundColor: MaterialStateProperty.all<Color>(Colors.white24),
         elevation: MaterialStateProperty.all<double>(0),
       ),
-    );
-  }
-
-  Widget _insertButton(context, categoryList) {
-    return FloatingActionButton(
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return RecipeListRegisterModalPage(
-                categoryDataList: categoryList);
-          });
-      },
-      tooltip: "データ登録",
-      child: Icon(Icons.add),
     );
   }
 
