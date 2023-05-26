@@ -142,6 +142,50 @@ class RecipeListPage extends ConsumerWidget {
       );
     }
 
+    //
+    // 削除ボタンウィジェット
+    //
+    // text::ボタン表示用テキスト
+    // context::BuilderContextクラスのオブジェクト
+    // recipeCategoryList::カテゴリ、レシピ名の1次元配列
+    //
+    Widget _deleteButton(String text, context, recipeCategoryList, categoryList) {
+      return ElevatedButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return RecipeListDeleteModalPage(
+                    recipeAndCategoryList: recipeCategoryList,
+                    categoryDataList: categoryList);
+              }
+          ).then((value) {
+            if (value != null) {
+              print("削除ボタンをクリックしました");
+              regetRecipeData();
+            } else {
+              print("閉じるボタンをクリックしました");
+            }
+          });
+        },
+        child: const Icon(
+          Icons.delete,
+          size: 20.0,
+          color: Colors.blue,
+        ),
+        style: ButtonStyle(
+          minimumSize: MaterialStateProperty.all<Size>(const Size(20, 20)),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0), // 角の丸さを指定
+            ),
+          ),
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.white24),
+          elevation: MaterialStateProperty.all<double>(0),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Center(child: Text("登録済レシピ一覧")),
@@ -197,42 +241,6 @@ class RecipeListPage extends ConsumerWidget {
               ],
             ),
       floatingActionButton: _insertButton(context, categoryList),
-    );
-  }
-
-  //
-  // 削除ボタンウィジェット
-  //
-  // text::ボタン表示用テキスト
-  // context::BuilderContextクラスのオブジェクト
-  // recipeCategoryList::カテゴリ、レシピ名の1次元配列
-  //
-  Widget _deleteButton(String text, context, recipeCategoryList, categoryList) {
-    return ElevatedButton(
-      onPressed: () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return RecipeListDeleteModalPage(
-                  recipeAndCategoryList: recipeCategoryList,
-                  categoryDataList: categoryList);
-            });
-      },
-      child: const Icon(
-        Icons.delete,
-        size: 20.0,
-        color: Colors.blue,
-      ),
-      style: ButtonStyle(
-        minimumSize: MaterialStateProperty.all<Size>(const Size(20, 20)),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0), // 角の丸さを指定
-          ),
-        ),
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.white24),
-        elevation: MaterialStateProperty.all<double>(0),
-      ),
     );
   }
 

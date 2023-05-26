@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_suggestion/domain/repository/firebase.dart';
 
 // 登録済みレシピ一覧画面の削除ボタンクリック時のモーダル画面クラス
 class RecipeListDeleteModalPage extends StatefulWidget {
@@ -17,6 +18,7 @@ class RecipeListDeleteModalPage extends StatefulWidget {
 class _RecipeListDeleteModalPageState extends State<RecipeListDeleteModalPage> {
   String categoryLabel = "";
   String recipeLabel = "";
+  int? categoryValue;
   TextEditingController recipeTextFieldValue = TextEditingController();
 
   var deleteExplainText = '''
@@ -28,6 +30,7 @@ class _RecipeListDeleteModalPageState extends State<RecipeListDeleteModalPage> {
   @override
   void initState() {
     super.initState();
+    categoryValue = _fetchCategoryId(widget.categoryDataList, widget.recipeAndCategoryList[0]);
     categoryLabel = widget.recipeAndCategoryList[0];
     recipeLabel = widget.recipeAndCategoryList[1];
     recipeTextFieldValue.text = widget.recipeAndCategoryList[1];
@@ -90,6 +93,9 @@ class _RecipeListDeleteModalPageState extends State<RecipeListDeleteModalPage> {
               child: ElevatedButton(
                 onPressed: () {
                   // 削除ボタンが押された時の処理
+                  Firebase firebase = Firebase();
+                  firebase.deleteRecipes(recipeLabel ,categoryValue);
+                  Navigator.of(context).pop("@@@");
                 },
                 child: Text("削除"),
               ),
@@ -108,5 +114,18 @@ class _RecipeListDeleteModalPageState extends State<RecipeListDeleteModalPage> {
         )
       ],
     );
+  }
+
+  _fetchCategoryId(List<Map<String, dynamic>> ctgList, recipeAndCategoryList) {
+    int categoryId = 0;
+
+    ctgList.forEach((data) {
+      if (data["name"] == recipeAndCategoryList) {
+        categoryId = data["category_id"];
+        return;
+      }
+    });
+
+    return categoryId;
   }
 }
