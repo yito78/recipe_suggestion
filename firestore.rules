@@ -1,12 +1,31 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if
-          request.time < timestamp.date(2023, 6, 10);
+    match /categories/{document=**} {
+      allow read, write: if true;
     }
+
+    match /index/{document=**} {
+      allow read, write: if true;
+    }
+
     match /recipes/{document=**} {
-      allow write, update: if request.resource.data.category == get(/databases/$(database)/documents/categories/$(request.resource.data.category_id)).data.category_id;
+      allow read: if true;
+
+      // カテゴリIDが許可された値であるかチェック
+      function checkCategory(document){
+          return exists(/databases/$(database)/documents/categories/$(document));
+      }
+
+      // カテゴリIDとレシピ名の組み合わせで、既に登録済みかチェック
+      // 登録済みの場合、書き込みを許可しない
+      function checkDuplication(category, name){
+          return !exists(/databases/$(database)/documents/index/$(category)/recipes/$(name));
+      }
+
+      // カテゴリIDの存在チェック、データ重複チェック
+      allow write, update: if checkCategory(request.resource.data.category) &&
+                              checkDuplication(request.resource.data.category, request.resource.data.name);
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:recipe_suggestion/provider/categories_data.dart';
 import 'package:recipe_suggestion/utils/log.dart';
 import 'package:recipe_suggestion/view/recipe_list_delete_modal_page.dart';
 import 'package:recipe_suggestion/view/recipe_list_edit_modal_page.dart';
+import 'package:recipe_suggestion/view/recipe_list_register_modal_page.dart';
 
 import '../provider/recipes_data.dart';
 
@@ -55,11 +56,47 @@ class RecipeListPage extends ConsumerWidget {
       categoryList.add(data);
     });
 
-    List<Map<String, dynamic>> sortedRecipeList = _sort(recipeList, categoryList.length);
+    List<Map<String, dynamic>> sortedRecipeList =
+        _sort(recipeList, categoryList.length);
 
     // カテゴリ名を抽出し、レシピ名とセットでデータを取得する
     List<List<String>> recipeCategoryList = [];
-    _mergeRecipeNameCategoryName(recipeCategoryList, sortedRecipeList, categoryList);
+    _mergeRecipeNameCategoryName(
+        recipeCategoryList, sortedRecipeList, categoryList);
+
+    ///
+    /// モーダル画面でfirestoreにデータ操作した際に、
+    /// 一覧画面に最新情報を表示するためにfirestoreからデータ再取得する処理
+    /// 
+    regetRecipeData() {
+      // データ作成処理
+      final recipeNotifier = ref.read(recipesDataNotifierProvider.notifier);
+      recipeNotifier.fetchRecipeDataState();
+    }
+
+    Widget _insertButton(context, categoryList) {
+      return FloatingActionButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return RecipeListRegisterModalPage(
+                  categoryDataList: categoryList
+                );
+              }
+          ).then((value) {
+            if (value != null) {
+              print("更新ボタンがクリックされました");
+              regetRecipeData();
+            } else {
+              print("閉じるボタンがクリックされました");
+            }
+          });
+        },
+        tooltip: "データ登録",
+        child: const Icon(Icons.add),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -67,44 +104,56 @@ class RecipeListPage extends ConsumerWidget {
       ),
       body: recipeCategoryList.isEmpty
           ? const Text("レシピデータを登録してください")
-          : ListView.builder(
-              itemCount: recipeCategoryList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Column(
-                  children: [
-                    Row(
-                      children: [
-                        // カテゴリ名
-                        SizedBox(
-                          width: screenSize.width * 0.20,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Text("${recipeCategoryList[index][0]}"),
-                          ),
-                        ),
-                        // レシピ名
-                        SizedBox(
-                          width: screenSize.width * 0.425,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Text("${recipeCategoryList[index][1]}"),
-                          ),
-                        ),
-                        // ボタンオブジェクトを右寄せするため
-                        const Expanded(child: SizedBox()),
-                        _editButton("編集", context, recipeCategoryList[index], categoryList),
-                        _deleteButton("削除", context, recipeCategoryList[index], categoryList),
-                      ],
-                    ),
-                    const Divider(
-                      height: 0.5,
-                      color: Colors.grey,
-                    ),
-                  ],
-                );
-              }),
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: recipeCategoryList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Column(
+                          children: [
+                            Row(
+                              children: [
+                                // カテゴリ名
+                                SizedBox(
+                                  width: screenSize.width * 0.20,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0),
+                                    child:
+                                        Text("${recipeCategoryList[index][0]}"),
+                                  ),
+                                ),
+                                // レシピ名
+                                SizedBox(
+                                  width: screenSize.width * 0.425,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10.0),
+                                    child:
+                                        Text("${recipeCategoryList[index][1]}"),
+                                  ),
+                                ),
+                                // ボタンオブジェクトを右寄せするため
+                                const Expanded(child: SizedBox()),
+                                _editButton("編集", context,
+                                    recipeCategoryList[index], categoryList),
+                                _deleteButton("削除", context,
+                                    recipeCategoryList[index], categoryList),
+                              ],
+                            ),
+                            const Divider(
+                              height: 0.5,
+                              color: Colors.grey,
+                            ),
+                          ],
+                        );
+                      }),
+                ),
+              ],
+            ),
+      floatingActionButton: _insertButton(context, categoryList),
     );
-    // return const Text("登録済みレシピ一覧画面");
   }
 
   //
@@ -116,25 +165,30 @@ class RecipeListPage extends ConsumerWidget {
   //
   Widget _editButton(String text, context, recipeCategoryList, categoryList) {
     return ElevatedButton(
-        onPressed: () {
-          showDialog(
+      onPressed: () {
+        showDialog(
             context: context,
             builder: (BuildContext context) {
-              return RecipeListEditModalPage(recipeAndCategoryList: recipeCategoryList, categoryDataList: categoryList);
-            }
-          );
-        },
-        child: const Icon(Icons.edit, size: 20.0, color: Colors.blue,),
-        style: ButtonStyle(
-          minimumSize: MaterialStateProperty.all<Size>(const Size(20, 20)),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0), // 角の丸さを指定
-            ),
+              return RecipeListEditModalPage(
+                  recipeAndCategoryList: recipeCategoryList,
+                  categoryDataList: categoryList);
+            });
+      },
+      child: const Icon(
+        Icons.edit,
+        size: 20.0,
+        color: Colors.blue,
+      ),
+      style: ButtonStyle(
+        minimumSize: MaterialStateProperty.all<Size>(const Size(20, 20)),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0), // 角の丸さを指定
           ),
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.white24),
-          elevation: MaterialStateProperty.all<double>(0),
         ),
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.white24),
+        elevation: MaterialStateProperty.all<double>(0),
+      ),
     );
   }
 
@@ -147,25 +201,30 @@ class RecipeListPage extends ConsumerWidget {
   //
   Widget _deleteButton(String text, context, recipeCategoryList, categoryList) {
     return ElevatedButton(
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return RecipeListDeleteModalPage(recipeAndCategoryList: recipeCategoryList, categoryDataList: categoryList);
-              }
-          );
-        },
-        child: const Icon(Icons.delete, size: 20.0, color: Colors.blue,),
-        style: ButtonStyle(
-          minimumSize: MaterialStateProperty.all<Size>(const Size(20, 20)),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0), // 角の丸さを指定
-            ),
+      onPressed: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return RecipeListDeleteModalPage(
+                  recipeAndCategoryList: recipeCategoryList,
+                  categoryDataList: categoryList);
+            });
+      },
+      child: const Icon(
+        Icons.delete,
+        size: 20.0,
+        color: Colors.blue,
+      ),
+      style: ButtonStyle(
+        minimumSize: MaterialStateProperty.all<Size>(const Size(20, 20)),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0), // 角の丸さを指定
           ),
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.white24),
-          elevation: MaterialStateProperty.all<double>(0),
         ),
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.white24),
+        elevation: MaterialStateProperty.all<double>(0),
+      ),
     );
   }
 
@@ -226,7 +285,8 @@ class RecipeListPage extends ConsumerWidget {
   // recipeList::レシピ情報(1次元配列)
   // categoryListLength::カテゴリ数
   //
-  List<Map<String, dynamic>> _sort(List<Map<String, dynamic>> recipeList, categoryListLength) {
+  List<Map<String, dynamic>> _sort(
+      List<Map<String, dynamic>> recipeList, categoryListLength) {
     // 第一ソートキー : カテゴリIDでソート
     recipeList.sort((a, b) {
       final sortByCategory = a["category"].compareTo(b["category"]);
@@ -279,7 +339,8 @@ class RecipeListPage extends ConsumerWidget {
     });
 
     // 2次元配列を1次元配列に変換
-    List<Map<String, dynamic>> sortedData = sortedRecipeList.expand((row) => row).toList();
+    List<Map<String, dynamic>> sortedData =
+        sortedRecipeList.expand((row) => row).toList();
 
     return sortedData;
   }

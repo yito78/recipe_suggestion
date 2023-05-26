@@ -48,4 +48,66 @@ class Firebase {
 
     return categoriesData;
   }
+
+  //
+  // recipesコレクションに入力データを登録する
+  //
+  // name::レシピ名
+  // category::カテゴリID
+  //
+  Future insertRecipes(name, category) async {
+    final batch = FirebaseFirestore.instance.batch();
+    final Map<String, dynamic> data = {
+      "name": name,
+      "category": category,
+    };
+
+    var indexRef = FirebaseFirestore.instance.collection("index").doc("$category").collection("recipes").doc(name);
+    batch.set(indexRef, data);
+
+    var recipesRef = FirebaseFirestore.instance.collection("recipes").doc("${category}_$name");
+    batch.set(recipesRef, data);
+
+    batch.commit().then(
+            (_) => print("成功")
+    ).catchError(
+            (e)=>print("$e")
+    );
+    // final Map<String, dynamic> data2 = {
+    //   "name": "天ぷら2",
+    //   "category": category,
+    // };
+    //
+    // batch.set(
+    //     FirebaseFirestore.instance.collection("index").doc("$category").collection("recipes").doc(name),
+    //     data
+    // );
+    //
+    // batch.set(
+    //     FirebaseFirestore.instance.collection("recipes").doc("${category}_$name"),
+    //     data
+    // );
+    //
+    // await batch.commit().then(
+    //         (_) => print("成功")
+    // ).catchError(
+    //         (e) => print("@@@@@@@@@@@$e")
+    // );
+
+
+
+
+    // await FirebaseFirestore.instance.runTransaction((transaction) async {
+    //
+    //   transaction.set(
+    //       FirebaseFirestore.instance.collection("recipes").doc("${category}_$name"),
+    //       data
+    //   );
+    //
+    //   transaction.set(
+    //       FirebaseFirestore.instance.collection("index").doc("$category").collection("recipes").doc(name),
+    //       data
+    //   );
+    // });
+  }
 }

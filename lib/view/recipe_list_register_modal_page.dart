@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_suggestion/domain/repository/firebase.dart';
 
-// 登録済みレシピ一覧画面の編集ボタンクリック時のモーダル画面クラス
-class RecipeListEditModalPage extends StatefulWidget {
-  List<String> recipeAndCategoryList;
+// 登録済みレシピ一覧画面の登録ボタンクリック時のモーダル画面クラス
+class RecipeListRegisterModalPage extends StatefulWidget {
   List<Map<String, dynamic>> categoryDataList;
 
-  RecipeListEditModalPage({Key? key, required this.recipeAndCategoryList, required this.categoryDataList })
+  RecipeListRegisterModalPage({Key? key, required this.categoryDataList })
       : super(key: key);
 
   @override
-  State<RecipeListEditModalPage> createState() =>
-      _RecipeListEditModalPageState();
+  State<RecipeListRegisterModalPage> createState() =>
+      _RecipeListRegisterModalPageState();
 }
 
-class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
+class _RecipeListRegisterModalPageState extends State<RecipeListRegisterModalPage> {
   List<Map<String, dynamic>> ctgList = [];
   int? defaultDropdownValue;
   TextEditingController recipeTextFieldValue = TextEditingController();
+
 
   @override
   void initState() {
     super.initState();
     ctgList = widget.categoryDataList;
-    defaultDropdownValue = _fetchCategoryId(ctgList, widget.recipeAndCategoryList[0]);
-    recipeTextFieldValue.text = widget.recipeAndCategoryList[1];
+    defaultDropdownValue = 0;
   }
 
   @override
@@ -91,6 +91,7 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
               child: ElevatedButton(
                 onPressed: () {
                   // 更新ボタンが押された時の処理
+                  _insert(context);
                 },
                 child: const Text("更新"),
               ),
@@ -111,16 +112,12 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
     );
   }
 
-  _fetchCategoryId(List<Map<String, dynamic>> ctgList, String recipeAndCategoryList) {
-    int categoryId = 0;
-
-    ctgList.forEach((data) {
-      if (data["name"] == recipeAndCategoryList) {
-        categoryId = data["category_id"];
-        return;
-      }
-    });
-
-    return categoryId;
+  //
+  // firebaseにデータ登録する
+  //
+  void _insert(context) {
+    Firebase firebase = Firebase();
+    firebase.insertRecipes(recipeTextFieldValue.text, defaultDropdownValue);
+    Navigator.of(context).pop("@@@");
   }
 }
