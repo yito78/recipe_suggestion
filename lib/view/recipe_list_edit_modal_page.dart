@@ -95,10 +95,10 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async{
                   // 更新ボタンが押された時の処理
                   Firebase firebase = Firebase();
-                  firebase.updataRecipes(recipeTextFieldValue.text ,defaultDropdownValue, originalName, originalCategory);
+                  await firebase.updataRecipes(recipeTextFieldValue.text ,defaultDropdownValue, originalName, originalCategory);
                   Navigator.of(context).pop("@@@");
                 },
                 child: const Text("更新"),

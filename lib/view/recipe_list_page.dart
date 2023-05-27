@@ -107,7 +107,7 @@ class RecipeListPage extends ConsumerWidget {
     //
     Widget _editButton(String text, context, recipeCategoryList, categoryList) {
       return ElevatedButton(
-        onPressed: () {
+        onPressed: () async{
           showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -115,10 +115,10 @@ class RecipeListPage extends ConsumerWidget {
                     recipeAndCategoryList: recipeCategoryList,
                     categoryDataList: categoryList);
               }
-          ).then((value) {
+          ).then((value) async {
             if (value != null) {
               print("更新ボタンをクリックしました");
-              regetRecipeData();
+              await regetRecipeData();
             } else {
               print("閉じるボタンをクリックしました");
             }
@@ -151,7 +151,7 @@ class RecipeListPage extends ConsumerWidget {
     //
     Widget _deleteButton(String text, context, recipeCategoryList, categoryList) {
       return ElevatedButton(
-        onPressed: () {
+        onPressed: () async{
           showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -159,10 +159,10 @@ class RecipeListPage extends ConsumerWidget {
                     recipeAndCategoryList: recipeCategoryList,
                     categoryDataList: categoryList);
               }
-          ).then((value) {
+          ).then((value) async{
             if (value != null) {
               print("削除ボタンをクリックしました");
-              regetRecipeData();
+              await regetRecipeData();
             } else {
               print("閉じるボタンをクリックしました");
             }

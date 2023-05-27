@@ -91,10 +91,10 @@ class _RecipeListDeleteModalPageState extends State<RecipeListDeleteModalPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   // 削除ボタンが押された時の処理
                   Firebase firebase = Firebase();
-                  firebase.deleteRecipes(recipeLabel ,categoryValue);
+                  await firebase.deleteRecipes(recipeLabel ,categoryValue);
                   Navigator.of(context).pop("@@@");
                 },
                 child: Text("削除"),

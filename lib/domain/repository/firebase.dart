@@ -69,7 +69,7 @@ class Firebase {
     batch.set(recipesRef, data);
 
     await batch.commit().then(
-            (_) => print("データ登録成功")
+            (_) => print("データ登録成功!")
     ).catchError(
             (e)=>print("$e")
     );
@@ -100,7 +100,7 @@ class Firebase {
   //
   Future deleteRecipes(name, category) async{
     final instance = FirebaseFirestore.instance;
-    instance.runTransaction((Transaction tx) async{
+    await instance.runTransaction((Transaction tx) async{
       // Firestoreのコレクションを参照
       CollectionReference recipesCollection = instance.collection("recipes");
       // フィールドの値でクエリを作成
