@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_suggestion/domain/repository/firebase.dart';
 
 // 登録済みレシピ一覧画面の編集ボタンクリック時のモーダル画面クラス
 class RecipeListEditModalPage extends StatefulWidget {
@@ -17,6 +18,8 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
   List<Map<String, dynamic>> ctgList = [];
   int? defaultDropdownValue;
   TextEditingController recipeTextFieldValue = TextEditingController();
+  int? originalCategory;
+  late String originalName;
 
   @override
   void initState() {
@@ -24,6 +27,9 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
     ctgList = widget.categoryDataList;
     defaultDropdownValue = _fetchCategoryId(ctgList, widget.recipeAndCategoryList[0]);
     recipeTextFieldValue.text = widget.recipeAndCategoryList[1];
+    // 検索用データ
+    originalCategory = _fetchCategoryId(ctgList, widget.recipeAndCategoryList[0]);
+    originalName = widget.recipeAndCategoryList[1];
   }
 
   @override
@@ -89,8 +95,11 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async{
                   // 更新ボタンが押された時の処理
+                  Firebase firebase = Firebase();
+                  await firebase.updataRecipes(recipeTextFieldValue.text ,defaultDropdownValue, originalName, originalCategory);
+                  Navigator.of(context).pop("@@@");
                 },
                 child: const Text("更新"),
               ),
@@ -99,7 +108,6 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: ElevatedButton(
                 onPressed: () {
-                  // 閉じるボタンが押された時の処理
                   Navigator.of(context).pop();
                 },
                 child: const Text("キャンセル"),
