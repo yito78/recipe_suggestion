@@ -4,7 +4,7 @@ import 'package:recipe_suggestion/provider/recipes_data.dart';
 import 'package:recipe_suggestion/utils/log.dart';
 import 'package:recipe_suggestion/view/import_csv_page.dart';
 import 'package:recipe_suggestion/view/recipe_list_page.dart';
-import 'package:recipe_suggestion/view/suggested_recipe_page.dart';
+import 'package:recipe_suggestion/view/weekly_recipe_page.dart';
 
 class FunctionListPage extends ConsumerWidget {
   const FunctionListPage({Key? key}) : super(key: key);
@@ -49,9 +49,9 @@ class FunctionListPage extends ConsumerWidget {
                   list.add(element);
                 });
                 if (list.isEmpty) {
-                  return _button(context, SuggestedRecipePage(), const Text("1週間のレシピ一覧"), false);
+                  return _button(context, WeeklyRecipePage(), const Text("1週間のレシピ一覧"), false);
                 } else {
-                  return _button(context, SuggestedRecipePage(), const Text("1週間のレシピ一覧"));
+                  return _button(context, WeeklyRecipePage(), const Text("1週間のレシピ一覧"));
                 }
             }),
             _button(context, RecipeListPage(), const Text("登録レシピ一覧")),
