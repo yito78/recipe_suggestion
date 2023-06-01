@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_suggestion/utils/weekly_recipe.dart';
 
 class WeeklyRecipePage extends StatelessWidget {
   const WeeklyRecipePage({Key? key}) : super(key: key);
@@ -139,5 +140,15 @@ class WeeklyRecipePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  ///
+  /// 画面表示用レシピ情報を作成する
+  ///
+  /// 戻り値::画面表示用レシピ情報
+  ///
+  Future<Map<int, List<dynamic>>> _createDisplayData() async{
+    WeeklyRecipe weeklyRecipe = WeeklyRecipe();
+    return await weeklyRecipe.createWeeklyRecipe();
   }
 }
