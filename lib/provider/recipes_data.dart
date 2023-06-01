@@ -1,3 +1,4 @@
+import 'package:recipe_suggestion/utils/weekly_recipe.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:recipe_suggestion/domain/repository/firebase.dart';
 part 'recipes_data.g.dart';

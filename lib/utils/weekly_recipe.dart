@@ -16,7 +16,7 @@ class WeeklyRecipe {
   ///   2: [ "月曜のデザートレシピ名", "火曜のデザートレシピ名", "水曜のデザートレシピ名", … ],
   /// }
   ///
-  Future<Map<int, List<dynamic>>> createWeeklyRecipe() async{
+  Future<Map<int, List<dynamic>>> createWeeklyRecipe(recipeData) async{
     Firebase firebase = Firebase();
 
     // レシピ情報取得
