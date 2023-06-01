@@ -86,7 +86,6 @@ class WeeklyRecipePage extends ConsumerWidget {
       "日曜日": 6,
     };
 
-    print(recipeByCategoryId);
     return SizedBox(
         height: setHeight,
         child: Card(
@@ -106,15 +105,15 @@ class WeeklyRecipePage extends ConsumerWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    _titleAndRecipeName(imagePath["main"], "主菜レシピ名", recipeByCategoryId.value[0][selectTargetIndex[weekdayText]]),
-                    SizedBox(
+                    _titleAndRecipeName(imagePath["main"], "主菜レシピ名", recipeByCategoryId.value == null ? "" : recipeByCategoryId.value[0][selectTargetIndex[weekdayText]]),
+                    const SizedBox(
                       height: 10.0,
                     ),
-                    _titleAndRecipeName(imagePath["sub"], "副菜レシピ名", recipeByCategoryId.value[1][selectTargetIndex[weekdayText]]),
-                    SizedBox(
+                    _titleAndRecipeName(imagePath["sub"], "副菜レシピ名", recipeByCategoryId.value == null ? "" : recipeByCategoryId.value[1][selectTargetIndex[weekdayText]]),
+                    const SizedBox(
                       height: 10.0,
                     ),
-                    _titleAndRecipeName(imagePath["dessert"], "デザートレシピ名", recipeByCategoryId.value[2][selectTargetIndex[weekdayText]]),
+                    _titleAndRecipeName(imagePath["dessert"], "デザートレシピ名", recipeByCategoryId.value == null ? "" : recipeByCategoryId.value[2][selectTargetIndex[weekdayText]]),
                   ],
                 ),
               ),
