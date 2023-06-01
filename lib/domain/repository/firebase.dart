@@ -134,44 +134,5 @@ class Firebase {
         });
       });
     });
-
-
-    // // Firestoreのコレクションを参照
-    // CollectionReference recipesCollection = FirebaseFirestore.instance.collection("recipes");
-    // // フィールドの値でクエリを作成
-    // Query recipesQuery = recipesCollection.where("name", isEqualTo: "$name").where("category", isEqualTo: category);
-    // // クエリを実行してドキュメントを取得
-    // QuerySnapshot querySnapshot = await recipesQuery.get();
-    //
-    // // 取得したドキュメントを処理
-    // querySnapshot.docs.forEach((doc) {
-    //   // ドキュメントのデータを取得
-    //   recipesCollection.doc("${doc.id}").delete().then((value) {
-    //     print("recipes削除成功");
-    //   }).catchError((e) {
-    //     print("recipes削除失敗 : $e");
-    //   });
-    //
-    //   // ドキュメントの更新処理などを行う
-    // });
-    //
-    // // Firestoreのコレクションを参照
-    // CollectionReference indexCollection = FirebaseFirestore.instance.collection("index").doc("$category").collection("recipes");
-    // // フィールドの値でクエリを作成
-    // Query indexQuery = indexCollection.where("name", isEqualTo: "$name").where("category", isEqualTo: category);
-    // // クエリを実行してドキュメントを取得
-    // QuerySnapshot queryIndexSnapshot = await indexQuery.get();
-    //
-    // // 取得したドキュメントを処理
-    // queryIndexSnapshot.docs.forEach((doc) {
-    //   // ドキュメントのデータを取得
-    //   indexCollection.doc("${doc.id}").delete().then((value) {
-    //     print("index削除成功");
-    //   }).catchError((e) {
-    //     print("index削除失敗 : $e");
-    //   });
-    //
-    //   // ドキュメントの更新処理などを行う
-    // });
   }
 }
