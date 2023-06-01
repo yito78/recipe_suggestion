@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:recipe_suggestion/domain/repository/firebase.dart';
 
 ///
 /// 1週間レシピ一覧画面に表示するレシピ情報を作成する
@@ -17,11 +16,6 @@ class WeeklyRecipe {
   /// }
   ///
   Future<Map<int, List<dynamic>>> createWeeklyRecipe(recipeData) async{
-    Firebase firebase = Firebase();
-
-    // レシピ情報取得
-    List<Map<String, dynamic>> recipeData = await firebase.searchAllRecipes();
-
     // レシピ情報をカテゴリごとに分類する
     Map<int, dynamic> categorizedData = _categorizeRecipeData(recipeData);
 
@@ -58,6 +52,7 @@ class WeeklyRecipe {
   }
 
   ///
+  /// (1週間分のレシピが存在しない場合)
   /// レシピ情報を月曜から日曜までの情報を作成
   ///
   /// recipeList::カテゴリ分けされたレシピ情報の配列
@@ -66,23 +61,18 @@ class WeeklyRecipe {
   ///   [ "月曜のレシピ名", "火曜のレシピ名", "水曜のレシピ名", … ]
   ///
   List<String> _fetchRandomDataForLessSeven(recipeList) {
-    return [ "", "", "", "", "", "", "" ];
-  }
+    List<String> storingList = [ "", "", "", "", "", "", "" ];
+    int recipeListLength = recipeList.length - 1;
+    Random random = Random();
 
-  ///
-  /// カテゴリIDのリストを作成
-  ///
-  /// categoryData::firestoreから取得したカテゴリコレクション
-  ///
-  /// 戻り値::カテゴリIDのリスト
-  ///
-  List<int> _fetchCategoryId(List<Map<String, dynamic>> categoryData) {
-    List<int> categoryList = [];
-    categoryData.forEach((data) {
-      categoryList.add(data.values.first);
-    });
+    for (int i = storingList.length - 1; i >= 0; i--) {
+      /// 入れ替え要素インデックス
+      int swapTargetIndex = random.nextInt(recipeListLength);
+      /// 入れ替え先へデータ格納
+      storingList[i] = recipeList[swapTargetIndex];
+    }
 
-    return categoryList;
+    return storingList;
   }
 
   ///
