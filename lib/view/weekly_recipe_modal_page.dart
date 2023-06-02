@@ -6,18 +6,21 @@ class WeeklyRecipeModalPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: Text("本当にレシピ情報を更新してもよろしいですか？"),
+      content: const Text("本当にレシピ情報を更新してもよろしいですか？"),
       actions: [
-        ElevatedButton(
-          onPressed: () {
-            // TODO データ更新処理
-            onPressed: () => Navigator.of(context).pop();
-          },
-          child: const Text("はい"),
-        ),
-        ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text("いいえ"),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop("@@@"),
+              child: const Text("更新"),
+            ),
+            const SizedBox(width: 10.0,),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("キャンセル"),
+            ),
+          ],
         ),
       ],
     );
