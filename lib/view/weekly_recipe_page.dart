@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recipe_suggestion/provider/randomed_recipes_data.dart';
 
-class WeeklyRecipePage extends StatelessWidget {
+class WeeklyRecipePage extends ConsumerWidget {
   const WeeklyRecipePage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var screenSize = MediaQuery.of(context).size;
     var setHeight = screenSize.height * 0.22;
     Map<String, String> imagePath = {
@@ -12,6 +14,23 @@ class WeeklyRecipePage extends StatelessWidget {
       "sub": "assets/images/sub.png",
       "dessert": "assets/images/dessert.png",
     };
+
+    // recipesデータの監視
+    final recipesWatch = ref.watch(randomedRecipesDataNotifierProvider);
+
+    // 監視データからデータ抽出
+    AsyncValue<Map<int, List<dynamic>>> fetchedRecipesData =
+      recipesWatch.when(
+        data: (d) {
+          return AsyncValue.data(d);
+        },
+        error: (e, s) {
+          return AsyncValue.error(e, s);
+        },
+        loading: () {
+          return AsyncValue.loading();
+        }
+      );
 
     return Scaffold(
       appBar: AppBar(
@@ -21,25 +40,25 @@ class WeeklyRecipePage extends StatelessWidget {
         children: [
           TableRow(
             children: [
-              _cardWidget("月曜日", setHeight, imagePath),
-              _cardWidget("火曜日", setHeight, imagePath),
+              _cardWidget("月曜日", setHeight, imagePath, fetchedRecipesData),
+              _cardWidget("火曜日", setHeight, imagePath, fetchedRecipesData),
             ],
           ),
           TableRow(
             children: [
-              _cardWidget("水曜日", setHeight, imagePath),
-              _cardWidget("木曜日", setHeight, imagePath),
+              _cardWidget("水曜日", setHeight, imagePath, fetchedRecipesData),
+              _cardWidget("木曜日", setHeight, imagePath, fetchedRecipesData),
             ],
           ),
           TableRow(
             children: [
-              _cardWidget("金曜日", setHeight, imagePath),
-              _cardWidget("土曜日", setHeight, imagePath),
+              _cardWidget("金曜日", setHeight, imagePath, fetchedRecipesData),
+              _cardWidget("土曜日", setHeight, imagePath, fetchedRecipesData),
             ],
           ),
           TableRow(
             children: [
-              _cardWidget("日曜日", setHeight, imagePath),
+              _cardWidget("日曜日", setHeight, imagePath, fetchedRecipesData),
               _floatActionButton(setHeight),
             ],
           ),
@@ -56,7 +75,17 @@ class WeeklyRecipePage extends StatelessWidget {
   ///
   /// 戻り値::月曜から日曜までのレシピ表示領域ウィジェット
   ///
-  Widget _cardWidget(weekdayText, setHeight, imagePath) {
+  Widget _cardWidget(weekdayText, setHeight, imagePath, recipeByCategoryId) {
+    Map<String, int> selectTargetIndex = {
+      "月曜日": 0,
+      "火曜日": 1,
+      "水曜日": 2,
+      "木曜日": 3,
+      "金曜日": 4,
+      "土曜日": 5,
+      "日曜日": 6,
+    };
+
     return SizedBox(
         height: setHeight,
         child: Card(
@@ -76,15 +105,15 @@ class WeeklyRecipePage extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    _titleAndRecipeName(imagePath["main"], "主菜レシピ名"),
-                    SizedBox(
+                    _titleAndRecipeName(imagePath["main"], "主菜レシピ名", recipeByCategoryId.value == null ? "" : recipeByCategoryId.value[0][selectTargetIndex[weekdayText]]),
+                    const SizedBox(
                       height: 10.0,
                     ),
-                    _titleAndRecipeName(imagePath["sub"], "副菜レシピ名"),
-                    SizedBox(
+                    _titleAndRecipeName(imagePath["sub"], "副菜レシピ名", recipeByCategoryId.value == null ? "" : recipeByCategoryId.value[1][selectTargetIndex[weekdayText]]),
+                    const SizedBox(
                       height: 10.0,
                     ),
-                    _titleAndRecipeName(imagePath["dessert"], "デザートレシピ名"),
+                    _titleAndRecipeName(imagePath["dessert"], "デザートレシピ名", recipeByCategoryId.value == null ? "" : recipeByCategoryId.value[2][selectTargetIndex[weekdayText]]),
                   ],
                 ),
               ),
@@ -101,7 +130,7 @@ class WeeklyRecipePage extends StatelessWidget {
   ///
   /// 戻り値::各カテゴリタイトル、レシピ名のウィジェット
   ///
-  Widget _titleAndRecipeName(imagePath, recipe) {
+  Widget _titleAndRecipeName(imagePath, recipe, recipeData) {
     return Row(
       children: [
         Padding(
@@ -113,7 +142,7 @@ class WeeklyRecipePage extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(left: 10.0),
-          child: Text(recipe, style: const TextStyle(fontSize: 12.0),),
+          child: Text(recipeData, style: const TextStyle(fontSize: 12.0),),
         ),
       ],
     );
@@ -140,4 +169,14 @@ class WeeklyRecipePage extends StatelessWidget {
       ),
     );
   }
+
+  ///
+  /// 画面表示用レシピ情報を作成する
+  ///
+  /// 戻り値::画面表示用レシピ情報
+  ///
+  // Future<Map<int, List<dynamic>>> _createDisplayData() async{
+  //   WeeklyRecipe weeklyRecipe = WeeklyRecipe();
+  //   return await weeklyRecipe.createWeeklyRecipe();
+  // }
 }
