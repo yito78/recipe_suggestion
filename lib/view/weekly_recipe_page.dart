@@ -15,6 +15,8 @@ class WeeklyRecipePage extends ConsumerWidget {
       "sub": "assets/images/sub.png",
       "dessert": "assets/images/dessert.png",
     };
+    List<String> test = _fetchTodayAndWeekday();
+    print("aaaaaa${test[0]}");
 
     // recipesデータの監視
     final recipesWatch = ref.watch(randomedRecipesDataNotifierProvider);
@@ -194,5 +196,28 @@ class WeeklyRecipePage extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  ///
+  /// アプリ実行時の日付と曜日を取得する
+  ///
+  /// 戻り値::アプリ実行時の日付の文字列のリスト(["yyyy/mm/dd", "XX曜日"])
+  ///
+  List<String> _fetchTodayAndWeekday() {
+    /// TODO 定数として扱う
+    const Map<int, String> weekendByDateTime = {
+      DateTime.monday: "月曜日",
+      DateTime.tuesday: "火曜日",
+      DateTime.wednesday: "水曜日",
+      DateTime.thursday: "木曜日",
+      DateTime.friday: "金曜日",
+      DateTime.saturday: "土曜日",
+      DateTime.sunday: "日曜日",
+    };
+
+    DateTime datetime = DateTime.now();
+    String yearMonthDate = "${datetime.year}/${datetime.month}/${datetime.day}";
+
+    return [yearMonthDate, weekendByDateTime[datetime.weekday] ?? ""];
   }
 }
