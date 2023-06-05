@@ -15,8 +15,11 @@ class WeeklyRecipePage extends ConsumerWidget {
       "sub": "assets/images/sub.png",
       "dessert": "assets/images/dessert.png",
     };
-    List<String> test = _fetchTodayAndWeekday();
-    print("aaaaaa${test[0]}");
+
+    /// 1週間分の日付と曜日のハッシュ情報取得
+    Map<String, String> dateByWeekday = _createWeeklyDateWeekday();
+
+    print(dateByWeekday);
 
     // recipesデータの監視
     final recipesWatch = ref.watch(randomedRecipesDataNotifierProvider);
@@ -199,25 +202,64 @@ class WeeklyRecipePage extends ConsumerWidget {
   }
 
   ///
-  /// アプリ実行時の日付と曜日を取得する
+  /// 1週間分の日付と曜日のハッシュ情報作成処理
   ///
-  /// 戻り値::アプリ実行時の日付の文字列のリスト(["yyyy/mm/dd", "XX曜日"])
+  /// 戻り値::
+  ///   {
+  ///     "月曜日": "yyyy/mm/dd"
+  ///     "火曜日": "yyyy/mm/dd"
+  ///     "水曜日": "yyyy/mm/dd"
+  ///     "木曜日": "yyyy/mm/dd"
+  ///     …
+  ///   }
   ///
-  List<String> _fetchTodayAndWeekday() {
-    /// TODO 定数として扱う
-    const Map<int, String> weekendByDateTime = {
-      DateTime.monday: "月曜日",
-      DateTime.tuesday: "火曜日",
-      DateTime.wednesday: "水曜日",
-      DateTime.thursday: "木曜日",
-      DateTime.friday: "金曜日",
-      DateTime.saturday: "土曜日",
-      DateTime.sunday: "日曜日",
+  Map<String, String> _createWeeklyDateWeekday() {
+    DateTime datetime = DateTime.now();
+    int weekdayInt = datetime.weekday;
+
+    Map<String, String> weeklyDateWeekday = {
+      "月曜日": _calclateDate(datetime, 1, weekdayInt),
+      "火曜日": _calclateDate(datetime, 2, weekdayInt),
+      "水曜日": _calclateDate(datetime, 3, weekdayInt),
+      "木曜日": _calclateDate(datetime, 4, weekdayInt),
+      "金曜日": _calclateDate(datetime, 5, weekdayInt),
+      "土曜日": _calclateDate(datetime, 6, weekdayInt),
+      "日曜日": _calclateDate(datetime, 7, weekdayInt),
     };
 
-    DateTime datetime = DateTime.now();
-    String yearMonthDate = "${datetime.year}/${datetime.month}/${datetime.day}";
 
-    return [yearMonthDate, weekendByDateTime[datetime.weekday] ?? ""];
+    return weeklyDateWeekday;
+  }
+
+  ///
+  /// 基準曜日(アプリ利用日)をもとに該当週の日付を計算する
+  /// 計算対象曜日が基準曜日以前である場合、基準曜日の日付から減算する
+  /// 逆の場合は、基準曜日の日付に対して加算する
+  ///
+  ///   例
+  ///     基準曜日(アプリ利用日)が水曜日で、計算対象曜日が月曜日の場合の計算について
+  ///     水曜日のDateTime.weekday : 3
+  ///     月曜日のDateTime.weekday : 1
+  ///       3 - 1 = 2
+  ///     水曜日のDateTime.nowから2日前として計算する
+  ///
+  ///     基準曜日(アプリ利用日)が水曜日で、計算対象曜日が木曜日の場合の計算について
+  ///     水曜日のDateTime.weekday : 3
+  ///     木曜日のDateTime.weekday : 4
+  ///       4 - 3 = 1
+  ///     水曜日のDateTime.nowから1日後として計算する
+  ///
+  /// datetime::DateTimeオブジェクト
+  /// calcTargetWeekday::計算対象曜日(月曜なら1, 火曜なら2…)
+  /// baseWeekday::基準曜日(月曜なら1, 火曜なら2…)
+  ///
+  String _calclateDate(DateTime datetime, int calcTargetWeekday, int baseWeekday) {
+    if (baseWeekday >= calcTargetWeekday) {
+      DateTime calclatedDate = datetime.subtract(Duration(days: baseWeekday - calcTargetWeekday));
+      return "${calclatedDate.year}/${calclatedDate.month}/${calclatedDate.day}";
+    } else {
+      DateTime calclatedDate = datetime.add(Duration(days: calcTargetWeekday - baseWeekday));
+      return "${calclatedDate.year}/${calclatedDate.month}/${calclatedDate.day}";
+    }
   }
 }
