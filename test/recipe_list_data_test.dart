@@ -67,7 +67,7 @@ void main() {
     expect(recipeListData.sort(recipeList, categoryListLength), result);
   });
 
-  test("mergeRecipeNameCategoryName", () {
+  test("firestoreから取得したデータを[\"レシピ名\", \"カテゴリ名\"]に変換されること", () {
     List<List<String>> recipeCategoryList = [];
 
     List<Map<String, dynamic>> recipeList = [

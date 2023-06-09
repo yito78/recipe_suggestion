@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recipe_suggestion/domain/repository/firebase.dart';
+import 'package:recipe_suggestion/data/recipe_list_register_modal_data.dart';
 
 // 登録済みレシピ一覧画面の登録ボタンクリック時のモーダル画面クラス
 class RecipeListRegisterModalPage extends StatefulWidget {
@@ -90,8 +90,10 @@ class _RecipeListRegisterModalPageState extends State<RecipeListRegisterModalPag
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: ElevatedButton(
                 onPressed: () {
+                  RecipeListRegisterModalData recipeListRegisterModalData = RecipeListRegisterModalData();
                   // 更新ボタンが押された時の処理
-                  _insert(context);
+                  recipeListRegisterModalData.insert(recipeTextFieldValue.text, defaultDropdownValue);
+                  Navigator.of(context).pop("@@@");
                 },
                 child: const Text("更新"),
               ),
@@ -110,14 +112,5 @@ class _RecipeListRegisterModalPageState extends State<RecipeListRegisterModalPag
         )
       ],
     );
-  }
-
-  //
-  // firebaseにデータ登録する
-  //
-  void _insert(context) {
-    Firebase firebase = Firebase();
-    firebase.insertRecipes(recipeTextFieldValue.text, defaultDropdownValue);
-    Navigator.of(context).pop("@@@");
   }
 }
