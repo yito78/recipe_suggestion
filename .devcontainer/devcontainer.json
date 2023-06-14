@@ -36,7 +36,6 @@
 			}
 		}
     },
-	"postCreateCommand": "/bin/bash .devcontainer/install.sh",
 	"forwardPorts": [
 		9100,
 		80
