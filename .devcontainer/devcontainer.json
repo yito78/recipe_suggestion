@@ -1,0 +1,44 @@
+{
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"FLUTTER_VERSION": "3.10.2"
+		}
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker": {},
+		"ghcr.io/dhoeric/features/google-cloud-cli:1": {},
+		"ghcr.io/devcontainers-contrib/features/firebase-cli:2": {}
+	},
+	"runArgs": [
+		"--cpus=1.5",
+		"--memory=4g"
+	],
+    "customizations": {
+		"vscode": {
+			"extensions": [
+				"ChFlick.firecode",
+				"Dart-Code.dart-code",
+				"Dart-Code.flutter",
+				"DavidAnson.vscode-markdownlint",
+				"GitHub.copilot",
+				"bierner.emojisense",
+				"eamodio.gitlens",
+				"github.vscode-github-actions",
+				"mhutchie.git-graph",
+				"oderwat.indent-rainbow",
+				"streetsidesoftware.code-spell-checker",
+				"toba.vsfire",
+				"yzhang.markdown-all-in-one"
+			],
+			"settings": {
+				"dart.devToolsPort": 9100
+			}
+		}
+    },
+	"postCreateCommand": "/bin/bash .devcontainer/install.sh",
+	"forwardPorts": [
+		9100,
+		80
+	]
+}
