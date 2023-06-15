@@ -83,10 +83,8 @@ class RecipeListPage extends ConsumerWidget {
               context: context,
               builder: (BuildContext context) {
                 return RecipeListRegisterModalPage(
-                  categoryDataList: categoryList
-                );
-              }
-          ).then((value) {
+                    categoryDataList: categoryList);
+              }).then((value) {
             if (value != null) {
               print("更新ボタンがクリックされました");
               regetRecipeData();
@@ -109,15 +107,14 @@ class RecipeListPage extends ConsumerWidget {
     //
     Widget _editButton(String text, context, recipeCategoryList, categoryList) {
       return ElevatedButton(
-        onPressed: () async{
+        onPressed: () async {
           showDialog(
               context: context,
               builder: (BuildContext context) {
                 return RecipeListEditModalPage(
                     recipeAndCategoryList: recipeCategoryList,
                     categoryDataList: categoryList);
-              }
-          ).then((value) async {
+              }).then((value) async {
             if (value != null) {
               print("更新ボタンをクリックしました");
               await regetRecipeData();
@@ -151,17 +148,17 @@ class RecipeListPage extends ConsumerWidget {
     // context::BuilderContextクラスのオブジェクト
     // recipeCategoryList::カテゴリ、レシピ名の1次元配列
     //
-    Widget _deleteButton(String text, context, recipeCategoryList, categoryList) {
+    Widget _deleteButton(
+        String text, context, recipeCategoryList, categoryList) {
       return ElevatedButton(
-        onPressed: () async{
+        onPressed: () async {
           showDialog(
               context: context,
               builder: (BuildContext context) {
                 return RecipeListDeleteModalPage(
                     recipeAndCategoryList: recipeCategoryList,
                     categoryDataList: categoryList);
-              }
-          ).then((value) async{
+              }).then((value) async {
             if (value != null) {
               print("削除ボタンをクリックしました");
               await regetRecipeData();

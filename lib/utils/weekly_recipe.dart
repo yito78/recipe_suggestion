@@ -17,7 +17,7 @@ class WeeklyRecipe {
   ///   2: [ "月曜のデザートレシピ名", "火曜のデザートレシピ名", "水曜のデザートレシピ名", … ],
   /// }
   ///
-  Future<Map<int, List<dynamic>>> createWeeklyRecipe(recipeData) async{
+  Future<Map<int, List<dynamic>>> createWeeklyRecipe(recipeData) async {
     // レシピ情報をカテゴリごとに分類する
     Map<int, dynamic> categorizedData = _categorizeRecipeData(recipeData);
 
@@ -42,10 +42,13 @@ class WeeklyRecipe {
     for (int i = recipeList.length - 1; i > 0; i--) {
       /// 入れ替え要素インデックス
       int swapTargetIndex = random.nextInt(i + 1);
+
       /// 入れ替え先インデックス退避
       String backupData = recipeList[i];
+
       /// 入れ替え先へデータ格納
       recipeList[i] = recipeList[swapTargetIndex];
+
       /// 入れ替え元に退避データを格納(データ重複防止)
       recipeList[swapTargetIndex] = backupData;
     }
@@ -63,13 +66,14 @@ class WeeklyRecipe {
   ///   [ "月曜のレシピ名", "火曜のレシピ名", "水曜のレシピ名", … ]
   ///
   List<String> _fetchRandomDataForLessSeven(recipeList) {
-    List<String> storingList = [ "", "", "", "", "", "", "" ];
+    List<String> storingList = ["", "", "", "", "", "", ""];
     int recipeListLength = recipeList.length - 1;
     Random random = Random();
 
     for (int i = storingList.length - 1; i >= 0; i--) {
       /// 入れ替え要素インデックス
       int swapTargetIndex = random.nextInt(recipeListLength);
+
       /// 入れ替え先へデータ格納
       storingList[i] = recipeList[swapTargetIndex];
     }
@@ -110,7 +114,8 @@ class WeeklyRecipe {
   ///
   /// 戻り値::各カテゴリごとのレシピ名のハッシュ
   ///
-  _createDisplayRecipeData(Map<int, dynamic> categorizedData, Map<int, List> randomData) {
+  _createDisplayRecipeData(
+      Map<int, dynamic> categorizedData, Map<int, List> randomData) {
     categorizedData.forEach((key, list) {
       if (list.length >= 7) {
         // 1週間分のレシピが存在する場合
@@ -123,8 +128,6 @@ class WeeklyRecipe {
 
     return randomData;
   }
-
-
 
   ///
   /// 1週間分の日付と曜日のハッシュ情報作成処理
@@ -177,12 +180,15 @@ class WeeklyRecipe {
   /// calcTargetWeekday::計算対象曜日(月曜なら1, 火曜なら2…)
   /// baseWeekday::基準曜日(月曜なら1, 火曜なら2…)
   ///
-  String _calclateDate(DateTime datetime, int calcTargetWeekday, int baseWeekday) {
+  String _calclateDate(
+      DateTime datetime, int calcTargetWeekday, int baseWeekday) {
     if (baseWeekday >= calcTargetWeekday) {
-      DateTime calclatedDate = datetime.subtract(Duration(days: baseWeekday - calcTargetWeekday));
+      DateTime calclatedDate =
+          datetime.subtract(Duration(days: baseWeekday - calcTargetWeekday));
       return "${calclatedDate.year}/${calclatedDate.month}/${calclatedDate.day}";
     } else {
-      DateTime calclatedDate = datetime.add(Duration(days: calcTargetWeekday - baseWeekday));
+      DateTime calclatedDate =
+          datetime.add(Duration(days: calcTargetWeekday - baseWeekday));
       return "${calclatedDate.year}/${calclatedDate.month}/${calclatedDate.day}";
     }
   }
