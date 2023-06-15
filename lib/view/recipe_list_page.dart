@@ -70,28 +70,27 @@ class RecipeListPage extends ConsumerWidget {
     /// モーダル画面でfirestoreにデータ操作した際に、
     /// 一覧画面に最新情報を表示するためにfirestoreからデータ再取得する処理
     ///
-    regetRecipeData() {
+    reacquireRecipeData() {
       // データ作成処理
       final recipeNotifier = ref.read(recipesDataNotifierProvider.notifier);
       recipeNotifier.fetchRecipeDataState();
     }
 
-    Widget _insertButton(context, categoryList) {
+    Widget insertButton(context, categoryList) {
       return FloatingActionButton(
-        onPressed: () {
-          showDialog(
+        onPressed: () async {
+          final isReloadSelected = await showDialog(
               context: context,
               builder: (BuildContext context) {
                 return RecipeListRegisterModalPage(
                     categoryDataList: categoryList);
-              }).then((value) {
-            if (value != null) {
-              print("更新ボタンがクリックされました");
-              regetRecipeData();
-            } else {
-              print("閉じるボタンがクリックされました");
-            }
-          });
+              });
+          if (isReloadSelected) {
+            print("更新ボタンがクリックされました");
+            reacquireRecipeData();
+          } else {
+            print("閉じるボタンがクリックされました");
+          }
         },
         tooltip: "データ登録",
         child: const Icon(Icons.add),
@@ -105,29 +104,24 @@ class RecipeListPage extends ConsumerWidget {
     // context::BuilderContextクラスのオブジェクト
     // recipeCategoryList::カテゴリ、レシピ名の1次元配列
     //
-    Widget _editButton(String text, context, recipeCategoryList, categoryList) {
+    Widget editButton(String text, context, recipeCategoryList, categoryList) {
       return ElevatedButton(
         onPressed: () async {
-          showDialog(
+          final isReloadSelected = await showDialog(
               context: context,
               builder: (BuildContext context) {
                 return RecipeListEditModalPage(
                     recipeAndCategoryList: recipeCategoryList,
                     categoryDataList: categoryList);
-              }).then((value) async {
-            if (value != null) {
-              print("更新ボタンをクリックしました");
-              await regetRecipeData();
-            } else {
-              print("閉じるボタンをクリックしました");
-            }
-          });
+              });
+
+          if (isReloadSelected) {
+            print("更新ボタンをクリックしました");
+            reacquireRecipeData();
+          } else {
+            print("閉じるボタンをクリックしました");
+          }
         },
-        child: const Icon(
-          Icons.edit,
-          size: 20.0,
-          color: Colors.blue,
-        ),
         style: ButtonStyle(
           minimumSize: MaterialStateProperty.all<Size>(const Size(20, 20)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -137,6 +131,11 @@ class RecipeListPage extends ConsumerWidget {
           ),
           backgroundColor: MaterialStateProperty.all<Color>(Colors.white24),
           elevation: MaterialStateProperty.all<double>(0),
+        ),
+        child: const Icon(
+          Icons.edit,
+          size: 20.0,
+          color: Colors.blue,
         ),
       );
     }
@@ -148,30 +147,24 @@ class RecipeListPage extends ConsumerWidget {
     // context::BuilderContextクラスのオブジェクト
     // recipeCategoryList::カテゴリ、レシピ名の1次元配列
     //
-    Widget _deleteButton(
+    Widget deleteButton(
         String text, context, recipeCategoryList, categoryList) {
       return ElevatedButton(
         onPressed: () async {
-          showDialog(
+          final isReloadSelected = await showDialog(
               context: context,
               builder: (BuildContext context) {
                 return RecipeListDeleteModalPage(
                     recipeAndCategoryList: recipeCategoryList,
                     categoryDataList: categoryList);
-              }).then((value) async {
-            if (value != null) {
-              print("削除ボタンをクリックしました");
-              await regetRecipeData();
-            } else {
-              print("閉じるボタンをクリックしました");
-            }
-          });
+              });
+          if (isReloadSelected) {
+            print("削除ボタンをクリックしました");
+            reacquireRecipeData();
+          } else {
+            print("閉じるボタンをクリックしました");
+          }
         },
-        child: const Icon(
-          Icons.delete,
-          size: 20.0,
-          color: Colors.blue,
-        ),
         style: ButtonStyle(
           minimumSize: MaterialStateProperty.all<Size>(const Size(20, 20)),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -181,6 +174,11 @@ class RecipeListPage extends ConsumerWidget {
           ),
           backgroundColor: MaterialStateProperty.all<Color>(Colors.white24),
           elevation: MaterialStateProperty.all<double>(0),
+        ),
+        child: const Icon(
+          Icons.delete,
+          size: 20.0,
+          color: Colors.blue,
         ),
       );
     }
@@ -223,9 +221,9 @@ class RecipeListPage extends ConsumerWidget {
                                 ),
                                 // ボタンオブジェクトを右寄せするため
                                 const Expanded(child: SizedBox()),
-                                _editButton("編集", context,
+                                editButton("編集", context,
                                     recipeCategoryList[index], categoryList),
-                                _deleteButton("削除", context,
+                                deleteButton("削除", context,
                                     recipeCategoryList[index], categoryList),
                               ],
                             ),
@@ -239,7 +237,7 @@ class RecipeListPage extends ConsumerWidget {
                 ),
               ],
             ),
-      floatingActionButton: _insertButton(context, categoryList),
+      floatingActionButton: insertButton(context, categoryList),
     );
   }
 

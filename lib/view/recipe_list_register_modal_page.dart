@@ -5,7 +5,7 @@ import 'package:recipe_suggestion/data/recipe_list_register_modal_data.dart';
 class RecipeListRegisterModalPage extends StatefulWidget {
   List<Map<String, dynamic>> categoryDataList;
 
-  RecipeListRegisterModalPage({Key? key, required this.categoryDataList })
+  RecipeListRegisterModalPage({Key? key, required this.categoryDataList})
       : super(key: key);
 
   @override
@@ -13,11 +13,11 @@ class RecipeListRegisterModalPage extends StatefulWidget {
       _RecipeListRegisterModalPageState();
 }
 
-class _RecipeListRegisterModalPageState extends State<RecipeListRegisterModalPage> {
+class _RecipeListRegisterModalPageState
+    extends State<RecipeListRegisterModalPage> {
   List<Map<String, dynamic>> ctgList = [];
   int? defaultDropdownValue;
   TextEditingController recipeTextFieldValue = TextEditingController();
-
 
   @override
   void initState() {
@@ -32,7 +32,7 @@ class _RecipeListRegisterModalPageState extends State<RecipeListRegisterModalPag
     var screenSize = MediaQuery.of(context).size;
 
     return AlertDialog(
-      title: const Center(child: Text("レシピ編集")),
+      title: const Center(child: Text("レシピ登録")),
       content: Container(
         height: screenSize.height * 0.3,
         child: Column(
@@ -90,12 +90,14 @@ class _RecipeListRegisterModalPageState extends State<RecipeListRegisterModalPag
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: ElevatedButton(
                 onPressed: () {
-                  RecipeListRegisterModalData recipeListRegisterModalData = RecipeListRegisterModalData();
+                  RecipeListRegisterModalData recipeListRegisterModalData =
+                      RecipeListRegisterModalData();
                   // 更新ボタンが押された時の処理
-                  recipeListRegisterModalData.insert(recipeTextFieldValue.text, defaultDropdownValue);
-                  Navigator.of(context).pop("@@@");
+                  recipeListRegisterModalData.insert(
+                      recipeTextFieldValue.text, defaultDropdownValue);
+                  Navigator.of(context).pop(true);
                 },
-                child: const Text("更新"),
+                child: const Text("登録"),
               ),
             ),
             Padding(
@@ -103,7 +105,7 @@ class _RecipeListRegisterModalPageState extends State<RecipeListRegisterModalPag
               child: ElevatedButton(
                 onPressed: () {
                   // 閉じるボタンが押された時の処理
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(false);
                 },
                 child: const Text("キャンセル"),
               ),
