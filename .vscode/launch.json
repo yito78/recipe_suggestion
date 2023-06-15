@@ -1,0 +1,22 @@
+{
+    "version":"0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter: web, debug, remote, canvaskit",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "debug",
+            "deviceId": "web-server",
+            "args": [
+                // "--no-start-paused"を付与することでアプリの画面が表示されるようになった.
+                "--no-start-paused",
+                "--web-renderer canvaskit",
+                "--web-hostname=localhost",
+                "--web-port=80",
+                "--web-enable-expression-evaluation"
+            ]
+        }
+    ]
+}
+
