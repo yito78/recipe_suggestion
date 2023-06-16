@@ -7,7 +7,9 @@ class RecipeListDeleteModalPage extends StatefulWidget {
   List<Map<String, dynamic>> categoryDataList;
 
   RecipeListDeleteModalPage(
-      {Key? key, required this.recipeAndCategoryList, required this.categoryDataList })
+      {Key? key,
+      required this.recipeAndCategoryList,
+      required this.categoryDataList})
       : super(key: key);
 
   @override
@@ -30,7 +32,8 @@ class _RecipeListDeleteModalPageState extends State<RecipeListDeleteModalPage> {
   @override
   void initState() {
     super.initState();
-    categoryValue = _fetchCategoryId(widget.categoryDataList, widget.recipeAndCategoryList[0]);
+    categoryValue = _fetchCategoryId(
+        widget.categoryDataList, widget.recipeAndCategoryList[0]);
     categoryLabel = widget.recipeAndCategoryList[0];
     recipeLabel = widget.recipeAndCategoryList[1];
     recipeTextFieldValue.text = widget.recipeAndCategoryList[1];
@@ -79,8 +82,11 @@ class _RecipeListDeleteModalPageState extends State<RecipeListDeleteModalPage> {
               height: screenSize.height * 0.05,
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Container(alignment: Alignment.centerLeft, child: Text(deleteExplainText)),),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(deleteExplainText)),
+            ),
           ],
         ),
       ),
@@ -94,10 +100,10 @@ class _RecipeListDeleteModalPageState extends State<RecipeListDeleteModalPage> {
                 onPressed: () async {
                   // 削除ボタンが押された時の処理
                   Firebase firebase = Firebase();
-                  await firebase.deleteRecipes(recipeLabel ,categoryValue);
-                  Navigator.of(context).pop("@@@");
+                  await firebase.deleteRecipes(recipeLabel, categoryValue);
+                  Navigator.of(context).pop(true);
                 },
-                child: Text("削除"),
+                child: const Text("削除"),
               ),
             ),
             Padding(
@@ -105,9 +111,9 @@ class _RecipeListDeleteModalPageState extends State<RecipeListDeleteModalPage> {
               child: ElevatedButton(
                 onPressed: () {
                   // 閉じるボタンが押された時の処理
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(false);
                 },
-                child: Text("キャンセル"),
+                child: const Text("キャンセル"),
               ),
             ),
           ],

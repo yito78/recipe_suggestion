@@ -6,7 +6,10 @@ class RecipeListEditModalPage extends StatefulWidget {
   List<String> recipeAndCategoryList;
   List<Map<String, dynamic>> categoryDataList;
 
-  RecipeListEditModalPage({Key? key, required this.recipeAndCategoryList, required this.categoryDataList })
+  RecipeListEditModalPage(
+      {Key? key,
+      required this.recipeAndCategoryList,
+      required this.categoryDataList})
       : super(key: key);
 
   @override
@@ -25,10 +28,12 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
   void initState() {
     super.initState();
     ctgList = widget.categoryDataList;
-    defaultDropdownValue = _fetchCategoryId(ctgList, widget.recipeAndCategoryList[0]);
+    defaultDropdownValue =
+        _fetchCategoryId(ctgList, widget.recipeAndCategoryList[0]);
     recipeTextFieldValue.text = widget.recipeAndCategoryList[1];
     // 検索用データ
-    originalCategory = _fetchCategoryId(ctgList, widget.recipeAndCategoryList[0]);
+    originalCategory =
+        _fetchCategoryId(ctgList, widget.recipeAndCategoryList[0]);
     originalName = widget.recipeAndCategoryList[1];
   }
 
@@ -95,11 +100,12 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: ElevatedButton(
-                onPressed: () async{
+                onPressed: () async {
                   // 更新ボタンが押された時の処理
                   Firebase firebase = Firebase();
-                  await firebase.updataRecipes(recipeTextFieldValue.text ,defaultDropdownValue, originalName, originalCategory);
-                  Navigator.of(context).pop("@@@");
+                  await firebase.updataRecipes(recipeTextFieldValue.text,
+                      defaultDropdownValue, originalName, originalCategory);
+                  Navigator.of(context).pop(true);
                 },
                 child: const Text("更新"),
               ),
@@ -108,7 +114,7 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(false);
                 },
                 child: const Text("キャンセル"),
               ),
@@ -119,7 +125,8 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
     );
   }
 
-  _fetchCategoryId(List<Map<String, dynamic>> ctgList, String recipeAndCategoryList) {
+  _fetchCategoryId(
+      List<Map<String, dynamic>> ctgList, String recipeAndCategoryList) {
     int categoryId = 0;
 
     ctgList.forEach((data) {
