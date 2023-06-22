@@ -1,4 +1,4 @@
-import 'package:recipe_suggestion/utils/weekly_recipe.dart';
+import 'package:recipe_suggestion/data/recipe.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:recipe_suggestion/domain/repository/firebase.dart';
 part 'recipes_data.g.dart';
@@ -9,19 +9,19 @@ part 'recipes_data.g.dart';
 class RecipesDataNotifier extends _$RecipesDataNotifier {
   @override
   // 初期化処理
-  Future<List<Map<String, dynamic>>> build() async {
+  Future<List<Recipe>> build() async {
     return _fetchAllRecipesData();
   }
 
   // レシピデータ更新処理
-  fetchRecipeDataState() async{
+  fetchRecipeDataState() async {
     state = AsyncValue.data(await _fetchAllRecipesData());
   }
 
   // レシピデータを全件取得
-  Future<List<Map<String, dynamic>>> _fetchAllRecipesData() async {
+  Future<List<Recipe>> _fetchAllRecipesData() async {
     Firebase firebase = Firebase();
-    List<Map<String, dynamic>> data = await firebase.searchAllRecipes();
+    List<Recipe> data = await firebase.searchAllRecipesTypeSafe();
     return data;
   }
 }

@@ -1,3 +1,5 @@
+import 'package:recipe_suggestion/data/recipe.dart';
+
 class RecipeListData {
   ///
   /// レシピとカテゴリ情報を統合し、配列データとして返却する
@@ -10,14 +12,14 @@ class RecipeListData {
   ///
   List<List<String>> mergeRecipeNameCategoryName(
       List<List<String>> recipeCategoryList,
-      List<Map<String, dynamic>> recipeList,
+      List<Recipe> recipeList,
       List<Map<String, dynamic>> categoryList) {
     recipeList.forEach((data) {
-      String name = data["name"];
+      String name = data.name;
       String category = "";
 
       categoryList.forEach((categoryData) {
-        if (categoryData["category_id"] == data["category"]) {
+        if (categoryData["category_id"] == data.category) {
           category = categoryData["name"];
         }
       });
@@ -37,19 +39,18 @@ class RecipeListData {
   /// recipeList::レシピ情報(1次元配列)
   /// categoryListLength::カテゴリ数
   ///
-  List<Map<String, dynamic>> sort(
-      List<Map<String, dynamic>> recipeList, categoryListLength) {
+  List<Recipe> sort(List<Recipe> recipeList, categoryListLength) {
     recipeList.sort((a, b) {
       // 第一ソートキー : カテゴリIDでソート
-      final aCat = a["category"] as int;
-      final bCat = b["category"] as int;
+      final aCat = a.category;
+      final bCat = b.category;
 
       final catCompResult = aCat.compareTo(bCat);
       if (catCompResult != 0) return catCompResult;
 
       // 第二ソートキー : レシピ名でソート
-      final aName = a["name"] as String;
-      final bName = b["name"] as String;
+      final aName = a.name;
+      final bName = b.name;
 
       return aName.compareTo(bName);
     });

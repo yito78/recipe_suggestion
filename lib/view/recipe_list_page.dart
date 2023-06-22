@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recipe_suggestion/data/recipe.dart';
 import 'package:recipe_suggestion/data/recipe_list_data.dart';
 import 'package:recipe_suggestion/provider/categories_data.dart';
 import 'package:recipe_suggestion/utils/log.dart';
@@ -23,8 +24,7 @@ class RecipeListPage extends ConsumerWidget {
     final recipesWatch = ref.watch(recipesDataNotifierProvider);
 
     // 監視データからデータ抽出
-    AsyncValue<List<Map<String, dynamic>>> fetchedRecipesData =
-        recipesWatch.when(data: (d) {
+    AsyncValue<List<Recipe>> fetchedRecipesData = recipesWatch.when(data: (d) {
       return AsyncValue.data(d);
     }, error: (e, s) {
       _outputErrorLog(e, s);
@@ -33,7 +33,7 @@ class RecipeListPage extends ConsumerWidget {
       return AsyncValue.loading();
     });
 
-    List<Map<String, dynamic>> recipeList = [];
+    List<Recipe> recipeList = [];
     fetchedRecipesData.value?.forEach((data) {
       recipeList.add(data);
     });
@@ -58,7 +58,7 @@ class RecipeListPage extends ConsumerWidget {
     });
 
     RecipeListData recipeListData = RecipeListData();
-    List<Map<String, dynamic>> sortedRecipeList =
+    List<Recipe> sortedRecipeList =
         recipeListData.sort(recipeList, categoryList.length);
 
     // カテゴリ名を抽出し、レシピ名とセットでデータを取得する
