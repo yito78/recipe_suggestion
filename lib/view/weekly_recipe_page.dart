@@ -135,8 +135,6 @@ class WeeklyRecipePage extends ConsumerWidget {
   ///
   Widget _cardWidget(
       weekdayText, setHeight, imagePath, recipeByCategoryId, displayDate) {
-    print(
-        "*************************111111111111${weekdayText}***********************");
     Map<String, int> selectTargetIndex = {
       "月曜日": 0,
       "火曜日": 1,

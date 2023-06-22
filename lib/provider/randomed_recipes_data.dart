@@ -11,7 +11,6 @@ class RandomedRecipesDataNotifier extends _$RandomedRecipesDataNotifier {
   @override
   // 初期化処理
   Future<Map<int, List<dynamic>>> build() async {
-    // List<Map<String, dynamic>> recipeData = await _fetchAllRecipesData();
     List<Recipe> recipeData = await _fetchAllRecipesDataTypeSafe();
     WeeklyRecipe weeklyRecipe = WeeklyRecipe();
     Future<Map<int, List<dynamic>>> stateData =
@@ -22,7 +21,6 @@ class RandomedRecipesDataNotifier extends _$RandomedRecipesDataNotifier {
 
   // レシピデータ更新処理
   fetchRandomedRecipeDataState() async {
-    // List<Map<String, dynamic>> recipeData = await _fetchAllRecipesData();
     List<Recipe> recipeData = await _fetchAllRecipesDataTypeSafe();
     WeeklyRecipe weeklyRecipe = WeeklyRecipe();
     AsyncValue<Map<int, List<dynamic>>> stateData =
