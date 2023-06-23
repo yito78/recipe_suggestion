@@ -21,7 +21,7 @@ class RecipesDataNotifier extends _$RecipesDataNotifier {
   // レシピデータを全件取得
   Future<List<Recipe>> _fetchAllRecipesData() async {
     Firebase firebase = Firebase();
-    List<Recipe> data = await firebase.searchAllRecipesTypeSafe();
+    List<Recipe> data = await firebase.searchAllRecipes();
     return data;
   }
 }

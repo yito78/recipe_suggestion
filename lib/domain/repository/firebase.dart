@@ -5,41 +5,11 @@ import '../../data/recipe.dart';
 // firebase操作に関するクラス
 class Firebase {
   ///
-  /// TODO searchAllRecipesTypeSafeを適用後、本メソッドは削除する
-  ///
-  /// recipesコレクションに登録されたデータを全件取得する
-  ///
-  /// 戻り値::recipesコレクションのデータ
-  ///
-  Future<List<Map<String, dynamic>>> searchAllRecipes() async {
-    // recipesコレクションのデータ
-    List<Map<String, dynamic>> recipesData = [];
-
-    // usersコレクションのデータを取得
-    await FirebaseFirestore.instance
-        .collection('recipes')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-        // firestoreデータを格納できるように型変換
-        final data = doc.data() as Map<String, dynamic>;
-        // データ格納
-        recipesData.add(data);
-      });
-    }).catchError((e) {
-      // TODO アナリティクスにログを出力に差し替える
-      print("${e}");
-    });
-
-    return recipesData;
-  }
-
-  ///
   /// recipesコレクションに登録されたデータを全件取得する(type safe)
   ///
   /// 戻り値::recipesコレクションのデータ
   ///
-  Future<List<Recipe>> searchAllRecipesTypeSafe() async {
+  Future<List<Recipe>> searchAllRecipes() async {
     // recipesコレクションのデータ
     final recipeList = <Recipe>[];
 

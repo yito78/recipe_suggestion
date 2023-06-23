@@ -439,20 +439,9 @@ class MockFirebase extends _i1.Mock implements _i7.Firebase {
   }
 
   @override
-  _i5.Future<List<Map<String, dynamic>>> searchAllRecipes() =>
-      (super.noSuchMethod(
+  _i5.Future<List<_i8.Recipe>> searchAllRecipes() => (super.noSuchMethod(
         Invocation.method(
           #searchAllRecipes,
-          [],
-        ),
-        returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i5.Future<List<Map<String, dynamic>>>);
-  @override
-  _i5.Future<List<_i8.Recipe>> searchAllRecipesTypeSafe() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #searchAllRecipesTypeSafe,
           [],
         ),
         returnValue: _i5.Future<List<_i8.Recipe>>.value(<_i8.Recipe>[]),
