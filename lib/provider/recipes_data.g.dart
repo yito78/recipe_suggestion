@@ -7,12 +7,12 @@ part of 'recipes_data.dart';
 // **************************************************************************
 
 String _$recipesDataNotifierHash() =>
-    r'613c65e3c80b2092e18d3c74dd3f14e38f83fddc';
+    r'9b31fcbc561deff6da590cff2b55bf32922a2089';
 
 /// See also [RecipesDataNotifier].
 @ProviderFor(RecipesDataNotifier)
 final recipesDataNotifierProvider = AutoDisposeAsyncNotifierProvider<
-    RecipesDataNotifier, List<Map<String, dynamic>>>.internal(
+    RecipesDataNotifier, List<Recipe>>.internal(
   RecipesDataNotifier.new,
   name: r'recipesDataNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -22,6 +22,5 @@ final recipesDataNotifierProvider = AutoDisposeAsyncNotifierProvider<
   allTransitiveDependencies: null,
 );
 
-typedef _$RecipesDataNotifier
-    = AutoDisposeAsyncNotifier<List<Map<String, dynamic>>>;
+typedef _$RecipesDataNotifier = AutoDisposeAsyncNotifier<List<Recipe>>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

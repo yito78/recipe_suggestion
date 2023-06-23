@@ -84,6 +84,9 @@ class WeeklyRecipe {
   ///
   /// レシピデータをカテゴリごとに分類する
   ///
+  /// recipeData::Recipeクラスでタイプセーフ化したレシピデータ配列
+  ///   [ Recipe(name: "XXX", category: 0), Recipe(name: "YYY", category: 0) ]
+  ///
   /// 戻り値::
   /// Map<int, dynamic>
   /// {
@@ -96,10 +99,10 @@ class WeeklyRecipe {
     Map<int, dynamic> categorizedData = {};
 
     recipeData.forEach((data) {
-      if (categorizedData[data["category"]] == null) {
-        categorizedData[data["category"]] = [data["name"]];
+      if (categorizedData[data.category] == null) {
+        categorizedData[data.category] = [data.name];
       } else {
-        categorizedData[data["category"]].add(data["name"]);
+        categorizedData[data.category].add(data.name);
       }
     });
 

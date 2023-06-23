@@ -26,17 +26,13 @@ class WeeklyRecipePage extends ConsumerWidget {
 
     // 監視データからデータ抽出
     AsyncValue<Map<int, List<dynamic>>> fetchedRecipesData =
-      recipesWatch.when(
-        data: (d) {
-          return AsyncValue.data(d);
-        },
-        error: (e, s) {
-          return AsyncValue.error(e, s);
-        },
-        loading: () {
-          return AsyncValue.loading();
-        }
-      );
+        recipesWatch.when(data: (d) {
+      return AsyncValue.data(d);
+    }, error: (e, s) {
+      return AsyncValue.error(e, s);
+    }, loading: () {
+      return AsyncValue.loading();
+    });
 
     ///
     /// モーダル画面でfirestoreにデータ操作した際に、
@@ -44,10 +40,10 @@ class WeeklyRecipePage extends ConsumerWidget {
     ///
     regetRecipeData() {
       // データ作成処理
-      final randomedRecipesDataNotifier = ref.read(randomedRecipesDataNotifierProvider.notifier);
+      final randomedRecipesDataNotifier =
+          ref.read(randomedRecipesDataNotifierProvider.notifier);
       randomedRecipesDataNotifier.fetchRandomedRecipeDataState();
     }
-
 
     ///
     /// レシピ一覧の内容更新するボタンを生成
@@ -69,8 +65,7 @@ class WeeklyRecipePage extends ConsumerWidget {
                   context: context,
                   builder: (BuildContext context) {
                     return const WeeklyRecipeModalPage();
-                  }
-              );
+                  });
 
               if (value != null) {
                 regetRecipeData();
@@ -93,25 +88,32 @@ class WeeklyRecipePage extends ConsumerWidget {
         children: [
           TableRow(
             children: [
-              _cardWidget("月曜日", setHeight, imagePath, fetchedRecipesData, dateByWeekday["月曜日"]),
-              _cardWidget("火曜日", setHeight, imagePath, fetchedRecipesData, dateByWeekday["火曜日"]),
+              _cardWidget("月曜日", setHeight, imagePath, fetchedRecipesData,
+                  dateByWeekday["月曜日"]),
+              _cardWidget("火曜日", setHeight, imagePath, fetchedRecipesData,
+                  dateByWeekday["火曜日"]),
             ],
           ),
           TableRow(
             children: [
-              _cardWidget("水曜日", setHeight, imagePath, fetchedRecipesData, dateByWeekday["水曜日"]),
-              _cardWidget("木曜日", setHeight, imagePath, fetchedRecipesData, dateByWeekday["木曜日"]),
+              _cardWidget("水曜日", setHeight, imagePath, fetchedRecipesData,
+                  dateByWeekday["水曜日"]),
+              _cardWidget("木曜日", setHeight, imagePath, fetchedRecipesData,
+                  dateByWeekday["木曜日"]),
             ],
           ),
           TableRow(
             children: [
-              _cardWidget("金曜日", setHeight, imagePath, fetchedRecipesData, dateByWeekday["金曜日"]),
-              _cardWidget("土曜日", setHeight, imagePath, fetchedRecipesData, dateByWeekday["土曜日"]),
+              _cardWidget("金曜日", setHeight, imagePath, fetchedRecipesData,
+                  dateByWeekday["金曜日"]),
+              _cardWidget("土曜日", setHeight, imagePath, fetchedRecipesData,
+                  dateByWeekday["土曜日"]),
             ],
           ),
           TableRow(
             children: [
-              _cardWidget("日曜日", setHeight, imagePath, fetchedRecipesData, dateByWeekday["日曜日"]),
+              _cardWidget("日曜日", setHeight, imagePath, fetchedRecipesData,
+                  dateByWeekday["日曜日"]),
               floatActionButton(setHeight, context),
             ],
           ),
@@ -131,7 +133,8 @@ class WeeklyRecipePage extends ConsumerWidget {
   ///
   /// 戻り値::月曜から日曜までのレシピ表示領域ウィジェット
   ///
-  Widget _cardWidget(weekdayText, setHeight, imagePath, recipeByCategoryId, displayDate) {
+  Widget _cardWidget(
+      weekdayText, setHeight, imagePath, recipeByCategoryId, displayDate) {
     Map<String, int> selectTargetIndex = {
       "月曜日": 0,
       "火曜日": 1,
@@ -161,15 +164,33 @@ class WeeklyRecipePage extends ConsumerWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    _titleAndRecipeName(imagePath["main"], "主菜レシピ名", recipeByCategoryId.value == null ? "" : recipeByCategoryId.value[0][selectTargetIndex[weekdayText]]),
+                    _titleAndRecipeName(
+                        imagePath["main"],
+                        "主菜レシピ名",
+                        recipeByCategoryId.value == null
+                            ? ""
+                            : recipeByCategoryId.value[0]
+                                [selectTargetIndex[weekdayText]]),
                     const SizedBox(
                       height: 10.0,
                     ),
-                    _titleAndRecipeName(imagePath["sub"], "副菜レシピ名", recipeByCategoryId.value == null ? "" : recipeByCategoryId.value[1][selectTargetIndex[weekdayText]]),
+                    _titleAndRecipeName(
+                        imagePath["sub"],
+                        "副菜レシピ名",
+                        recipeByCategoryId.value == null
+                            ? ""
+                            : recipeByCategoryId.value[1]
+                                [selectTargetIndex[weekdayText]]),
                     const SizedBox(
                       height: 10.0,
                     ),
-                    _titleAndRecipeName(imagePath["dessert"], "デザートレシピ名", recipeByCategoryId.value == null ? "" : recipeByCategoryId.value[2][selectTargetIndex[weekdayText]]),
+                    _titleAndRecipeName(
+                        imagePath["dessert"],
+                        "デザートレシピ名",
+                        recipeByCategoryId.value == null
+                            ? ""
+                            : recipeByCategoryId.value[2]
+                                [selectTargetIndex[weekdayText]]),
                   ],
                 ),
               ),
@@ -192,13 +213,19 @@ class WeeklyRecipePage extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.only(left: 15.0),
           child: Align(
-            alignment: Alignment.centerLeft,
-            child: Image.asset(imagePath, width: 14.0, height: 14.0,)
-          ),
+              alignment: Alignment.centerLeft,
+              child: Image.asset(
+                imagePath,
+                width: 14.0,
+                height: 14.0,
+              )),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 10.0),
-          child: Text(recipeData, style: const TextStyle(fontSize: 12.0),),
+          child: Text(
+            recipeData,
+            style: const TextStyle(fontSize: 12.0),
+          ),
         ),
       ],
     );

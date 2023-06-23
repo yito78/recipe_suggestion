@@ -1,15 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../data/recipe.dart';
+
 // firebase操作に関するクラス
 class Firebase {
-  //
-  // recipesコレクションに登録されたデータを全件取得する
-  //
-  // 戻り値::recipesコレクションのデータ
-  //
-  Future<List<Map<String, dynamic>>> searchAllRecipes() async {
+  ///
+  /// recipesコレクションに登録されたデータを全件取得する(type safe)
+  ///
+  /// 戻り値::recipesコレクションのデータ
+  ///
+  Future<List<Recipe>> searchAllRecipes() async {
     // recipesコレクションのデータ
-    List<Map<String, dynamic>> recipesData = [];
+    final recipeList = <Recipe>[];
 
     // usersコレクションのデータを取得
     await FirebaseFirestore.instance
@@ -19,18 +21,18 @@ class Firebase {
       querySnapshot.docs.forEach((doc) {
         // firestoreデータを格納できるように型変換
         final data = doc.data() as Map<String, dynamic>;
-        // データ格納
-        recipesData.add(data);
+        // お試し
+        recipeList.add(Recipe.fromJson(data));
       });
     }).catchError((e) {
       // TODO アナリティクスにログを出力に差し替える
       print("${e}");
     });
 
-    return recipesData;
+    return recipeList;
   }
 
-  Future<List<Map<String, dynamic>>> searchAllCategories() async{
+  Future<List<Map<String, dynamic>>> searchAllCategories() async {
     // recipesコレクションのデータ
     List<Map<String, dynamic>> categoriesData = [];
 
@@ -62,17 +64,22 @@ class Firebase {
       "category": category,
     };
 
-    var indexRef = FirebaseFirestore.instance.collection("index").doc("$category").collection("recipes").doc(name);
+    var indexRef = FirebaseFirestore.instance
+        .collection("index")
+        .doc("$category")
+        .collection("recipes")
+        .doc(name);
     batch.set(indexRef, data);
 
-    var recipesRef = FirebaseFirestore.instance.collection("recipes").doc("${category}_$name");
+    var recipesRef = FirebaseFirestore.instance
+        .collection("recipes")
+        .doc("${category}_$name");
     batch.set(recipesRef, data);
 
-    await batch.commit().then(
-            (_) => print("データ登録成功!")
-    ).catchError(
-            (e)=>print("$e")
-    );
+    await batch
+        .commit()
+        .then((_) => print("データ登録成功!"))
+        .catchError((e) => print("$e"));
   }
 
   //
@@ -98,13 +105,15 @@ class Firebase {
   // name::レシピ名
   // category::カテゴリID
   //
-  Future deleteRecipes(name, category) async{
+  Future deleteRecipes(name, category) async {
     final instance = FirebaseFirestore.instance;
-    await instance.runTransaction((Transaction tx) async{
+    await instance.runTransaction((Transaction tx) async {
       // Firestoreのコレクションを参照
       CollectionReference recipesCollection = instance.collection("recipes");
       // フィールドの値でクエリを作成
-      Query recipesQuery = recipesCollection.where("name", isEqualTo: "$name").where("category", isEqualTo: category);
+      Query recipesQuery = recipesCollection
+          .where("name", isEqualTo: "$name")
+          .where("category", isEqualTo: category);
       // クエリを実行してドキュメントを取得
       QuerySnapshot querySnapshot = await recipesQuery.get();
       // 取得したドキュメントを処理
@@ -118,14 +127,17 @@ class Firebase {
       });
 
       // Firestoreのコレクションを参照
-      CollectionReference indexCollection = instance.collection("index").doc("$category").collection("recipes");
+      CollectionReference indexCollection =
+          instance.collection("index").doc("$category").collection("recipes");
       // フィールドの値でクエリを作成
-      Query indexQuery = indexCollection.where("name", isEqualTo: "$name").where("category", isEqualTo: category);
+      Query indexQuery = indexCollection
+          .where("name", isEqualTo: "$name")
+          .where("category", isEqualTo: category);
       // クエリを実行してドキュメントを取得
       QuerySnapshot queryIndexSnapshot = await indexQuery.get();
 
       // 取得したドキュメントを処理
-      queryIndexSnapshot.docs.forEach((doc) async{
+      queryIndexSnapshot.docs.forEach((doc) async {
         // ドキュメントのデータを取得
         await indexCollection.doc("${doc.id}").delete().then((value) {
           print("index削除成功");

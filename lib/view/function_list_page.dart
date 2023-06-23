@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recipe_suggestion/data/recipe.dart';
 import 'package:recipe_suggestion/provider/recipes_data.dart';
 import 'package:recipe_suggestion/utils/log.dart';
 import 'package:recipe_suggestion/view/import_csv_page.dart';
@@ -17,19 +18,14 @@ class FunctionListPage extends ConsumerWidget {
     final recipesWatch = ref.watch(recipesDataNotifierProvider);
 
     // 監視データからデータ抽出
-    AsyncValue<List<Map<String, dynamic>>> fetchedRecipesData =
-        recipesWatch.when(
-      data: (d) {
-        return AsyncValue.data(d);
-      },
-      error: (e, s) {
-        _outputErrorLog(e, s);
-        return AsyncValue.error(e, s);
-      },
-      loading: () {
-        return AsyncValue.loading();
-      }
-    );
+    AsyncValue<List<Recipe>> fetchedRecipesData = recipesWatch.when(data: (d) {
+      return AsyncValue.data(d);
+    }, error: (e, s) {
+      _outputErrorLog(e, s);
+      return AsyncValue.error(e, s);
+    }, loading: () {
+      return AsyncValue.loading();
+    });
 
     return SafeArea(
       child: Scaffold(
@@ -40,19 +36,19 @@ class FunctionListPage extends ConsumerWidget {
           children: [
             // 部分的に再レンダリング
             Consumer(
-              builder: (BuildContext context,
-                        WidgetRef ref,
-                        Widget? child) {
-                final recipeWatch = ref.watch(recipesDataNotifierProvider);
-                List<dynamic> list = [];
-                recipeWatch.value?.forEach((element) {
-                  list.add(element);
-                });
-                if (list.isEmpty) {
-                  return _button(context, WeeklyRecipePage(), const Text("1週間のレシピ一覧"), false);
-                } else {
-                  return _button(context, WeeklyRecipePage(), const Text("1週間のレシピ一覧"));
-                }
+                builder: (BuildContext context, WidgetRef ref, Widget? child) {
+              final recipeWatch = ref.watch(recipesDataNotifierProvider);
+              List<dynamic> list = [];
+              recipeWatch.value?.forEach((element) {
+                list.add(element);
+              });
+              if (list.isEmpty) {
+                return _button(context, WeeklyRecipePage(),
+                    const Text("1週間のレシピ一覧"), false);
+              } else {
+                return _button(
+                    context, WeeklyRecipePage(), const Text("1週間のレシピ一覧"));
+              }
             }),
             _button(context, RecipeListPage(), const Text("登録レシピ一覧")),
             _button(context, ImportCsvPage(), const Text("CSVファイルデータ登録")),

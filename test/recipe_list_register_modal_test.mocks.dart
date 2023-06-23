@@ -11,8 +11,9 @@ import 'package:cloud_firestore_platform_interface/cloud_firestore_platform_inte
     as _i3;
 import 'package:firebase_core/firebase_core.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:recipe_suggestion/data/recipe.dart' as _i8;
 import 'package:recipe_suggestion/data/recipe_list_register_modal_data.dart'
-    as _i8;
+    as _i9;
 import 'package:recipe_suggestion/domain/repository/firebase.dart' as _i7;
 
 // ignore_for_file: type=lint
@@ -438,15 +439,13 @@ class MockFirebase extends _i1.Mock implements _i7.Firebase {
   }
 
   @override
-  _i5.Future<List<Map<String, dynamic>>> searchAllRecipes() =>
-      (super.noSuchMethod(
+  _i5.Future<List<_i8.Recipe>> searchAllRecipes() => (super.noSuchMethod(
         Invocation.method(
           #searchAllRecipes,
           [],
         ),
-        returnValue: _i5.Future<List<Map<String, dynamic>>>.value(
-            <Map<String, dynamic>>[]),
-      ) as _i5.Future<List<Map<String, dynamic>>>);
+        returnValue: _i5.Future<List<_i8.Recipe>>.value(<_i8.Recipe>[]),
+      ) as _i5.Future<List<_i8.Recipe>>);
   @override
   _i5.Future<List<Map<String, dynamic>>> searchAllCategories() =>
       (super.noSuchMethod(
@@ -512,7 +511,7 @@ class MockFirebase extends _i1.Mock implements _i7.Firebase {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockRecipeListRegisterModalData extends _i1.Mock
-    implements _i8.RecipeListRegisterModalData {
+    implements _i9.RecipeListRegisterModalData {
   MockRecipeListRegisterModalData() {
     _i1.throwOnMissingStub(this);
   }
