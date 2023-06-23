@@ -71,8 +71,6 @@ void main() {
         listForDateTime.add(DateFormat('y/M/d').parse(value));
       });
 
-      print(listForDateTime);
-
       listForDateTime.forEach((date) {});
 
       for (int i = 1; i <= listForDateTime.length - 1; i++) {
