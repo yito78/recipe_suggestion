@@ -27,28 +27,28 @@ class LoginPage extends ConsumerWidget {
               height: 20.0,
             ),
 
-            /// ログイン
+            // ログイン
             _loginButton(context, const FunctionListPage()),
 
             const SizedBox(
               height: 10.0,
             ),
 
-            /// パスワードを忘れた方
+            // パスワードを忘れた方
             _linkForgetPassword(),
 
             const SizedBox(
               height: 30.0,
             ),
 
-            /// Googleアカウントでログイン
+            // Googleアカウントでログイン
             _googleLoginButton(context, const FunctionListPage()),
 
             const SizedBox(
               height: 20.0,
             ),
 
-            /// 新規登録
+            // 新規登録
             _registerButton(context, const FunctionListPage()),
           ],
         ),
@@ -59,7 +59,7 @@ class LoginPage extends ConsumerWidget {
   ///
   /// テキスト入力エリアを作成する
   ///
-  /// title::プレースホルダーに表示するテキスト情報
+  /// [title] プレースホルダーに表示するテキスト情報
   ///
   /// 戻り値::TextFormFieldウィジェット
   ///
@@ -76,22 +76,22 @@ class LoginPage extends ConsumerWidget {
   ///
   /// ログインボタンを作成する
   ///
-  /// context::build時のcontext
-  /// page::遷移先のページ
+  /// [context] build時のcontext
+  /// [page] 遷移先のページ
   ///
   /// 戻り値::ボタンウィジェット
   ///
   Widget _loginButton(BuildContext context, page) {
     return ElevatedButton(
       onPressed: () {
-        print("login buttonクリック");
+        debugPrint("login buttonクリック");
 
         _navigate(context, page);
 
-        /// セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
-        /// firebaseにログイン認証を行う
-        ///   ログイン成功の場合、機能一覧画面に遷移する
-        ///   ログイン失敗の場合、失敗フラッシュメッセージを表示する
+        // セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
+        // firebaseにログイン認証を行う
+        //   ログイン成功の場合、機能一覧画面に遷移する
+        //   ログイン失敗の場合、失敗フラッシュメッセージを表示する
       },
       child: const Text("ログイン"),
     );
@@ -100,22 +100,22 @@ class LoginPage extends ConsumerWidget {
   ///
   /// ログインボタンを作成する
   ///
-  /// context::build時のcontext
-  /// page::遷移先のページ
+  /// [context] build時のcontext
+  /// [page] 遷移先のページ
   ///
   /// 戻り値::ボタンウィジェット
   ///
   Widget _googleLoginButton(BuildContext context, page) {
     return ElevatedButton(
       onPressed: () {
-        print("login buttonクリック");
+        debugPrint("Google login buttonクリック");
 
         _navigate(context, page);
 
-        /// セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
-        /// firebaseにログイン認証を行う
-        ///   ログイン成功の場合、機能一覧画面に遷移する
-        ///   ログイン失敗の場合、失敗フラッシュメッセージを表示する
+        // セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
+        // firebaseにログイン認証を行う
+        //   ログイン成功の場合、機能一覧画面に遷移する
+        //   ログイン失敗の場合、失敗フラッシュメッセージを表示する
       },
       child: const Text("Googleアカウントログイン"),
     );
@@ -129,7 +129,7 @@ class LoginPage extends ConsumerWidget {
   Widget _linkForgetPassword() {
     return InkWell(
       onTap: () {
-        print("aaa");
+        debugPrint("aaa");
       },
       child: const Text(
         "パスワードを忘れた方",
@@ -144,22 +144,22 @@ class LoginPage extends ConsumerWidget {
   ///
   /// 新規登録ボタンを作成する
   ///
-  /// context::build時のcontext
-  /// page::遷移先のページ
+  /// [context] build時のcontext
+  /// [page] 遷移先のページ
   ///
   /// 戻り値::ボタンウィジェット
   ///
   Widget _registerButton(BuildContext context, page) {
     return ElevatedButton(
       onPressed: () {
-        print("register buttonクリック");
+        debugPrint("register buttonクリック");
 
         _navigate(context, page);
 
-        /// セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
-        /// firebaseにログイン認証を行う
-        ///   ログイン成功の場合、機能一覧画面に遷移する
-        ///   ログイン失敗の場合、失敗フラッシュメッセージを表示する
+        // セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
+        // firebaseにログイン認証を行う
+        //   ログイン成功の場合、機能一覧画面に遷移する
+        //   ログイン失敗の場合、失敗フラッシュメッセージを表示する
       },
       style: const ButtonStyle(
         backgroundColor: MaterialStatePropertyAll<Color>(Colors.orange),
@@ -171,8 +171,8 @@ class LoginPage extends ConsumerWidget {
   ///
   /// 画面遷移処理
   ///
-  /// context::build時のcontext
-  /// page::遷移先のページ
+  /// [context] build時のcontext
+  /// [page] 遷移先のページ
   ///
   /// 戻り値::なし
   ///
