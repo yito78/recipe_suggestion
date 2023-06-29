@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recipe_suggestion/view/function_list_page.dart';
 
 class LoginPage extends ConsumerWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class LoginPage extends ConsumerWidget {
             ),
 
             /// ログイン
-            _loginButton(),
+            _loginButton(context, const FunctionListPage()),
 
             const SizedBox(
               height: 10.0,
@@ -69,10 +70,12 @@ class LoginPage extends ConsumerWidget {
   ///
   /// 戻り値::ボタンウィジェット
   ///
-  Widget _loginButton() {
+  Widget _loginButton(BuildContext context, page) {
     return ElevatedButton(
       onPressed: () {
         print("login buttonクリック");
+
+        _navigate(context, page);
 
         /// セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
         /// firebaseにログイン認証を行う
@@ -119,5 +122,17 @@ class LoginPage extends ConsumerWidget {
       ),
       child: const Text("新規登録"),
     );
+  }
+
+  ///
+  /// 画面遷移処理
+  ///
+  /// context::build時のcontext
+  /// page::遷移先のページ
+  ///
+  /// 戻り値::なし
+  ///
+  _navigate(BuildContext context, page) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 }
