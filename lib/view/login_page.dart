@@ -45,11 +45,7 @@ class LoginPage extends ConsumerWidget {
             _googleLoginButton(context, const FunctionListPage()),
 
             const SizedBox(
-              height: 10.0,
-            ),
-
-            const SizedBox(
-              height: 10.0,
+              height: 20.0,
             ),
 
             /// 新規登録
