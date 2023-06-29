@@ -105,7 +105,7 @@ class LoginPage extends ConsumerWidget {
   ///
   /// 戻り値::ボタンウィジェット
   ///
-  Widget _googleLoginButton(BuildContext context, page) {
+  Widget _googleLoginButton(BuildContext context, Widget page) {
     return ElevatedButton(
       onPressed: () {
         debugPrint("Google login buttonクリック");
@@ -149,7 +149,7 @@ class LoginPage extends ConsumerWidget {
   ///
   /// 戻り値::ボタンウィジェット
   ///
-  Widget _registerButton(BuildContext context, page) {
+  Widget _registerButton(BuildContext context, Widget page) {
     return ElevatedButton(
       onPressed: () {
         debugPrint("register buttonクリック");
@@ -176,7 +176,7 @@ class LoginPage extends ConsumerWidget {
   ///
   /// 戻り値::なし
   ///
-  _navigate(BuildContext context, page) {
+  _navigate(BuildContext context, Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 }
