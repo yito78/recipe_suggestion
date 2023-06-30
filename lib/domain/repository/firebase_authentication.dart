@@ -40,5 +40,17 @@ class FirebaseAuthentication {
   /// [emailAddress] メールアドレス
   /// [password] パスワード
   ///
-  authenticateWithPassword(final String emailAddress, final String password) {}
+  Future<void> authenticateWithPassword(
+      final String emailAddress, final String password) async {
+    try {
+      final credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: emailAddress, password: password);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+  }
 }

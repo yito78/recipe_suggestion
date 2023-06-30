@@ -87,6 +87,9 @@ class LoginPage extends ConsumerWidget {
       onPressed: () {
         debugPrint("login buttonクリック");
 
+        FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
+        firebaseAuth.authenticateWithPassword("test@test.com", "abcdefg12345@");
+
         _navigate(context, page);
 
         // セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
@@ -156,7 +159,7 @@ class LoginPage extends ConsumerWidget {
         debugPrint("register buttonクリック");
 
         FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        firebaseAuth.registerWithPassword("メールアドレス", "パスワード");
+        firebaseAuth.registerWithPassword("test@test.com", "abcdefg12345@");
 
         _navigate(context, page);
 
