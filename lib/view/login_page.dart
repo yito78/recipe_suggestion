@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/view/function_list_page.dart';
+import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 
 /// ログイン画面
 class LoginPage extends ConsumerWidget {
@@ -153,6 +154,9 @@ class LoginPage extends ConsumerWidget {
     return ElevatedButton(
       onPressed: () {
         debugPrint("register buttonクリック");
+
+        FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
+        firebaseAuth.registerWithPassword("メールアドレス", "パスワード");
 
         _navigate(context, page);
 
