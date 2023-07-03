@@ -111,8 +111,11 @@ class LoginPage extends ConsumerWidget {
   ///
   Widget _googleLoginButton(BuildContext context, Widget page) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
         debugPrint("Google login buttonクリック");
+
+        FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
+        await firebaseAuth.authenticateWithGoogle();
 
         _navigate(context, page);
 
