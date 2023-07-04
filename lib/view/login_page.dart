@@ -117,7 +117,11 @@ class LoginPage extends ConsumerWidget {
         FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
         await firebaseAuth.authenticateWithGoogle();
 
-        _navigate(context, page);
+        if (context.mounted) {
+          _navigate(context, page);
+        } else {
+          return;
+        }
 
         // セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
         // firebaseにログイン認証を行う
@@ -158,13 +162,18 @@ class LoginPage extends ConsumerWidget {
   ///
   Widget _registerButton(BuildContext context, Widget page) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
         debugPrint("register buttonクリック");
 
         FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        firebaseAuth.registerWithPassword("test@test.com", "abcdefg12345@");
+        await firebaseAuth.registerWithPassword(
+            "test@test.com", "abcdefg12345@");
 
-        _navigate(context, page);
+        if (context.mounted) {
+          _navigate(context, page);
+        } else {
+          return;
+        }
 
         // セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
         // firebaseにログイン認証を行う
