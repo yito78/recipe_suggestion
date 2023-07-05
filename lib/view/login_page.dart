@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recipe_suggestion/view/forget_password_page.dart';
 import 'package:recipe_suggestion/view/function_list_page.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 
@@ -36,7 +37,7 @@ class LoginPage extends ConsumerWidget {
             ),
 
             // パスワードを忘れた方
-            _linkForgetPassword(),
+            _linkForgetPassword(context, const ForgetPasswordPage()),
 
             const SizedBox(
               height: 30.0,
@@ -82,15 +83,20 @@ class LoginPage extends ConsumerWidget {
   ///
   /// 戻り値::ボタンウィジェット
   ///
-  Widget _loginButton(BuildContext context, page) {
+  Widget _loginButton(BuildContext context, Widget page) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
         debugPrint("login buttonクリック");
 
         FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        firebaseAuth.authenticateWithPassword("test@test.com", "abcdefg12345@");
+        await firebaseAuth.authenticateWithPassword(
+            "test@test.com", "abcdefg12345@");
 
-        _navigate(context, page);
+        if (context.mounted) {
+          _navigate(context, page);
+        } else {
+          return;
+        }
 
         // セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
         // firebaseにログイン認証を行う
@@ -137,10 +143,11 @@ class LoginPage extends ConsumerWidget {
   ///
   /// 戻り値::パスワード忘れリンクウィジェット
   ///
-  Widget _linkForgetPassword() {
+  Widget _linkForgetPassword(BuildContext context, Widget page) {
     return InkWell(
       onTap: () {
         debugPrint("aaa");
+        _navigate(context, page);
       },
       child: const Text(
         "パスワードを忘れた方",

@@ -60,7 +60,7 @@ class FirebaseAuthentication {
   Future<void> authenticateWithPassword(
       final String emailAddress, final String password) async {
     try {
-      final credential = await FirebaseAuth.instance
+      await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: emailAddress, password: password);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -68,6 +68,19 @@ class FirebaseAuthentication {
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided for that user.');
       }
+    }
+  }
+
+  ///
+  /// パスワード忘れ処理を行う
+  ///
+  /// [emailAddress] メールアドレス
+  ///
+  Future<void> reissuePassword(final String emailAddress) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: emailAddress);
+    } catch (e) {
+      debugPrint("$e");
     }
   }
 }
