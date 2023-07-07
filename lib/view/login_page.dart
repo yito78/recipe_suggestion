@@ -48,11 +48,12 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(
               height: 30.0,
             ),
-            _textBox("メールアドレス", emailTextEditController),
+            _createTextBox("メールアドレス", emailTextEditController),
             const SizedBox(
               height: 10.0,
             ),
-            _textBox("パスワード", passwordTextEditController, obscureText: true),
+            _createTextBox("パスワード", passwordTextEditController,
+                obscureText: true),
             const SizedBox(
               height: 20.0,
             ),
@@ -97,7 +98,8 @@ class _LoginPageState extends State<LoginPage> {
   ///
   /// 戻り値::[TextFormField]ウィジェット
   ///
-  Widget _textBox(String title, TextEditingController textEditingController,
+  Widget _createTextBox(
+      String title, TextEditingController textEditingController,
       {bool obscureText = false}) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
