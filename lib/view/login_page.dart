@@ -92,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
   /// テキスト入力エリアを作成する
   ///
   /// [title] プレースホルダーに表示するテキスト情報
-  /// [textEditingController] テキストフィールドコントローラ
+  /// [textEditingController] 作成するWidgetの子要素のTextFormFieldに紐づけるTextEditiongController
   /// [obscureText] テキストフィールドの入力値を表示する場合はtrue / 非表示にする場合はfalse
   ///
   /// 戻り値::[TextFormField]ウィジェット
