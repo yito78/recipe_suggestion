@@ -71,7 +71,7 @@ class LoginPage extends ConsumerWidget {
   /// [title] プレースホルダーに表示するテキスト情報
   /// [textEditingController] テキストフィールドコントローラ
   ///
-  /// 戻り値::TextFormFieldウィジェット
+  /// 戻り値::[TextFormField]ウィジェット
   ///
   Widget _textBox(String title, TextEditingController textEditingController) {
     return Padding(
