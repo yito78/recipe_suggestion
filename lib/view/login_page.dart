@@ -169,6 +169,9 @@ class _LoginPageState extends State<LoginPage> {
   ///
   /// パスワード忘れリンクウィジェットを作成する
   ///
+  /// [context] build時のcontext
+  /// [page] 遷移先のページ
+  ///
   /// 戻り値::パスワード忘れリンクウィジェット
   ///
   Widget _linkForgetPassword(BuildContext context, Widget page) {
