@@ -28,6 +28,14 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  ///
+  /// テキストフィールドの値をクリアする
+  ///
+  void clearTextFields() {
+    emailTextEditController.clear();
+    passwordTextEditController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -120,7 +128,6 @@ class _LoginPageState extends State<LoginPage> {
         await firebaseAuth.authenticateWithPassword(email.text, password.text);
 
         if (context.mounted) {
-          dispose();
           _navigate(context, page);
         } else {
           return;
@@ -209,7 +216,6 @@ class _LoginPageState extends State<LoginPage> {
         await firebaseAuth.registerWithPassword(email.text, password.text);
 
         if (context.mounted) {
-          dispose();
           _navigate(context, page);
         } else {
           return;
@@ -237,5 +243,8 @@ class _LoginPageState extends State<LoginPage> {
   ///
   _navigate(BuildContext context, Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+    setState(() {
+      clearTextFields();
+    });
   }
 }
