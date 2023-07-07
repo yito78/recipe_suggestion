@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(
               height: 10.0,
             ),
-            _textBox("パスワード", passwordTextEditController),
+            _textBox("パスワード", passwordTextEditController, obscureText: true),
             const SizedBox(
               height: 20.0,
             ),
@@ -93,14 +93,16 @@ class _LoginPageState extends State<LoginPage> {
   ///
   /// [title] プレースホルダーに表示するテキスト情報
   /// [textEditingController] テキストフィールドコントローラ
+  /// [obscureText] テキストフィールドの入力値を表示する場合はtrue / 非表示にする場合はfalse
   ///
   /// 戻り値::[TextFormField]ウィジェット
   ///
-  Widget _textBox(String title, TextEditingController textEditingController) {
+  Widget _textBox(String title, TextEditingController textEditingController,
+      {bool obscureText = false}) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: TextFormField(
-          obscureText: title == "パスワード" ? true : false,
+          obscureText: obscureText ? true : false,
           controller: textEditingController,
           decoration: InputDecoration(
             labelText: "$titleを入力してください",
