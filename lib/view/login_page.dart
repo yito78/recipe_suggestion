@@ -174,7 +174,6 @@ class _LoginPageState extends State<LoginPage> {
   Widget _linkForgetPassword(BuildContext context, Widget page) {
     return InkWell(
       onTap: () {
-        debugPrint("aaa");
         _navigate(context, page);
       },
       child: const Text(
