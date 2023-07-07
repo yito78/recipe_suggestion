@@ -1,20 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/view/forget_password_page.dart';
 import 'package:recipe_suggestion/view/function_list_page.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 
 /// ログイン画面
-class LoginPage extends ConsumerWidget {
-  const LoginPage({Key? key}) : super(key: key);
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final TextEditingController emailTextEditController =
-        TextEditingController();
-    final TextEditingController passwordTextEditController =
-        TextEditingController();
+  State<LoginPage> createState() => _LoginPageState();
+}
 
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailTextEditController = TextEditingController();
+  final TextEditingController passwordTextEditController =
+      TextEditingController();
+
+  @override
+
+  ///
+  /// [TextEditingController]のリソース破棄処理
+  ///
+  void dispose() {
+    emailTextEditController.dispose();
+    passwordTextEditController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -105,6 +120,7 @@ class LoginPage extends ConsumerWidget {
         await firebaseAuth.authenticateWithPassword(email.text, password.text);
 
         if (context.mounted) {
+          dispose();
           _navigate(context, page);
         } else {
           return;
@@ -191,6 +207,7 @@ class LoginPage extends ConsumerWidget {
         await firebaseAuth.registerWithPassword(email.text, password.text);
 
         if (context.mounted) {
+          dispose();
           _navigate(context, page);
         } else {
           return;
