@@ -10,6 +10,11 @@ class LoginPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final TextEditingController emailTextEditController =
+        TextEditingController();
+    final TextEditingController passwordTextEditController =
+        TextEditingController();
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -20,17 +25,18 @@ class LoginPage extends ConsumerWidget {
             const SizedBox(
               height: 30.0,
             ),
-            _textBox("メールアドレス"),
+            _textBox("メールアドレス", emailTextEditController),
             const SizedBox(
               height: 10.0,
             ),
-            _textBox("パスワード"),
+            _textBox("パスワード", passwordTextEditController),
             const SizedBox(
               height: 20.0,
             ),
 
             // ログイン
-            _loginButton(context, const FunctionListPage()),
+            _loginButton(context, const FunctionListPage(),
+                emailTextEditController, passwordTextEditController),
 
             const SizedBox(
               height: 10.0,
@@ -51,7 +57,8 @@ class LoginPage extends ConsumerWidget {
             ),
 
             // 新規登録
-            _registerButton(context, const FunctionListPage()),
+            _registerButton(context, const FunctionListPage(),
+                emailTextEditController, passwordTextEditController),
           ],
         ),
       ),
@@ -62,13 +69,16 @@ class LoginPage extends ConsumerWidget {
   /// テキスト入力エリアを作成する
   ///
   /// [title] プレースホルダーに表示するテキスト情報
+  /// [textEditingController] テキストフィールドコントローラ
   ///
   /// 戻り値::TextFormFieldウィジェット
   ///
-  Widget _textBox(String title) {
+  Widget _textBox(String title, TextEditingController textEditingController) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: TextFormField(
+          obscureText: title == "パスワード" ? true : false,
+          controller: textEditingController,
           decoration: InputDecoration(
             labelText: "$titleを入力してください",
           ),
@@ -80,17 +90,19 @@ class LoginPage extends ConsumerWidget {
   ///
   /// [context] build時のcontext
   /// [page] 遷移先のページ
+  /// [email] メールアドレスのテキストフィールドコントローラ
+  /// [password] パスワードのテキストフィールドコントローラ
   ///
   /// 戻り値::ボタンウィジェット
   ///
-  Widget _loginButton(BuildContext context, Widget page) {
+  Widget _loginButton(BuildContext context, Widget page,
+      TextEditingController email, TextEditingController password) {
     return ElevatedButton(
       onPressed: () async {
         debugPrint("login buttonクリック");
 
         FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        await firebaseAuth.authenticateWithPassword(
-            "test@test.com", "abcdefg12345@");
+        await firebaseAuth.authenticateWithPassword(email.text, password.text);
 
         if (context.mounted) {
           _navigate(context, page);
@@ -164,17 +176,19 @@ class LoginPage extends ConsumerWidget {
   ///
   /// [context] build時のcontext
   /// [page] 遷移先のページ
+  /// [email] メールアドレスのテキストフィールドコントローラ
+  /// [password] パスワードのテキストフィールドコントローラ
   ///
   /// 戻り値::ボタンウィジェット
   ///
-  Widget _registerButton(BuildContext context, Widget page) {
+  Widget _registerButton(BuildContext context, Widget page,
+      TextEditingController email, TextEditingController password) {
     return ElevatedButton(
       onPressed: () async {
         debugPrint("register buttonクリック");
 
         FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        await firebaseAuth.registerWithPassword(
-            "test@test.com", "abcdefg12345@");
+        await firebaseAuth.registerWithPassword(email.text, password.text);
 
         if (context.mounted) {
           _navigate(context, page);

@@ -11,6 +11,8 @@ class ForgetPasswordPage extends StatefulWidget {
 }
 
 class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
+  final TextEditingController emailTextEditController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,9 +20,10 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
         title: const Text("パスワード再発行"),
       ),
       body: Column(children: [
-        _textBox("メールアドレス"),
+        _textBox("メールアドレス", emailTextEditController),
         const SizedBox(height: 20.0),
-        _reissuePasswordButton(context, const LoginPage())
+        _reissuePasswordButton(
+            context, const LoginPage(), emailTextEditController)
       ]),
     );
   }
@@ -29,13 +32,15 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   /// テキスト入力エリアを作成する
   ///
   /// [title] プレースホルダーに表示するテキスト情報
+  /// [textEditingController] テキストフィールドコントローラ
   ///
   /// 戻り値::TextFormFieldウィジェット
   ///
-  Widget _textBox(String title) {
+  Widget _textBox(String title, TextEditingController textEditingController) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: TextFormField(
+          controller: textEditingController,
           decoration: InputDecoration(
             labelText: "$titleを入力してください",
           ),
@@ -47,16 +52,18 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   ///
   /// [context] build時のcontext
   /// [page] 遷移先のページ
+  /// [emailTextEditingController] emailアドレスのテキストフィールドコントロール
   ///
   /// 戻り値::ボタンウィジェット
   ///
-  Widget _reissuePasswordButton(BuildContext context, Widget page) {
+  Widget _reissuePasswordButton(BuildContext context, Widget page,
+      TextEditingController emailTextEditingController) {
     return ElevatedButton(
       onPressed: () async {
         debugPrint("パスワード再発行 buttonクリック");
 
         FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        await firebaseAuth.reissuePassword("yosuke.ito@uniadex.co.jp");
+        await firebaseAuth.reissuePassword(emailTextEditingController.text);
 
         if (context.mounted) {
           _navigate(context, page);
