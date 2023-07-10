@@ -1,13 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recipe_suggestion/view/forget_password_page.dart';
 import 'package:recipe_suggestion/view/function_list_page.dart';
+import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 
 /// ログイン画面
-class LoginPage extends ConsumerWidget {
-  const LoginPage({Key? key}) : super(key: key);
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailTextEditController = TextEditingController();
+  final TextEditingController passwordTextEditController =
+      TextEditingController();
+
+  @override
+
+  ///
+  /// [TextEditingController]のリソース破棄処理
+  ///
+  void dispose() {
+    emailTextEditController.dispose();
+    passwordTextEditController.dispose();
+    super.dispose();
+  }
+
+  ///
+  /// テキストフィールドの値をクリアする
+  ///
+  void clearTextFields() {
+    emailTextEditController.clear();
+    passwordTextEditController.clear();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -18,24 +48,26 @@ class LoginPage extends ConsumerWidget {
             const SizedBox(
               height: 30.0,
             ),
-            _textBox("メールアドレス"),
+            _createTextBox("メールアドレス", emailTextEditController),
             const SizedBox(
               height: 10.0,
             ),
-            _textBox("パスワード"),
+            _createTextBox("パスワード", passwordTextEditController,
+                obscureText: true),
             const SizedBox(
               height: 20.0,
             ),
 
             // ログイン
-            _loginButton(context, const FunctionListPage()),
+            _loginButton(context, const FunctionListPage(),
+                emailTextEditController, passwordTextEditController),
 
             const SizedBox(
               height: 10.0,
             ),
 
             // パスワードを忘れた方
-            _linkForgetPassword(),
+            _linkForgetPassword(context, const ForgetPasswordPage()),
 
             const SizedBox(
               height: 30.0,
@@ -49,7 +81,8 @@ class LoginPage extends ConsumerWidget {
             ),
 
             // 新規登録
-            _registerButton(context, const FunctionListPage()),
+            _registerButton(context, const FunctionListPage(),
+                emailTextEditController, passwordTextEditController),
           ],
         ),
       ),
@@ -60,13 +93,19 @@ class LoginPage extends ConsumerWidget {
   /// テキスト入力エリアを作成する
   ///
   /// [title] プレースホルダーに表示するテキスト情報
+  /// [textEditingController] 作成するWidgetの子要素のTextFormFieldに紐づけるTextEditiongController
+  /// [obscureText] テキストフィールドの入力値を表示する場合はtrue / 非表示にする場合はfalse
   ///
-  /// 戻り値::TextFormFieldウィジェット
+  /// 戻り値::[TextFormField]ウィジェット
   ///
-  Widget _textBox(String title) {
+  Widget _createTextBox(
+      String title, TextEditingController textEditingController,
+      {bool obscureText = false}) {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: TextFormField(
+          obscureText: obscureText ? true : false,
+          controller: textEditingController,
           decoration: InputDecoration(
             labelText: "$titleを入力してください",
           ),
@@ -78,15 +117,25 @@ class LoginPage extends ConsumerWidget {
   ///
   /// [context] build時のcontext
   /// [page] 遷移先のページ
+  /// [email] メールアドレスのテキストフィールドコントローラ
+  /// [password] パスワードのテキストフィールドコントローラ
   ///
   /// 戻り値::ボタンウィジェット
   ///
-  Widget _loginButton(BuildContext context, page) {
+  Widget _loginButton(BuildContext context, Widget page,
+      TextEditingController email, TextEditingController password) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
         debugPrint("login buttonクリック");
 
-        _navigate(context, page);
+        FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
+        await firebaseAuth.authenticateWithPassword(email.text, password.text);
+
+        if (context.mounted) {
+          _navigate(context, page);
+        } else {
+          return;
+        }
 
         // セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
         // firebaseにログイン認証を行う
@@ -107,10 +156,17 @@ class LoginPage extends ConsumerWidget {
   ///
   Widget _googleLoginButton(BuildContext context, Widget page) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
         debugPrint("Google login buttonクリック");
 
-        _navigate(context, page);
+        FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
+        await firebaseAuth.authenticateWithGoogle();
+
+        if (context.mounted) {
+          _navigate(context, page);
+        } else {
+          return;
+        }
 
         // セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
         // firebaseにログイン認証を行う
@@ -124,12 +180,15 @@ class LoginPage extends ConsumerWidget {
   ///
   /// パスワード忘れリンクウィジェットを作成する
   ///
+  /// [context] build時のcontext
+  /// [page] 遷移先のページ
+  ///
   /// 戻り値::パスワード忘れリンクウィジェット
   ///
-  Widget _linkForgetPassword() {
+  Widget _linkForgetPassword(BuildContext context, Widget page) {
     return InkWell(
       onTap: () {
-        debugPrint("aaa");
+        _navigate(context, page);
       },
       child: const Text(
         "パスワードを忘れた方",
@@ -146,15 +205,25 @@ class LoginPage extends ConsumerWidget {
   ///
   /// [context] build時のcontext
   /// [page] 遷移先のページ
+  /// [email] メールアドレスのテキストフィールドコントローラ
+  /// [password] パスワードのテキストフィールドコントローラ
   ///
   /// 戻り値::ボタンウィジェット
   ///
-  Widget _registerButton(BuildContext context, Widget page) {
+  Widget _registerButton(BuildContext context, Widget page,
+      TextEditingController email, TextEditingController password) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
         debugPrint("register buttonクリック");
 
-        _navigate(context, page);
+        FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
+        await firebaseAuth.registerWithPassword(email.text, password.text);
+
+        if (context.mounted) {
+          _navigate(context, page);
+        } else {
+          return;
+        }
 
         // セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
         // firebaseにログイン認証を行う
@@ -178,5 +247,8 @@ class LoginPage extends ConsumerWidget {
   ///
   _navigate(BuildContext context, Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+    setState(() {
+      clearTextFields();
+    });
   }
 }
