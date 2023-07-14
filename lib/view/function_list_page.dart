@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/data/recipe.dart';
+import 'package:recipe_suggestion/provider/login_user.dart';
 import 'package:recipe_suggestion/provider/recipes_data.dart';
 import 'package:recipe_suggestion/utils/log.dart';
 import 'package:recipe_suggestion/view/import_csv_page.dart';
@@ -18,7 +19,7 @@ class FunctionListPage extends ConsumerWidget {
     // recipesデータの監視
     final recipesWatch = ref.watch(recipesDataNotifierProvider);
 
-    // 監視データからデータ抽出
+    // recipesデータからデータ抽出
     AsyncValue<List<Recipe>> fetchedRecipesData = recipesWatch.when(data: (d) {
       return AsyncValue.data(d);
     }, error: (e, s) {
@@ -27,6 +28,9 @@ class FunctionListPage extends ConsumerWidget {
     }, loading: () {
       return const AsyncValue.loading();
     });
+
+    // ユーザログイン状況監視
+    final signedInUserWatch = ref.watch(userProvider);
 
     return SafeArea(
       child: Scaffold(

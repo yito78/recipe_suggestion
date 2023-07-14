@@ -482,6 +482,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.1"
+  hooks_riverpod:
+    dependency: "direct main"
+    description:
+      name: hooks_riverpod
+      sha256: be68cf7653fcab798500f9047ac58c3f109287a1595012412f4a0d654a9bb9c5
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.6"
   http:
     dependency: transitive
     description:
