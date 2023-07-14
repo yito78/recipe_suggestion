@@ -5,7 +5,7 @@
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
     "editor.rulers": [
-        80
+      80
     ],
     "editor.selectionHighlight": false,
     "editor.suggest.snippetsPreventQuickSuggestions": false,
@@ -25,5 +25,7 @@
   },
   "editor.cursorStyle": "block",
   "cSpell.words": [
+    "firestore",
+    "riveropd"
   ]
 }
