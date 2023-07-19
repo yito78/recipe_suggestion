@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 part 'login_user.g.dart';
 
 @riverpod
