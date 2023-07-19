@@ -40,7 +40,7 @@ class FunctionListPage extends ConsumerWidget {
           automaticallyImplyLeading: false,
         ),
         // 現状drawerにはログアウト機能のみのため、ログイン状態であれば表示、そうでなければ非表示とする
-        endDrawer: signedInUserWatch.value != null ? DrawerPage(context) : null,
+        endDrawer: signedInUserWatch.value != null ? const DrawerPage() : null,
         body: Column(
           children: [
             // 部分的に再レンダリング
