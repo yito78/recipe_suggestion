@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
+import 'package:recipe_suggestion/view/login_page.dart';
 
 class DrawerPage extends StatelessWidget {
   const DrawerPage({super.key});
@@ -50,12 +52,7 @@ class DrawerPage extends StatelessWidget {
               return _createAlertDialog(context);
             });
       },
-      child: const Text(
-        "ログアウト",
-        style: TextStyle(
-          color: Colors.black,
-        ),
-      ),
+      child: const Text("ログアウト"),
     );
   }
 
@@ -68,19 +65,26 @@ class DrawerPage extends StatelessWidget {
   ///
   Widget _createAlertDialog(BuildContext context) {
     return AlertDialog(
-      title: const Text('ログアウトしてもよろしいですか？'),
-      // content: const Text('こうかいしませんね？'),
+      title: const Text("ログアウトしてもよろしいですか？"),
       actions: <Widget>[
         GestureDetector(
-          child: const Text('いいえ'),
+          child: const Text("いいえ"),
           onTap: () {
             Navigator.pop(context);
           },
         ),
         GestureDetector(
           // ログアウト処理
-          onTap: null,
-          child: const Text('はい'),
+          onTap: () async {
+            FirebaseAuthentication firebase = FirebaseAuthentication();
+            await firebase.signOut();
+
+            if (context.mounted) {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()));
+            }
+          },
+          child: const Text("はい"),
         )
       ],
     );

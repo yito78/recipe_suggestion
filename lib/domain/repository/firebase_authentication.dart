@@ -93,4 +93,15 @@ class FirebaseAuthentication {
   User? fetchSignedInUser() {
     return FirebaseAuth.instance.currentUser;
   }
+
+  ///
+  /// ログアウト処理
+  ///
+  Future<void> signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+    } catch (e) {
+      debugPrint("$e");
+    }
+  }
 }
