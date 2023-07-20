@@ -41,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Recipe Suggestion"),
+          automaticallyImplyLeading: false,
         ),
         body: Column(
           children: [
