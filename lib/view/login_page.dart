@@ -4,7 +4,6 @@ import 'package:recipe_suggestion/view/function_list_page.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 
 /// ログイン画面
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
