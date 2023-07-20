@@ -67,15 +67,15 @@ class DrawerPage extends StatelessWidget {
     return AlertDialog(
       title: const Text("ログアウトしてもよろしいですか？"),
       actions: <Widget>[
-        GestureDetector(
-          child: const Text("いいえ"),
-          onTap: () {
+        TextButton(
+          onPressed: () {
             Navigator.pop(context);
           },
+          child: const Text("いいえ"),
         ),
-        GestureDetector(
+        TextButton(
           // ログアウト処理
-          onTap: () async {
+          onPressed: () async {
             FirebaseAuthentication firebase = FirebaseAuthentication();
             await firebase.signOut();
 
