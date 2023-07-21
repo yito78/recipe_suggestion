@@ -4,7 +4,7 @@ import 'package:recipe_suggestion/data/recipe.dart';
 import 'package:recipe_suggestion/provider/login_user.dart';
 import 'package:recipe_suggestion/provider/recipes_data.dart';
 import 'package:recipe_suggestion/utils/log.dart';
-import 'package:recipe_suggestion/view/drawer_page.dart';
+import 'package:recipe_suggestion/view/drawer_component.dart';
 import 'package:recipe_suggestion/view/import_csv_page.dart';
 import 'package:recipe_suggestion/view/recipe_list_page.dart';
 import 'package:recipe_suggestion/view/weekly_recipe_page.dart';
@@ -40,7 +40,8 @@ class FunctionListPage extends ConsumerWidget {
           automaticallyImplyLeading: false,
         ),
         // 現状drawerにはログアウト機能のみのため、ログイン状態であれば表示、そうでなければ非表示とする
-        endDrawer: signedInUserWatch.value != null ? const DrawerPage() : null,
+        endDrawer:
+            signedInUserWatch.value != null ? const DrawerComponent() : null,
         body: Column(
           children: [
             // 部分的に再レンダリング

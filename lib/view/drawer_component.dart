@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 import 'package:recipe_suggestion/view/login_page.dart';
 
-class DrawerPage extends StatelessWidget {
-  const DrawerPage({super.key});
+class DrawerComponent extends StatelessWidget {
+  const DrawerComponent({super.key});
 
   @override
   Widget build(BuildContext context) {
