@@ -21,12 +21,28 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final signedInUserWatch = ref.watch(userProvider);
+    // return MaterialApp(
+    //   debugShowCheckedModeBanner: false,
+    //   title: 'Recipe Suggestion',
+    //   theme: ThemeData(
+    //     primarySwatch: Colors.blue,
+    //   ),
+    //   home: signedInUserWatch.when(
+    //     data: (user) =>
+    //         // ログイン済みであれば、機能一覧画面へ遷移する
+    //         user != null ? const FunctionListPage() : const LoginPage(),
+    //     loading: () => const CircularProgressIndicator(),
+    //     error: (err, stack) => Text('Error: $err'),
+    //   ),
+    // );
 
-    return signedInUserWatch.when(
-      data: (user) => _createMaterialApp(user),
-      loading: () => const CircularProgressIndicator(),
-      error: (err, stack) => Text('Error: $err'),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Recipe Suggestion',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const Main(),
     );
   }
 
@@ -40,15 +56,32 @@ class MyApp extends ConsumerWidget {
   ///
   /// 戻り値::各画面Widget
   ///
-  Widget _createMaterialApp(User? user) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Recipe Suggestion',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      // ログイン済みであれば、機能一覧画面へ遷移する
-      home: user != null ? const FunctionListPage() : const LoginPage(),
+  // Widget _createMaterialApp(User? user) {
+  //   return MaterialApp(
+  //     debugShowCheckedModeBanner: false,
+  //     title: 'Recipe Suggestion',
+  //     theme: ThemeData(
+  //       primarySwatch: Colors.blue,
+  //     ),
+  //     // ログイン済みであれば、機能一覧画面へ遷移する
+  //     home: user != null ? const FunctionListPage() : const LoginPage(),
+  //   );
+  // }
+}
+
+class Main extends ConsumerWidget {
+  const Main({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final signedInUserWatch = ref.watch(userProvider);
+
+    return signedInUserWatch.when(
+      data: (user) =>
+          // ログイン済みであれば、機能一覧画面へ遷移する
+          user != null ? const FunctionListPage() : const LoginPage(),
+      loading: () => const CircularProgressIndicator(),
+      error: (err, stack) => Text('Error: $err'),
     );
   }
 }

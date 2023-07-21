@@ -79,10 +79,10 @@ class DrawerComponent extends StatelessWidget {
             FirebaseAuthentication firebase = FirebaseAuthentication();
             await firebase.signOut();
 
-            if (context.mounted) {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()));
-            }
+            // if (context.mounted) {
+            //   Navigator.push(context,
+            //       MaterialPageRoute(builder: (context) => const LoginPage()));
+            // }
           },
           child: const Text("はい"),
         )

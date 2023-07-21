@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 part 'login_user.g.dart';
@@ -20,6 +21,7 @@ final userProvider = StreamProvider<User?>((ref) async* {
   final auth = FirebaseAuth.instance;
   final userStream = auth.authStateChanges();
   await for (final user in userStream) {
+    debugPrint("-------------user: $user");
     yield user;
   }
 });
