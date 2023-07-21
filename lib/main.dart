@@ -29,10 +29,13 @@ class MyApp extends ConsumerWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // ログイン済みであれば、機能一覧画面へ遷移する
-      home: signedInUserWatch.value != null
-          ? const FunctionListPage()
-          : const LoginPage(),
+      home: signedInUserWatch.when(
+        data: (user) =>
+            // ログイン済みであれば、機能一覧画面へ遷移する
+            user != null ? const FunctionListPage() : const LoginPage(),
+        loading: () => const CircularProgressIndicator(),
+        error: (err, stack) => Text('Error: $err'),
+      ),
     );
   }
 }
