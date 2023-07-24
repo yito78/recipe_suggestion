@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/data/recipe.dart';
-import 'package:recipe_suggestion/provider/login_user.dart';
 import 'package:recipe_suggestion/provider/recipes_data.dart';
 import 'package:recipe_suggestion/utils/log.dart';
 import 'package:recipe_suggestion/view/drawer_component.dart';
@@ -30,9 +29,6 @@ class FunctionListPage extends ConsumerWidget {
       return const AsyncValue.loading();
     });
 
-    // ユーザログイン状況監視
-    final signedInUserWatch = ref.watch(userProvider);
-
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -40,8 +36,7 @@ class FunctionListPage extends ConsumerWidget {
           automaticallyImplyLeading: false,
         ),
         // 現状drawerにはログアウト機能のみのため、ログイン状態であれば表示、そうでなければ非表示とする
-        endDrawer:
-            signedInUserWatch.value != null ? const DrawerComponent() : null,
+        endDrawer: const DrawerComponent(),
         body: Column(
           children: [
             // 部分的に再レンダリング

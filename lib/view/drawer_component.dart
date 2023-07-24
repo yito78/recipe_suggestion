@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
-import 'package:recipe_suggestion/view/login_page.dart';
 
 class DrawerComponent extends StatelessWidget {
   const DrawerComponent({super.key});
@@ -78,6 +77,11 @@ class DrawerComponent extends StatelessWidget {
           onPressed: () async {
             FirebaseAuthentication firebase = FirebaseAuthentication();
             await firebase.signOut();
+
+            if (context.mounted) {
+              // モーダル画面の除去
+              Navigator.pop(context);
+            }
           },
           child: const Text("はい"),
         )
