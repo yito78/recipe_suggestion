@@ -93,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
   /// テキスト入力エリアを作成する
   ///
   /// [title] プレースホルダーに表示するテキスト情報
-  /// [textEditingController] 作成するWidgetの子要素のTextFormFieldに紐づけるTextEditiongController
+  /// [textEditingController] 作成するWidgetの子要素のTextFormFieldに紐づけるTextEditingController
   /// [obscureText] テキストフィールドの入力値を表示する場合はtrue / 非表示にする場合はfalse
   ///
   /// 戻り値::[TextFormField]ウィジェット
@@ -130,17 +130,6 @@ class _LoginPageState extends State<LoginPage> {
 
         FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
         await firebaseAuth.authenticateWithPassword(email.text, password.text);
-
-        if (context.mounted) {
-          _navigate(context, page);
-        } else {
-          return;
-        }
-
-        // セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
-        // firebaseにログイン認証を行う
-        //   ログイン成功の場合、機能一覧画面に遷移する
-        //   ログイン失敗の場合、失敗フラッシュメッセージを表示する
       },
       child: const Text("ログイン"),
     );
@@ -161,17 +150,6 @@ class _LoginPageState extends State<LoginPage> {
 
         FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
         await firebaseAuth.authenticateWithGoogle();
-
-        if (context.mounted) {
-          _navigate(context, page);
-        } else {
-          return;
-        }
-
-        // セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
-        // firebaseにログイン認証を行う
-        //   ログイン成功の場合、機能一覧画面に遷移する
-        //   ログイン失敗の場合、失敗フラッシュメッセージを表示する
       },
       child: const Text("Googleアカウントログイン"),
     );
@@ -218,17 +196,6 @@ class _LoginPageState extends State<LoginPage> {
 
         FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
         await firebaseAuth.registerWithPassword(email.text, password.text);
-
-        if (context.mounted) {
-          _navigate(context, page);
-        } else {
-          return;
-        }
-
-        // セッションが存在するかチェックし、存在する場合は機能一覧画面に遷移する
-        // firebaseにログイン認証を行う
-        //   ログイン成功の場合、機能一覧画面に遷移する
-        //   ログイン失敗の場合、失敗フラッシュメッセージを表示する
       },
       style: const ButtonStyle(
         backgroundColor: MaterialStatePropertyAll<Color>(Colors.orange),
