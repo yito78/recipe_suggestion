@@ -83,4 +83,25 @@ class FirebaseAuthentication {
       debugPrint("$e");
     }
   }
+
+  ///
+  /// サインイン済みユーザのログイン情報を取得する
+  ///
+  /// 戻り値::サインイン済みの場合は、ユーザ情報を返却
+  ///        そうでない場合、null
+  ///
+  User? fetchSignedInUser() {
+    return FirebaseAuth.instance.currentUser;
+  }
+
+  ///
+  /// ログアウト処理
+  ///
+  Future<void> signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+    } catch (e) {
+      debugPrint("$e");
+    }
+  }
 }

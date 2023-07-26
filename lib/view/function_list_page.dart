@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/data/recipe.dart';
 import 'package:recipe_suggestion/provider/recipes_data.dart';
 import 'package:recipe_suggestion/utils/log.dart';
+import 'package:recipe_suggestion/view/drawer_component.dart';
 import 'package:recipe_suggestion/view/import_csv_page.dart';
 import 'package:recipe_suggestion/view/recipe_list_page.dart';
 import 'package:recipe_suggestion/view/weekly_recipe_page.dart';
 
+/// 機能一覧画面生成クラス
 class FunctionListPage extends ConsumerWidget {
   const FunctionListPage({Key? key}) : super(key: key);
 
@@ -17,21 +19,24 @@ class FunctionListPage extends ConsumerWidget {
     // recipesデータの監視
     final recipesWatch = ref.watch(recipesDataNotifierProvider);
 
-    // 監視データからデータ抽出
+    // recipesデータからデータ抽出
     AsyncValue<List<Recipe>> fetchedRecipesData = recipesWatch.when(data: (d) {
       return AsyncValue.data(d);
     }, error: (e, s) {
       _outputErrorLog(e, s);
       return AsyncValue.error(e, s);
     }, loading: () {
-      return AsyncValue.loading();
+      return const AsyncValue.loading();
     });
 
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           title: const Center(child: Text("機能一覧")),
+          automaticallyImplyLeading: false,
         ),
+        // 現状drawerにはログアウト機能のみのため、ログイン状態であれば表示、そうでなければ非表示とする
+        endDrawer: const DrawerComponent(),
         body: Column(
           children: [
             // 部分的に再レンダリング
@@ -43,15 +48,15 @@ class FunctionListPage extends ConsumerWidget {
                 list.add(element);
               });
               if (list.isEmpty) {
-                return _button(context, WeeklyRecipePage(),
+                return _button(context, const WeeklyRecipePage(),
                     const Text("1週間のレシピ一覧"), false);
               } else {
                 return _button(
-                    context, WeeklyRecipePage(), const Text("1週間のレシピ一覧"));
+                    context, const WeeklyRecipePage(), const Text("1週間のレシピ一覧"));
               }
             }),
-            _button(context, RecipeListPage(), const Text("登録レシピ一覧")),
-            _button(context, ImportCsvPage(), const Text("CSVファイルデータ登録")),
+            _button(context, const RecipeListPage(), const Text("登録レシピ一覧")),
+            _button(context, const ImportCsvPage(), const Text("CSVファイルデータ登録")),
           ],
         ),
         // firestoreデータ再取得ボタン
@@ -67,11 +72,11 @@ class FunctionListPage extends ConsumerWidget {
   // context::build時のcontext
   // page::遷移先のページ
   // text::表示されるボタン名
-  // isActived::ボタン活性状態制御フラグ(true: 活性状態、false: 非活性状態)
+  // isActivated::ボタン活性状態制御フラグ(true: 活性状態、false: 非活性状態)
   //
   // 戻り値::ElevatedButton
   //
-  Widget _button(context, page, text, [bool isActived = true]) {
+  Widget _button(context, page, text, [bool isActivated = true]) {
     // 横幅定義用データ
     var screenSize = MediaQuery.of(context).size;
 
@@ -81,7 +86,7 @@ class FunctionListPage extends ConsumerWidget {
         child: SizedBox(
           width: screenSize.width * 0.8,
           child: ElevatedButton(
-              onPressed: isActived ? () => _navigate(context, page) : null,
+              onPressed: isActivated ? () => _navigate(context, page) : null,
               child: text),
         ),
       ),
@@ -108,7 +113,7 @@ class FunctionListPage extends ConsumerWidget {
   // fetchedRecipesData::firestoreデータ
   // ref::recipeデータの監視データ
   //
-  // 戻り値::FloatingActionButtun Widget
+  // 戻り値::FloatingActionButton Widget
   //
   Widget _floatingActionButton(context, fetchedRecipesData, ref) {
     return FloatingActionButton(

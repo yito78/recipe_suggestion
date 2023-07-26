@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:recipe_suggestion/provider/login_user.dart';
+import 'package:recipe_suggestion/view/function_list_page.dart';
 import 'package:recipe_suggestion/view/login_page.dart';
 import 'firebase_options.dart';
 
@@ -16,25 +18,32 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Recipe Suggestion',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage(),
+      home: const Main(),
+    );
+  }
+}
+
+class Main extends ConsumerWidget {
+  const Main({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final signedInUserWatch = ref.watch(userProvider);
+
+    return signedInUserWatch.when(
+      data: (user) =>
+          // ログイン済みであれば、機能一覧画面へ遷移する
+          user != null ? const FunctionListPage() : const LoginPage(),
+      loading: () => const CircularProgressIndicator(),
+      error: (err, stack) => Text('Error: $err'),
     );
   }
 }
