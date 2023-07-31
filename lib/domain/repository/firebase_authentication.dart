@@ -34,6 +34,7 @@ class FirebaseAuthentication {
   /// Googleアカウント認証を行う
   ///
   Future<UserCredential> authenticateWithGoogle() async {
+    // throw Exception()
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -59,16 +60,8 @@ class FirebaseAuthentication {
   ///
   Future<void> authenticateWithPassword(
       final String emailAddress, final String password) async {
-    try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: emailAddress, password: password);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
-    }
+    await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: emailAddress, password: password);
   }
 
   ///

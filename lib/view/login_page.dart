@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_suggestion/view/forget_password_page.dart';
 import 'package:recipe_suggestion/view/function_list_page.dart';
@@ -129,7 +130,21 @@ class _LoginPageState extends State<LoginPage> {
         debugPrint("login buttonクリック");
 
         FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        await firebaseAuth.authenticateWithPassword(email.text, password.text);
+        // await firebaseAuth
+        //     .authenticateWithPassword(email.text, password.text)
+        //     .then((value) {
+        //   debugPrint("ログイン成功");
+        // }).onError((error, stackTrace) {
+        //   debugPrint(
+        //       "_loginButtonクリック処理用デバッグ----------------------------------------");
+        //   debugPrint("${error}");
+        // });
+        try {
+          await firebaseAuth.authenticateWithPassword(
+              email.text, password.text);
+        } on FirebaseAuthException catch (e) {
+          debugPrint("${e.code}");
+        }
       },
       child: const Text("ログイン"),
     );
@@ -149,7 +164,15 @@ class _LoginPageState extends State<LoginPage> {
         debugPrint("Google login buttonクリック");
 
         FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        await firebaseAuth.authenticateWithGoogle();
+        await firebaseAuth.authenticateWithGoogle().then((value) {
+          debugPrint("ログインに成功");
+        }).onError((error, stackTrace) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('ログイン処理に失敗しました'),
+            ),
+          );
+        });
       },
       child: const Text("Googleアカウントログイン"),
     );
