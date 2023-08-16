@@ -157,15 +157,15 @@ class _LoginPageState extends State<LoginPage> {
       onPressed: () async {
         debugPrint("Google login buttonクリック");
 
-        await FirebaseAuthentication.authenticateWithGoogle().then((value) {
-          debugPrint("ログインに成功");
-        }).onError((error, stackTrace) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('ログイン処理に失敗しました'),
-            ),
-          );
-        });
+        try {
+          await FirebaseAuthentication.authenticateWithGoogle();
+          debugPrint("ログイン成功");
+        } catch (exp) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("ログインに失敗しました"));
+          }
+        }
       },
       child: const Text("Googleアカウントログイン"),
     );
