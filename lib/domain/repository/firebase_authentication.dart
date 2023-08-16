@@ -10,7 +10,7 @@ class FirebaseAuthentication {
   /// [emailAddress] メールアドレス
   /// [password] パスワード
   ///
-  Future<void> registerWithPassword(
+  static Future<void> registerWithPassword(
       final String emailAddress, final String password) async {
     try {
       final credential =
@@ -33,7 +33,7 @@ class FirebaseAuthentication {
   ///
   /// Googleアカウント認証を行う
   ///
-  Future<UserCredential> authenticateWithGoogle() async {
+  static Future<UserCredential> authenticateWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -57,7 +57,7 @@ class FirebaseAuthentication {
   /// [emailAddress] メールアドレス
   /// [password] パスワード
   ///
-  Future<void> authenticateWithPassword(
+  static Future<void> authenticateWithPassword(
       final String emailAddress, final String password) async {
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: emailAddress, password: password);
@@ -68,7 +68,7 @@ class FirebaseAuthentication {
   ///
   /// [emailAddress] メールアドレス
   ///
-  Future<void> reissuePassword(final String emailAddress) async {
+  static Future<void> reissuePassword(final String emailAddress) async {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: emailAddress);
     } catch (e) {
@@ -82,14 +82,14 @@ class FirebaseAuthentication {
   /// 戻り値::サインイン済みの場合は、ユーザ情報を返却
   ///        そうでない場合、null
   ///
-  User? fetchSignedInUser() {
+  static User? fetchSignedInUser() {
     return FirebaseAuth.instance.currentUser;
   }
 
   ///
   /// ログアウト処理
   ///
-  Future<void> signOut() async {
+  static Future<void> signOut() async {
     try {
       await FirebaseAuth.instance.signOut();
     } catch (e) {

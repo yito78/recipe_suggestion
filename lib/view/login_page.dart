@@ -131,9 +131,8 @@ class _LoginPageState extends State<LoginPage> {
       onPressed: () async {
         debugPrint("login buttonクリック");
 
-        FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
         try {
-          await firebaseAuth.authenticateWithPassword(
+          await FirebaseAuthentication.authenticateWithPassword(
               email.text, password.text);
         } on FirebaseAuthException catch (e) {
           String errorMessage = firebase_auth_error.getExceptionMessage(e);
@@ -158,8 +157,7 @@ class _LoginPageState extends State<LoginPage> {
       onPressed: () async {
         debugPrint("Google login buttonクリック");
 
-        FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        await firebaseAuth.authenticateWithGoogle().then((value) {
+        await FirebaseAuthentication.authenticateWithGoogle().then((value) {
           debugPrint("ログインに成功");
         }).onError((error, stackTrace) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -212,8 +210,8 @@ class _LoginPageState extends State<LoginPage> {
       onPressed: () async {
         debugPrint("register buttonクリック");
 
-        FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        await firebaseAuth.registerWithPassword(email.text, password.text);
+        await FirebaseAuthentication.registerWithPassword(
+            email.text, password.text);
       },
       style: const ButtonStyle(
         backgroundColor: MaterialStatePropertyAll<Color>(Colors.orange),
