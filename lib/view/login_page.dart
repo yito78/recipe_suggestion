@@ -135,9 +135,9 @@ class _LoginPageState extends State<LoginPage> {
           await firebaseAuth.authenticateWithPassword(
               email.text, password.text);
         } on FirebaseAuthException catch (e) {
-          debugPrint("${e.code} ${e.code.runtimeType}");
           String errorMessage = FirebaseAuthError.exceptionMessage(e);
-          debugPrint("errorMessage: $errorMessage");
+          final snackBar = SnackBar(content: Text(errorMessage));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
       },
       child: const Text("ログイン"),
