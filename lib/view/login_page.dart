@@ -162,8 +162,8 @@ class _LoginPageState extends State<LoginPage> {
           debugPrint("ログイン成功");
         } catch (exp) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("ログインに失敗しました"));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("ログインに失敗しました")));
           }
         }
       },
