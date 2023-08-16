@@ -135,7 +135,7 @@ class _LoginPageState extends State<LoginPage> {
           await firebaseAuth.authenticateWithPassword(
               email.text, password.text);
         } on FirebaseAuthException catch (e) {
-          String errorMessage = FirebaseAuthError.exceptionMessage(e);
+          String errorMessage = FirebaseAuthError.getExceptionMessage(e);
           final snackBar = SnackBar(content: Text(errorMessage));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
