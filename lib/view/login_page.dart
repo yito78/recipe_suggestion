@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:recipe_suggestion/utils/firebase_auth_error.dart';
+import 'package:recipe_suggestion/utils/firebase_auth_error.dart'
+    as firebase_auth_error;
 import 'package:recipe_suggestion/view/forget_password_page.dart';
 import 'package:recipe_suggestion/view/function_list_page.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
@@ -135,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
           await firebaseAuth.authenticateWithPassword(
               email.text, password.text);
         } on FirebaseAuthException catch (e) {
-          String errorMessage = FirebaseAuthError.getExceptionMessage(e);
+          String errorMessage = firebase_auth_error.getExceptionMessage(e);
           final snackBar = SnackBar(content: Text(errorMessage));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
