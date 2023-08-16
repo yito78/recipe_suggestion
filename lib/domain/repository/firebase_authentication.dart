@@ -34,7 +34,6 @@ class FirebaseAuthentication {
   /// Googleアカウント認証を行う
   ///
   Future<UserCredential> authenticateWithGoogle() async {
-    // throw Exception()
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
