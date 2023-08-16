@@ -8,37 +8,28 @@ import 'package:firebase_auth/firebase_auth.dart';
 ///　戻り値::エラーメッセージ
 ///
 String getExceptionMessage(FirebaseAuthException error) {
-  String message = "";
+  // String return "";
 
   switch (error.code) {
     case "invalid-email":
-      message = "メールアドレスが間違ってます。";
-      break;
+      return "メールアドレスが間違ってます。";
 
     case "wrong-password":
-      message = "パスワードが間違ってます。";
-      break;
+      return "パスワードが間違ってます。";
 
     case "user-not-found":
-      message = "このアカウントは存在しません。";
-      break;
+      return "このアカウントは存在しません。";
 
     case "user-disabled":
-      message = "このアカウントは無効です。";
-      break;
+      return "このアカウントは無効です。";
 
     case "too-many-requests":
-      message = "回線が混雑してます。時間をおいて試してください。";
-      break;
+      return "回線が混雑してます。時間をおいて試してください。";
 
     case "email-already-in-use":
-      message = "このメールアドレスは既に登録されてます。";
-      break;
+      return "このメールアドレスは既に登録されてます。";
 
     default:
-      message = "予期せぬエラーが発生しました。システム管理者へ連絡してください。";
-      break;
+      return "予期せぬエラーが発生しました。システム管理者へ連絡してください。";
   }
-
-  return message;
 }
