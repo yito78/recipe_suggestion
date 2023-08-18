@@ -62,8 +62,8 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
       onPressed: () async {
         debugPrint("パスワード再発行 buttonクリック");
 
-        FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        await firebaseAuth.reissuePassword(emailTextEditingController.text);
+        await FirebaseAuthentication.reissuePassword(
+            emailTextEditingController.text);
 
         if (context.mounted) {
           _navigate(context, page);

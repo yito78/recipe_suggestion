@@ -75,8 +75,7 @@ class DrawerComponent extends StatelessWidget {
         TextButton(
           // ログアウト処理
           onPressed: () async {
-            FirebaseAuthentication firebase = FirebaseAuthentication();
-            await firebase.signOut();
+            await FirebaseAuthentication.signOut();
 
             if (context.mounted) {
               // モーダル画面の除去

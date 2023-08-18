@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_suggestion/utils/firebase_auth_error.dart'
+    as firebase_auth_error;
 import 'package:recipe_suggestion/view/forget_password_page.dart';
 import 'package:recipe_suggestion/view/function_list_page.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
@@ -128,8 +131,14 @@ class _LoginPageState extends State<LoginPage> {
       onPressed: () async {
         debugPrint("login buttonクリック");
 
-        FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        await firebaseAuth.authenticateWithPassword(email.text, password.text);
+        try {
+          await FirebaseAuthentication.authenticateWithPassword(
+              email.text, password.text);
+        } on FirebaseAuthException catch (e) {
+          String errorMessage = firebase_auth_error.getExceptionMessage(e);
+          final snackBar = SnackBar(content: Text(errorMessage));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
       },
       child: const Text("ログイン"),
     );
@@ -148,8 +157,15 @@ class _LoginPageState extends State<LoginPage> {
       onPressed: () async {
         debugPrint("Google login buttonクリック");
 
-        FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        await firebaseAuth.authenticateWithGoogle();
+        try {
+          await FirebaseAuthentication.authenticateWithGoogle();
+          debugPrint("ログイン成功");
+        } catch (exp) {
+          if (mounted) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("ログインに失敗しました")));
+          }
+        }
       },
       child: const Text("Googleアカウントログイン"),
     );
@@ -194,8 +210,8 @@ class _LoginPageState extends State<LoginPage> {
       onPressed: () async {
         debugPrint("register buttonクリック");
 
-        FirebaseAuthentication firebaseAuth = FirebaseAuthentication();
-        await firebaseAuth.registerWithPassword(email.text, password.text);
+        await FirebaseAuthentication.registerWithPassword(
+            email.text, password.text);
       },
       style: const ButtonStyle(
         backgroundColor: MaterialStatePropertyAll<Color>(Colors.orange),
