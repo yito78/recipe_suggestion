@@ -77,13 +77,23 @@ class FirebaseAuthentication {
   }
 
   ///
-  /// サインイン済みユーザのログイン情報を取得する
+  /// サインイン済みユーザのログインIDを取得する
   ///
   /// 戻り値::サインイン済みの場合は、ユーザ情報を返却
   ///        そうでない場合、null
   ///
-  static User? fetchSignedInUser() {
-    return FirebaseAuth.instance.currentUser;
+  static Future<String?> fetchSignedInUserId() async {
+    final auth = FirebaseAuth.instance;
+    final uid = auth.currentUser?.uid.toString();
+
+    // 画面開いた状態で、セッション切れた場合を想定
+    // ログイン情報がなしと判断し、サインアウト処理を実行する
+    // ログイン画面に戻す(状態遷移により実現)
+    if (uid == null) {
+      await signOut();
+    }
+
+    return uid;
   }
 
   ///

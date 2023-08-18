@@ -9,7 +9,7 @@ part 'recipes_data.g.dart';
 class RecipesDataNotifier extends _$RecipesDataNotifier {
   @override
   // 初期化処理
-  Future<List<Recipe>> build() async {
+  Future<List<Recipe>?> build() async {
     return _fetchAllRecipesData();
   }
 
@@ -19,9 +19,9 @@ class RecipesDataNotifier extends _$RecipesDataNotifier {
   }
 
   // レシピデータを全件取得
-  Future<List<Recipe>> _fetchAllRecipesData() async {
+  Future<List<Recipe>?> _fetchAllRecipesData() async {
     Firebase firebase = Firebase();
-    List<Recipe> data = await firebase.searchAllRecipes();
+    List<Recipe>? data = await firebase.searchAllRecipes();
     return data;
   }
 }

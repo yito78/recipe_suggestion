@@ -24,13 +24,13 @@ class RecipeListPage extends ConsumerWidget {
     final recipesWatch = ref.watch(recipesDataNotifierProvider);
 
     // 監視データからデータ抽出
-    AsyncValue<List<Recipe>> fetchedRecipesData = recipesWatch.when(data: (d) {
+    AsyncValue<List<Recipe>?> fetchedRecipesData = recipesWatch.when(data: (d) {
       return AsyncValue.data(d);
     }, error: (e, s) {
       _outputErrorLog(e, s);
       return AsyncValue.error(e, s);
     }, loading: () {
-      return AsyncValue.loading();
+      return const AsyncValue.loading();
     });
 
     List<Recipe> recipeList = [];

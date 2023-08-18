@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 
 import '../../data/recipe.dart';
 
@@ -9,13 +10,20 @@ class Firebase {
   ///
   /// 戻り値::recipesコレクションのデータ
   ///
-  Future<List<Recipe>> searchAllRecipes() async {
+  Future<List<Recipe>?> searchAllRecipes() async {
     // recipesコレクションのデータ
     final recipeList = <Recipe>[];
+
+    String? uid = await FirebaseAuthentication.fetchSignedInUserId();
+
+    if (uid == null) {
+      return null;
+    }
 
     // usersコレクションのデータを取得
     await FirebaseFirestore.instance
         .collection('recipes')
+        .where("uid", isEqualTo: uid)
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {

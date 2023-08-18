@@ -20,7 +20,7 @@ class FunctionListPage extends ConsumerWidget {
     final recipesWatch = ref.watch(recipesDataNotifierProvider);
 
     // recipesデータからデータ抽出
-    AsyncValue<List<Recipe>> fetchedRecipesData = recipesWatch.when(data: (d) {
+    AsyncValue<List<Recipe>?> fetchedRecipesData = recipesWatch.when(data: (d) {
       return AsyncValue.data(d);
     }, error: (e, s) {
       _outputErrorLog(e, s);
