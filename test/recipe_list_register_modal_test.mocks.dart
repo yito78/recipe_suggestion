@@ -472,7 +472,7 @@ class MockFirebase extends _i1.Mock implements _i7.Firebase {
         returnValue: _i5.Future<dynamic>.value(),
       ) as _i5.Future<dynamic>);
   @override
-  _i5.Future<dynamic> updataRecipes(
+  _i5.Future<dynamic> updateRecipes(
     dynamic name,
     dynamic category,
     dynamic originalName,
@@ -480,7 +480,7 @@ class MockFirebase extends _i1.Mock implements _i7.Firebase {
   ) =>
       (super.noSuchMethod(
         Invocation.method(
-          #updataRecipes,
+          #updateRecipes,
           [
             name,
             category,

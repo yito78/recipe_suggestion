@@ -103,7 +103,7 @@ class _RecipeListEditModalPageState extends State<RecipeListEditModalPage> {
                 onPressed: () async {
                   // 更新ボタンが押された時の処理
                   Firebase firebase = Firebase();
-                  await firebase.updataRecipes(recipeTextFieldValue.text,
+                  await firebase.updateRecipes(recipeTextFieldValue.text,
                       defaultDropdownValue, originalName, originalCategory);
                   Navigator.of(context).pop(true);
                 },

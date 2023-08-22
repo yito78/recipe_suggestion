@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_suggestion/domain/repository/firebase.dart';
 
-// 登録済みレシピ一覧画面の削除ボタンクリック時のモーダル画面クラス
+/// 登録済みレシピ一覧画面の削除ボタンクリック時のモーダル画面クラス
 class RecipeListDeleteModalPage extends StatefulWidget {
-  List<String> recipeAndCategoryList;
-  List<Map<String, dynamic>> categoryDataList;
+  final List<String> recipeAndCategoryList;
+  final List<Map<String, dynamic>> categoryDataList;
 
-  RecipeListDeleteModalPage(
+  const RecipeListDeleteModalPage(
       {Key? key,
       required this.recipeAndCategoryList,
       required this.categoryDataList})
@@ -45,21 +45,21 @@ class _RecipeListDeleteModalPageState extends State<RecipeListDeleteModalPage> {
     var screenSize = MediaQuery.of(context).size;
 
     return AlertDialog(
-      title: Center(child: Text("レシピ削除")),
-      content: Container(
+      title: const Center(child: Text("レシピ削除")),
+      content: SizedBox(
         height: screenSize.height * 0.3,
         child: Column(
           children: [
             Row(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: SizedBox(
                     width: screenSize.width * 0.20,
-                    child: Text("カテゴリ名"),
+                    child: const Text("カテゴリ名"),
                   ),
                 ),
-                Container(
+                SizedBox(
                   child: Text(categoryLabel),
                 )
               ],
@@ -67,13 +67,13 @@ class _RecipeListDeleteModalPageState extends State<RecipeListDeleteModalPage> {
             Row(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: SizedBox(
                     width: screenSize.width * 0.20,
-                    child: Text("レシピ名"),
+                    child: const Text("レシピ名"),
                   ),
                 ),
-                Container(
+                SizedBox(
                   child: Text(recipeLabel),
                 )
               ],
