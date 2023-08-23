@@ -138,12 +138,12 @@ class FunctionListPage extends ConsumerWidget {
     log.accessLog(runtimeType.toString());
   }
 
-  //
-  // エラー発生内容をアナリティクスログとして出力する
-  //
-  // e::エラークラス
-  // s::スタックトレース
-  //
+  ///
+  /// エラー発生内容をアナリティクスログとして出力する
+  ///
+  /// [e] エラークラス
+  /// [s] スタックトレース
+  ///
   _outputErrorLog(e, s) {
     Log log = Log();
     log.errorLog(runtimeType.toString(), e, s);

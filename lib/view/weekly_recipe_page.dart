@@ -31,7 +31,7 @@ class WeeklyRecipePage extends ConsumerWidget {
     }, error: (e, s) {
       return AsyncValue.error(e, s);
     }, loading: () {
-      return AsyncValue.loading();
+      return const AsyncValue.loading();
     });
 
     ///
@@ -69,9 +69,9 @@ class WeeklyRecipePage extends ConsumerWidget {
 
               if (value != null) {
                 regetRecipeData();
-                print("更新ボタンがクリックされました");
+                debugPrint("更新ボタンがクリックされました");
               } else {
-                print("閉じるボタンがクリックされました");
+                debugPrint("閉じるボタンがクリックされました");
               }
             },
             child: const Icon(Icons.refresh),
@@ -144,6 +144,10 @@ class WeeklyRecipePage extends ConsumerWidget {
       "土曜日": 5,
       "日曜日": 6,
     };
+
+    print("666666666666666666666666666666666");
+    print(recipeByCategoryId);
+    print("666666666666666666666666666666666");
 
     return SizedBox(
         height: setHeight,

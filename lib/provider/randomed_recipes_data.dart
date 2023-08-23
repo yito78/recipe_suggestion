@@ -16,6 +16,9 @@ class RandomedRecipesDataNotifier extends _$RandomedRecipesDataNotifier {
     Future<Map<int, List<dynamic>>> stateData =
         weeklyRecipe.createWeeklyRecipe(recipeData);
 
+    print("444444444444444444444444444444444444444444444444");
+    print(await stateData);
+    print("444444444444444444444444444444444444444444444444");
     return stateData;
   }
 
