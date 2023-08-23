@@ -36,7 +36,7 @@ class Firebase {
     return recipeList;
   }
 
-  Future<List<Map<String, dynamic>>> searchAllCategories() async {
+  static Future<List<Map<String, dynamic>>> searchAllCategories() async {
     // recipesコレクションのデータ
     List<Map<String, dynamic>> categoriesData = [];
 

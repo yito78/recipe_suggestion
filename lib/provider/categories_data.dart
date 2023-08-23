@@ -13,14 +13,13 @@ class CategoriesDataNotifier extends _$CategoriesDataNotifier {
   }
 
   // カテゴリデータ更新処理
-  fetchCategoriesDataState() async{
+  fetchCategoriesDataState() async {
     state = AsyncValue.data(await _fetchAllCategoriesData());
   }
 
   // カテゴリデータを全件取得
   Future<List<Map<String, dynamic>>> _fetchAllCategoriesData() async {
-    Firebase firebase = Firebase();
-    List<Map<String, dynamic>> data = await firebase.searchAllCategories();
+    List<Map<String, dynamic>> data = await Firebase.searchAllCategories();
     return data;
   }
 }

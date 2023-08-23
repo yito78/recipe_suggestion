@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/data/recipe.dart';
+import 'package:recipe_suggestion/domain/repository/firebase.dart';
 import 'package:recipe_suggestion/provider/recipes_data.dart';
 import 'package:recipe_suggestion/utils/log.dart';
 import 'package:recipe_suggestion/view/drawer_component.dart';
@@ -47,6 +48,8 @@ class FunctionListPage extends ConsumerWidget {
               recipeWatch.value?.forEach((element) {
                 list.add(element);
               });
+              _isValidRecipeData(fetchedRecipesData);
+
               if (list.isEmpty) {
                 return _button(context, const WeeklyRecipePage(),
                     const Text("1週間のレシピ一覧"), false);
@@ -147,5 +150,37 @@ class FunctionListPage extends ConsumerWidget {
   _outputErrorLog(e, s) {
     Log log = Log();
     log.errorLog(runtimeType.toString(), e, s);
+  }
+
+  ///
+  ///
+  ///
+  ///
+  ///
+  ///
+  ///
+  Future<bool> _isValidRecipeData(AsyncValue<List<Recipe>?> recipeData) async {
+    Map<int, dynamic> checkerByCategoryId = {};
+    List<Map<String, dynamic>> categories =
+        await Firebase.searchAllCategories();
+
+    for (var category in categories) {
+      // [0, 1, 2]
+      checkerByCategoryId[category["category_id"]];
+    }
+
+    debugPrint("111111111111111111111111111111111111");
+    debugPrint("${recipeData.value}");
+    debugPrint("111111111111111111111111111111111111");
+    if (recipeData.value == null) {
+      return false;
+    }
+
+    for (var data in recipeData.value!) {
+      checkerByCategoryId[data.category] = "check";
+    }
+
+    // TODO 各カテゴリIDのキーに対して、値が設定されているか確認する
+    return true;
   }
 }
