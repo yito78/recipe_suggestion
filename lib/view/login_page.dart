@@ -62,8 +62,8 @@ class _LoginPageState extends State<LoginPage> {
             ),
 
             // ログイン
-            _loginButton(context, const FunctionListPage(),
-                emailTextEditController, passwordTextEditController),
+            _loginButton(context, FunctionListPage(), emailTextEditController,
+                passwordTextEditController),
 
             const SizedBox(
               height: 10.0,
@@ -77,14 +77,14 @@ class _LoginPageState extends State<LoginPage> {
             ),
 
             // Googleアカウントでログイン
-            _googleLoginButton(context, const FunctionListPage()),
+            _googleLoginButton(context, FunctionListPage()),
 
             const SizedBox(
               height: 20.0,
             ),
 
             // 新規登録
-            _registerButton(context, const FunctionListPage(),
+            _registerButton(context, FunctionListPage(),
                 emailTextEditController, passwordTextEditController),
           ],
         ),

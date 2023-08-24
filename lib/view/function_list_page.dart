@@ -11,7 +11,9 @@ import 'package:recipe_suggestion/view/weekly_recipe_page.dart';
 
 /// 機能一覧画面生成クラス
 class FunctionListPage extends ConsumerWidget {
-  const FunctionListPage({Key? key}) : super(key: key);
+  late bool isActivated;
+
+  // const FunctionListPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,6 +24,10 @@ class FunctionListPage extends ConsumerWidget {
 
     // recipesデータからデータ抽出
     AsyncValue<List<Recipe>?> fetchedRecipesData = recipesWatch.when(data: (d) {
+      _isValidRecipeData(AsyncValue.data(d)).then((value) {
+        isActivated = value;
+      });
+
       return AsyncValue.data(d);
     }, error: (e, s) {
       _outputErrorLog(e, s);
@@ -48,15 +54,15 @@ class FunctionListPage extends ConsumerWidget {
               recipeWatch.value?.forEach((element) {
                 list.add(element);
               });
-              _isValidRecipeData(fetchedRecipesData);
 
-              if (list.isEmpty) {
-                return _button(context, const WeeklyRecipePage(),
-                    const Text("1週間のレシピ一覧"), false);
-              } else {
-                return _button(
-                    context, const WeeklyRecipePage(), const Text("1週間のレシピ一覧"));
-              }
+              _isValidRecipeData(fetchedRecipesData).then((value) {
+                isActivated = value;
+              });
+
+              print("2222222222222222222222222222222222222222222$isActivated");
+
+              return _button(context, const WeeklyRecipePage(),
+                  const Text("1週間のレシピ一覧"), isActivated);
             }),
             _button(context, const RecipeListPage(), const Text("登録レシピ一覧")),
             _button(context, const ImportCsvPage(), const Text("CSVファイルデータ登録")),
@@ -164,23 +170,25 @@ class FunctionListPage extends ConsumerWidget {
     List<Map<String, dynamic>> categories =
         await Firebase.searchAllCategories();
 
-    for (var category in categories) {
-      // [0, 1, 2]
-      checkerByCategoryId[category["category_id"]];
-    }
-
-    debugPrint("111111111111111111111111111111111111");
-    debugPrint("${recipeData.value}");
-    debugPrint("111111111111111111111111111111111111");
     if (recipeData.value == null) {
       return false;
+    }
+
+    for (var category in categories) {
+      checkerByCategoryId[category["category_id"]];
     }
 
     for (var data in recipeData.value!) {
       checkerByCategoryId[data.category] = "check";
     }
 
-    // TODO 各カテゴリIDのキーに対して、値が設定されているか確認する
+    for (var category in categories) {
+      debugPrint("${checkerByCategoryId[category["category_id"]]}");
+      if (checkerByCategoryId[category["category_id"]] != "check") {
+        return false;
+      }
+    }
+
     return true;
   }
 }
