@@ -61,11 +61,13 @@ class FunctionListPage extends ConsumerWidget {
 
               print("2222222222222222222222222222222222222222222$isActivated");
 
-              return _button(context, const WeeklyRecipePage(),
+              return _createButton(context, const WeeklyRecipePage(),
                   const Text("1週間のレシピ一覧"), isActivated);
             }),
-            _button(context, const RecipeListPage(), const Text("登録レシピ一覧")),
-            _button(context, const ImportCsvPage(), const Text("CSVファイルデータ登録")),
+            _createButton(
+                context, const RecipeListPage(), const Text("登録レシピ一覧")),
+            _createButton(
+                context, const ImportCsvPage(), const Text("CSVファイルデータ登録")),
           ],
         ),
         // firestoreデータ再取得ボタン
@@ -75,17 +77,17 @@ class FunctionListPage extends ConsumerWidget {
     );
   }
 
-  //
-  // ボタンWidget作成
-  //
-  // context::build時のcontext
-  // page::遷移先のページ
-  // text::表示されるボタン名
-  // isActivated::ボタン活性状態制御フラグ(true: 活性状態、false: 非活性状態)
-  //
-  // 戻り値::ElevatedButton
-  //
-  Widget _button(context, page, text, [bool isActivated = true]) {
+  ///
+  /// ボタンWidget作成
+  ///
+  /// [context] build時のcontext
+  /// [page] 遷移先のページ
+  /// [text] 表示されるボタン名
+  /// [isActivated] ボタン活性状態制御フラグ(true: 活性状態、false: 非活性状態)
+  ///
+  /// 戻り値::ElevatedButton
+  ///
+  Widget _createButton(context, page, text, [bool isActivated = true]) {
     // 横幅定義用データ
     var screenSize = MediaQuery.of(context).size;
 
@@ -102,28 +104,28 @@ class FunctionListPage extends ConsumerWidget {
     );
   }
 
-  //
-  // 画面遷移処理
-  //
-  // context::build時のcontext
-  // page::遷移先のページ
-  //
-  // 戻り値::なし
-  //
+  ///
+  /// 画面遷移処理
+  ///
+  /// [context] build時のcontext
+  /// [page] 遷移先のページ
+  ///
+  /// 戻り値::なし
+  ///
   _navigate(context, page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
-  //
-  // firestoreからのデータ再取得ボタン
-  // 画面描画時、firestoreからデータ取得失敗時を想定し、ボタン設置
-  //
-  // context::BuilderContextオブジェクト
-  // fetchedRecipesData::firestoreデータ
-  // ref::recipeデータの監視データ
-  //
-  // 戻り値::FloatingActionButton Widget
-  //
+  ///
+  /// firestoreからのデータ再取得ボタン
+  /// 画面描画時、firestoreからデータ取得失敗時を想定し、ボタン設置
+  ///
+  /// [context] BuilderContextオブジェクト
+  /// [fetchedRecipesData] firestoreデータ
+  /// [ref] recipeデータの監視データ
+  ///
+  /// 戻り値::FloatingActionButton Widget
+  ///
   Widget _floatingActionButton(context, fetchedRecipesData, ref) {
     return FloatingActionButton(
       onPressed: () async {
@@ -139,9 +141,9 @@ class FunctionListPage extends ConsumerWidget {
     );
   }
 
-  //
-  // 機能にアクセスされたことをアナリティクスログとして出力する
-  //
+  ///
+  /// 機能にアクセスされたことをアナリティクスログとして出力する
+  ///
   _outputAccessLog() {
     Log log = Log();
     log.accessLog(runtimeType.toString());
@@ -159,11 +161,12 @@ class FunctionListPage extends ConsumerWidget {
   }
 
   ///
+  /// 1週間レシピ機能の利用判定を実施
+  ///   各カテゴリにレシピデータが1件以上登録されていれば、利用可能
   ///
+  /// [recipeData] レシピデータ
   ///
-  ///
-  ///
-  ///
+  ///　戻り値::true 利用可能
   ///
   Future<bool> _isValidRecipeData(AsyncValue<List<Recipe>?> recipeData) async {
     Map<int, dynamic> checkerByCategoryId = {};
