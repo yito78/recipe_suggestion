@@ -5,29 +5,48 @@ import 'package:recipe_suggestion/domain/repository/firebase.dart';
 import 'package:recipe_suggestion/provider/recipes_data.dart';
 import 'package:recipe_suggestion/utils/log.dart';
 import 'package:recipe_suggestion/view/drawer_component.dart';
-import 'package:recipe_suggestion/view/import_csv_page.dart';
+// import 'package:recipe_suggestion/view/import_csv_page.dart';
 import 'package:recipe_suggestion/view/recipe_list_page.dart';
 import 'package:recipe_suggestion/view/weekly_recipe_page.dart';
 
 /// 機能一覧画面生成クラス
-class FunctionListPage extends ConsumerWidget {
+class FunctionListPage extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<FunctionListPage> createState() => _FunctionListPageState();
+}
+
+class _FunctionListPageState extends ConsumerState<FunctionListPage> {
   late bool isActivated;
 
-  // const FunctionListPage({Key? key}) : super(key: key);
+  @override
+  void initState() {
+    super.initState();
+    Future(() async {
+      debugPrint("111111111111111111111111111111111111");
+      final recipeWatch = ref.watch(recipesDataNotifierProvider);
+      debugPrint("222222222222222222222222222222222222");
+      await _isValidRecipeData(recipeWatch.value).then((value) {
+        isActivated = value;
+        setState(() {
+          debugPrint("3333333333333333333333333333 $isActivated");
+        });
+      });
+
+      debugPrint("44444444444444444444444444444444 $isActivated");
+    });
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    debugPrint("444444444444444444444444444444444444");
     _outputAccessLog();
 
     // recipesデータの監視
     final recipesWatch = ref.watch(recipesDataNotifierProvider);
+    // final categoryWatch = ref.watch(categoryDatanotifierProvider);
 
     // recipesデータからデータ抽出
     AsyncValue<List<Recipe>?> fetchedRecipesData = recipesWatch.when(data: (d) {
-      _isValidRecipeData(AsyncValue.data(d)).then((value) {
-        isActivated = value;
-      });
-
       return AsyncValue.data(d);
     }, error: (e, s) {
       _outputErrorLog(e, s);
@@ -36,16 +55,29 @@ class FunctionListPage extends ConsumerWidget {
       return const AsyncValue.loading();
     });
 
+    final recipes = fetchedRecipesData.value;
+
+    _isValidRecipeData(recipes).then((value) {
+      isActivated = value;
+      setState(() {
+        debugPrint("3333333333333333333333333333 $isActivated");
+      });
+    });
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           title: const Center(child: Text("機能一覧")),
           automaticallyImplyLeading: false,
         ),
-        // 現状drawerにはログアウト機能のみのため、ログイン状態であれば表示、そうでなければ非表示とする
         endDrawer: const DrawerComponent(),
         body: Column(
           children: [
+            _createButton(context, const WeeklyRecipePage(), const Text("テスト"),
+                recipes?.isNotEmpty ?? false),
+            //
+            // statefulConsumerWidgetに変換
+            // isActivatedをstatefulConsumerWidgetStateでstateに当てはめる
             // 部分的に再レンダリング
             Consumer(
                 builder: (BuildContext context, WidgetRef ref, Widget? child) {
@@ -55,19 +87,20 @@ class FunctionListPage extends ConsumerWidget {
                 list.add(element);
               });
 
-              _isValidRecipeData(fetchedRecipesData).then((value) {
+              _isValidRecipeData(recipeWatch.value).then((value) {
                 isActivated = value;
               });
 
-              print("2222222222222222222222222222222222222222222$isActivated");
-
-              return _createButton(context, const WeeklyRecipePage(),
-                  const Text("1週間のレシピ一覧"), isActivated);
+              if (list.isEmpty) {
+                return _createButton(context, const WeeklyRecipePage(),
+                    const Text("1週間のレシピ一覧"), false);
+              } else {
+                return _createButton(context, const WeeklyRecipePage(),
+                    const Text("1週間のレシピ一覧"), isActivated);
+              }
             }),
             _createButton(
                 context, const RecipeListPage(), const Text("登録レシピ一覧")),
-            _createButton(
-                context, const ImportCsvPage(), const Text("CSVファイルデータ登録")),
           ],
         ),
         // firestoreデータ再取得ボタン
@@ -168,12 +201,12 @@ class FunctionListPage extends ConsumerWidget {
   ///
   ///　戻り値::true 利用可能
   ///
-  Future<bool> _isValidRecipeData(AsyncValue<List<Recipe>?> recipeData) async {
+  Future<bool> _isValidRecipeData(List<Recipe>? recipeData) async {
     Map<int, dynamic> checkerByCategoryId = {};
     List<Map<String, dynamic>> categories =
         await Firebase.searchAllCategories();
 
-    if (recipeData.value == null) {
+    if (recipeData == null) {
       return false;
     }
 
@@ -181,12 +214,12 @@ class FunctionListPage extends ConsumerWidget {
       checkerByCategoryId[category["category_id"]];
     }
 
-    for (var data in recipeData.value!) {
+    for (var data in recipeData) {
       checkerByCategoryId[data.category] = "check";
     }
 
     for (var category in categories) {
-      debugPrint("${checkerByCategoryId[category["category_id"]]}");
+      debugPrint("55555555 ${checkerByCategoryId[category["category_id"]]}");
       if (checkerByCategoryId[category["category_id"]] != "check") {
         return false;
       }
