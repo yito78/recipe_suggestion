@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/data/recipe.dart';
-import 'package:recipe_suggestion/domain/repository/firebase.dart';
+import 'package:recipe_suggestion/provider/categories_data.dart';
 import 'package:recipe_suggestion/provider/recipes_data.dart';
 import 'package:recipe_suggestion/utils/log.dart';
 import 'package:recipe_suggestion/view/drawer_component.dart';
-// import 'package:recipe_suggestion/view/import_csv_page.dart';
 import 'package:recipe_suggestion/view/recipe_list_page.dart';
 import 'package:recipe_suggestion/view/weekly_recipe_page.dart';
 
@@ -19,31 +18,13 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
   late bool isActivated;
 
   @override
-  void initState() {
-    super.initState();
-    Future(() async {
-      debugPrint("111111111111111111111111111111111111");
-      final recipeWatch = ref.watch(recipesDataNotifierProvider);
-      debugPrint("222222222222222222222222222222222222");
-      await _isValidRecipeData(recipeWatch.value).then((value) {
-        isActivated = value;
-        setState(() {
-          debugPrint("3333333333333333333333333333 $isActivated");
-        });
-      });
-
-      debugPrint("44444444444444444444444444444444 $isActivated");
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    debugPrint("444444444444444444444444444444444444");
     _outputAccessLog();
 
     // recipesデータの監視
     final recipesWatch = ref.watch(recipesDataNotifierProvider);
-    // final categoryWatch = ref.watch(categoryDatanotifierProvider);
+    // categoriesデータの監視
+    final categoriesWatch = ref.watch(categoriesDataNotifierProvider);
 
     // recipesデータからデータ抽出
     AsyncValue<List<Recipe>?> fetchedRecipesData = recipesWatch.when(data: (d) {
@@ -54,15 +35,21 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
     }, loading: () {
       return const AsyncValue.loading();
     });
-
     final recipes = fetchedRecipesData.value;
 
-    _isValidRecipeData(recipes).then((value) {
-      isActivated = value;
-      setState(() {
-        debugPrint("3333333333333333333333333333 $isActivated");
-      });
+    // categoriesデータからデータ抽出
+    AsyncValue<List<Map<String, dynamic>>?> fetchedCategoriesData =
+        categoriesWatch.when(data: (d) {
+      return AsyncValue.data(d);
+    }, error: (e, s) {
+      _outputErrorLog(e, s);
+      return AsyncValue.error(e, s);
+    }, loading: () {
+      return const AsyncValue.loading();
     });
+    final categories = fetchedCategoriesData.value;
+
+    isActivated = _isValidRecipeData(recipes, categories);
 
     return SafeArea(
       child: Scaffold(
@@ -73,32 +60,8 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
         endDrawer: const DrawerComponent(),
         body: Column(
           children: [
-            _createButton(context, const WeeklyRecipePage(), const Text("テスト"),
-                recipes?.isNotEmpty ?? false),
-            //
-            // statefulConsumerWidgetに変換
-            // isActivatedをstatefulConsumerWidgetStateでstateに当てはめる
-            // 部分的に再レンダリング
-            Consumer(
-                builder: (BuildContext context, WidgetRef ref, Widget? child) {
-              final recipeWatch = ref.watch(recipesDataNotifierProvider);
-              List<dynamic> list = [];
-              recipeWatch.value?.forEach((element) {
-                list.add(element);
-              });
-
-              _isValidRecipeData(recipeWatch.value).then((value) {
-                isActivated = value;
-              });
-
-              if (list.isEmpty) {
-                return _createButton(context, const WeeklyRecipePage(),
-                    const Text("1週間のレシピ一覧"), false);
-              } else {
-                return _createButton(context, const WeeklyRecipePage(),
-                    const Text("1週間のレシピ一覧"), isActivated);
-              }
-            }),
+            _createButton(context, const WeeklyRecipePage(),
+                const Text("1週間のレシピ一覧"), isActivated),
             _createButton(
                 context, const RecipeListPage(), const Text("登録レシピ一覧")),
           ],
@@ -198,28 +161,30 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
   ///   各カテゴリにレシピデータが1件以上登録されていれば、利用可能
   ///
   /// [recipeData] レシピデータ
+  /// [categoryData] カテゴリデータ
   ///
   ///　戻り値::true 利用可能
   ///
-  Future<bool> _isValidRecipeData(List<Recipe>? recipeData) async {
+  bool _isValidRecipeData(
+      List<Recipe>? recipeData, List<Map<String, dynamic>>? categoryData) {
     Map<int, dynamic> checkerByCategoryId = {};
-    List<Map<String, dynamic>> categories =
-        await Firebase.searchAllCategories();
-
-    if (recipeData == null) {
+    // データバリデーション
+    if (recipeData == null || categoryData == null) {
       return false;
     }
 
-    for (var category in categories) {
-      checkerByCategoryId[category["category_id"]];
+    // カテゴリ種別を抽出し、後続処理で各カテゴリ種別にデータが存在するかチェックさせる
+    for (var category in categoryData) {
+      checkerByCategoryId[category["category_id"]] = "";
     }
 
+    // 各レシピデータ内のカテゴリ値を元に、カテゴリチェッカーハッシュに証跡を残す
     for (var data in recipeData) {
       checkerByCategoryId[data.category] = "check";
     }
 
-    for (var category in categories) {
-      debugPrint("55555555 ${checkerByCategoryId[category["category_id"]]}");
+    // 各カテゴリ種別に証跡がなければ、利用不可と判定
+    for (var category in categoryData) {
       if (checkerByCategoryId[category["category_id"]] != "check") {
         return false;
       }

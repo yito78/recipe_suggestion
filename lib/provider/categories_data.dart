@@ -9,7 +9,7 @@ class CategoriesDataNotifier extends _$CategoriesDataNotifier {
   @override
   // 初期化処理
   Future<List<Map<String, dynamic>>> build() async {
-    return _fetchAllCategoriesData();
+    return await _fetchAllCategoriesData();
   }
 
   // カテゴリデータ更新処理
