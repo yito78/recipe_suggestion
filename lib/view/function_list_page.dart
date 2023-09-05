@@ -10,6 +10,8 @@ import 'package:recipe_suggestion/view/weekly_recipe_page.dart';
 
 /// 機能一覧画面生成クラス
 class FunctionListPage extends ConsumerStatefulWidget {
+  const FunctionListPage({super.key});
+
   @override
   ConsumerState<FunctionListPage> createState() => _FunctionListPageState();
 }
@@ -49,6 +51,7 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
     });
     final categories = fetchedCategoriesData.value;
 
+    // 1週間のレシピ一覧画面の活性状態を判定(各カテゴリに1件以上データ登録あれば、活性化)
     isActivated = _isValidRecipeData(recipes, categories);
 
     return SafeArea(
