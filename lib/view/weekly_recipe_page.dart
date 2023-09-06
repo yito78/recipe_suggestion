@@ -145,10 +145,6 @@ class WeeklyRecipePage extends ConsumerWidget {
       "日曜日": 6,
     };
 
-    print("666666666666666666666666666666666");
-    print(recipeByCategoryId);
-    print("666666666666666666666666666666666");
-
     return SizedBox(
         height: setHeight,
         child: Card(
