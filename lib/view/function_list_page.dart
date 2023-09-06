@@ -17,7 +17,7 @@ class FunctionListPage extends ConsumerStatefulWidget {
 }
 
 class _FunctionListPageState extends ConsumerState<FunctionListPage> {
-  late bool isActivated;
+  // late bool isActivated;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,8 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
     final categories = fetchedCategoriesData.value;
 
     // 1週間のレシピ一覧画面の活性状態を判定(各カテゴリに1件以上データ登録あれば、活性化)
-    isActivated = _isValidRecipeData(recipes, categories);
+    Map<String, dynamic> validationResultMap =
+        _isValidRecipeData(recipes, categories);
 
     return SafeArea(
       child: Scaffold(
@@ -64,9 +65,14 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
         body: Column(
           children: [
             _createButton(context, const WeeklyRecipePage(),
-                const Text("1週間のレシピ一覧"), isActivated),
+                const Text("1週間のレシピ一覧"), validationResultMap["isActivated"]),
             _createButton(
                 context, const RecipeListPage(), const Text("登録レシピ一覧")),
+            // TODO isActivatedがfalseの場合、エラー文言を表示する
+            validationResultMap["isActivated"]
+                ? Container()
+                : _displayPromoteRegisterMessage(
+                    validationResultMap["validCategoryNames"]),
           ],
         ),
         // firestoreデータ再取得ボタン
@@ -167,13 +173,19 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
   /// [categoryData] カテゴリデータ
   ///
   ///　戻り値::true 利用可能
-  ///
-  bool _isValidRecipeData(
+  /// Map<String, dynamic>
+  Map<String, dynamic> _isValidRecipeData(
       List<Recipe>? recipeData, List<Map<String, dynamic>>? categoryData) {
     Map<int, dynamic> checkerByCategoryId = {};
+    List<String> validCategoryNames = [];
+    Map<String, dynamic> resultData = {
+      "isActivated": false,
+      "validCategoryNames": validCategoryNames,
+    };
+
     // データバリデーション
     if (recipeData == null || categoryData == null) {
-      return false;
+      return resultData;
     }
 
     // カテゴリ種別を抽出し、後続処理で各カテゴリ種別にデータが存在するかチェックさせる
@@ -186,13 +198,32 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
       checkerByCategoryId[data.category] = "check";
     }
 
-    // 各カテゴリ種別に証跡がなければ、利用不可と判定
+    // 各カテゴリ種別にデータがない場合、不正カテゴリ種別としてリスト管理する
     for (var category in categoryData) {
       if (checkerByCategoryId[category["category_id"]] != "check") {
-        return false;
+        validCategoryNames.add(category["name"]);
       }
     }
 
-    return true;
+    // 不正カテゴリ種別がある場合、利用不可の判定
+    if (validCategoryNames.isNotEmpty) {
+      resultData["validCategoryNames"] = validCategoryNames;
+    } else {
+      resultData["isActivated"] = true;
+    }
+
+    return resultData;
+  }
+
+  ///
+  /// レシピデータの登録を促すメッセージを表示する
+  ///
+  /// [validCategoryId] 不正なカテゴリ種別
+  ///
+  /// 戻り値::メッセージ
+  ///
+  ///
+  _displayPromoteRegisterMessage(List<String> validCategoryNames) {
+    return Text("カテゴリ種別: ${validCategoryNames.toString()} のレシピデータを登録してください");
   }
 }
