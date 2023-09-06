@@ -222,8 +222,15 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
   ///
   /// 戻り値::メッセージ
   ///
-  ///
-  _displayPromoteRegisterMessage(List<String> validCategoryNames) {
-    return Text("カテゴリ種別: ${validCategoryNames.toString()} のレシピデータを登録してください");
+  Widget _displayPromoteRegisterMessage(List<String> validCategoryNames) {
+    return Container(
+      padding: const EdgeInsets.all(30.0),
+      child: Text(
+          "※登録レシピ一覧機能より、以下カテゴリ種別のレシピデータを登録してください\n\nカテゴリ種別: ${validCategoryNames.toString()}",
+          style: const TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          )),
+    );
   }
 }
