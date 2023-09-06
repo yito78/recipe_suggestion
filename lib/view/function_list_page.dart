@@ -17,8 +17,6 @@ class FunctionListPage extends ConsumerStatefulWidget {
 }
 
 class _FunctionListPageState extends ConsumerState<FunctionListPage> {
-  // late bool isActivated;
-
   @override
   Widget build(BuildContext context) {
     _outputAccessLog();
@@ -68,7 +66,6 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
                 const Text("1週間のレシピ一覧"), validationResultMap["isActivated"]),
             _createButton(
                 context, const RecipeListPage(), const Text("登録レシピ一覧")),
-            // TODO isActivatedがfalseの場合、エラー文言を表示する
             validationResultMap["isActivated"]
                 ? Container()
                 : _displayPromoteRegisterMessage(
