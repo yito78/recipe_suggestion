@@ -123,14 +123,14 @@ class Firebase {
           instance.collection("users").doc(uid).collection("recipes");
 
       // フィールドの値でクエリを作成
-      Query usersQuery = usersCollection
+      Query recipesQuery = usersCollection
           .doc(uid)
           .collection("recipes")
           .where("name", isEqualTo: "$name")
           .where("category", isEqualTo: category);
 
       // クエリを実行してドキュメントを取得
-      QuerySnapshot querySnapshot = await usersQuery.get();
+      QuerySnapshot querySnapshot = await recipesQuery.get();
 
       // 取得したドキュメントを処理
       querySnapshot.docs.forEach((doc) async {
