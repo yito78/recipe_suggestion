@@ -17,7 +17,6 @@ class Firebase {
     // recipesコレクションのデータ
     final recipeList = <Recipe>[];
 
-    var uid = await _fetchUid();
     // usersコレクションのデータを取得
     await FirebaseFirestore.instance
         .collection("users")
