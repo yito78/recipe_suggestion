@@ -23,8 +23,8 @@ class Firebase {
         .doc(uid)
         .collection('recipes')
         .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
+        .then((QuerySnapshot recipesQS) {
+      recipesQS.docs.forEach((doc) {
         // firestoreデータを格納できるように型変換
         final data = doc.data() as Map<String, dynamic>;
         // お試し
