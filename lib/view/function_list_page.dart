@@ -51,7 +51,7 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
 
     // 1週間のレシピ一覧画面の活性状態を判定(各カテゴリに1件以上データ登録あれば、活性化)
     Map<String, dynamic> validationResultMap =
-        _isValidRecipeData(recipes, categories);
+        _selectInvalidCategoryIdAndIsActivated(recipes, categories);
 
     return SafeArea(
       child: Scaffold(
@@ -170,8 +170,8 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
   /// [categories] カテゴリデータ
   ///
   ///　戻り値::true 利用可能
-  /// Map<String, dynamic>
-  Map<String, dynamic> _isValidRecipeData(
+  /// selectInvalidCategoryIdAndIsActivated
+  Map<String, dynamic> _selectInvalidCategoryIdAndIsActivated(
       List<Recipe>? recipes, List<Map<String, dynamic>>? categories) {
     Map<int, dynamic> checkerByCategoryId = {};
     List<String> validCategoryNames = [];
