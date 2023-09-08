@@ -130,10 +130,10 @@ class Firebase {
           .where("category", isEqualTo: category);
 
       // クエリを実行してドキュメントを取得
-      QuerySnapshot querySnapshot = await recipesQuery.get();
+      QuerySnapshot recipesQS = await recipesQuery.get();
 
       // 取得したドキュメントを処理
-      querySnapshot.docs.forEach((doc) async {
+      recipesQS.docs.forEach((doc) async {
         // ドキュメントのデータを取得
         await recipesCollection.doc(doc.id).delete().then((value) {
           debugPrint("recipes削除成功");
