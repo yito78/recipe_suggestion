@@ -135,11 +135,12 @@ class Firebase {
       // 取得したドキュメントを処理
       recipesQS.docs.forEach((doc) async {
         // ドキュメントのデータを取得
-        await recipesCollection.doc(doc.id).delete().then((value) {
+        try {
+          await recipesCollection.doc(doc.id).delete();
           debugPrint("recipes削除成功");
-        }).catchError((e) {
+        } catch (e) {
           debugPrint("recipes削除失敗 : $e");
-        });
+        }
       });
 
       // Firestoreのコレクションを参照
