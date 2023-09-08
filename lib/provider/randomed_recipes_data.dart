@@ -1,4 +1,5 @@
 import 'package:recipe_suggestion/data/recipe.dart';
+import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 import 'package:recipe_suggestion/utils/weekly_recipe.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:recipe_suggestion/domain/repository/firebase.dart';
@@ -31,8 +32,10 @@ class RandomedRecipesDataNotifier extends _$RandomedRecipesDataNotifier {
 
   // レシピデータを全件取得
   Future<List<Recipe>?> _fetchAllRecipesData() async {
+    final uid = await FirebaseAuthentication.fetchSignedInUserId();
+
     Firebase firebase = Firebase();
-    List<Recipe>? data = await firebase.searchAllRecipes();
+    List<Recipe>? data = await firebase.fetchAllRecipes(uid);
     return data;
   }
 }

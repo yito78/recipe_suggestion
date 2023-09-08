@@ -9,9 +9,11 @@ class Firebase {
   ///
   /// recipesコレクションに登録されたデータを全件取得する(type safe)
   ///
+  /// [uid] ログインユーザID
+  ///
   /// 戻り値::recipesコレクションのデータ
   ///
-  Future<List<Recipe>?> searchAllRecipes() async {
+  Future<List<Recipe>?> fetchAllRecipes(uid) async {
     // recipesコレクションのデータ
     final recipeList = <Recipe>[];
 
