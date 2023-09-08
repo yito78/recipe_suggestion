@@ -166,13 +166,13 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
   /// 1週間レシピ機能の利用判定を実施
   ///   各カテゴリにレシピデータが1件以上登録されていれば、利用可能
   ///
-  /// [recipeData] レシピデータ
-  /// [categoryData] カテゴリデータ
+  /// [recipes] レシピデータ
+  /// [categories] カテゴリデータ
   ///
   ///　戻り値::true 利用可能
   /// Map<String, dynamic>
   Map<String, dynamic> _isValidRecipeData(
-      List<Recipe>? recipeData, List<Map<String, dynamic>>? categoryData) {
+      List<Recipe>? recipes, List<Map<String, dynamic>>? categories) {
     Map<int, dynamic> checkerByCategoryId = {};
     List<String> validCategoryNames = [];
     Map<String, dynamic> resultData = {
@@ -181,22 +181,22 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
     };
 
     // データバリデーション
-    if (recipeData == null || categoryData == null) {
+    if (recipes == null || categories == null) {
       return resultData;
     }
 
     // カテゴリ種別を抽出し、後続処理で各カテゴリ種別にデータが存在するかチェックさせる
-    for (var category in categoryData) {
+    for (var category in categories) {
       checkerByCategoryId[category["category_id"]] = "";
     }
 
     // 各レシピデータ内のカテゴリ値を元に、カテゴリチェッカーハッシュに証跡を残す
-    for (var data in recipeData) {
+    for (var data in recipes) {
       checkerByCategoryId[data.category] = "check";
     }
 
     // 各カテゴリ種別にデータがない場合、不正カテゴリ種別としてリスト管理する
-    for (var category in categoryData) {
+    for (var category in categories) {
       if (checkerByCategoryId[category["category_id"]] != "check") {
         validCategoryNames.add(category["name"]);
       }
