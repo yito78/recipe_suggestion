@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 
 import '../../data/recipe.dart';
 
@@ -7,32 +9,35 @@ class Firebase {
   ///
   /// recipesコレクションに登録されたデータを全件取得する(type safe)
   ///
+  /// [uid] ログインユーザID
+  ///
   /// 戻り値::recipesコレクションのデータ
   ///
-  Future<List<Recipe>> searchAllRecipes() async {
+  Future<List<Recipe>?> fetchAllRecipes(uid) async {
     // recipesコレクションのデータ
     final recipeList = <Recipe>[];
 
     // usersコレクションのデータを取得
     await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
         .collection('recipes')
         .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
+        .then((QuerySnapshot recipesQS) {
+      recipesQS.docs.forEach((doc) {
         // firestoreデータを格納できるように型変換
         final data = doc.data() as Map<String, dynamic>;
         // お試し
         recipeList.add(Recipe.fromJson(data));
       });
     }).catchError((e) {
-      // TODO アナリティクスにログを出力に差し替える
-      print("${e}");
+      debugPrint("$e");
     });
 
     return recipeList;
   }
 
-  Future<List<Map<String, dynamic>>> searchAllCategories() async {
+  static Future<List<Map<String, dynamic>>> searchAllCategories() async {
     // recipesコレクションのデータ
     List<Map<String, dynamic>> categoriesData = [];
 
@@ -45,7 +50,7 @@ class Firebase {
         categoriesData.add(data);
       });
     }).catchError((e) {
-      print(e);
+      debugPrint("$e");
     });
 
     return categoriesData;
@@ -71,15 +76,18 @@ class Firebase {
         .doc(name);
     batch.set(indexRef, data);
 
+    var uid = await _fetchUid();
     var recipesRef = FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
         .collection("recipes")
         .doc("${category}_$name");
     batch.set(recipesRef, data);
 
     await batch
         .commit()
-        .then((_) => print("データ登録成功!"))
-        .catchError((e) => print("$e"));
+        .then((_) => debugPrint("データ登録成功!"))
+        .catchError((e) => debugPrint("$e"));
   }
 
   //
@@ -91,7 +99,7 @@ class Firebase {
   // originalName::更新前のレシピ名
   // originalCategory::更新前のカテゴリID
   //
-  Future updataRecipes(name, category, originalName, originalCategory) async {
+  Future updateRecipes(name, category, originalName, originalCategory) async {
     // データ削除
     await deleteRecipes(originalName, originalCategory);
     // データ登録
@@ -109,21 +117,31 @@ class Firebase {
     final instance = FirebaseFirestore.instance;
     await instance.runTransaction((Transaction tx) async {
       // Firestoreのコレクションを参照
-      CollectionReference recipesCollection = instance.collection("recipes");
+      CollectionReference usersCollection = instance.collection("users");
+
+      var uid = await _fetchUid();
+      CollectionReference recipesCollection =
+          instance.collection("users").doc(uid).collection("recipes");
+
       // フィールドの値でクエリを作成
-      Query recipesQuery = recipesCollection
+      Query recipesQuery = usersCollection
+          .doc(uid)
+          .collection("recipes")
           .where("name", isEqualTo: "$name")
           .where("category", isEqualTo: category);
+
       // クエリを実行してドキュメントを取得
-      QuerySnapshot querySnapshot = await recipesQuery.get();
+      QuerySnapshot recipesQS = await recipesQuery.get();
+
       // 取得したドキュメントを処理
-      querySnapshot.docs.forEach((doc) async {
+      recipesQS.docs.forEach((doc) async {
         // ドキュメントのデータを取得
-        await recipesCollection.doc("${doc.id}").delete().then((value) {
-          print("recipes削除成功");
-        }).catchError((e) {
-          print("recipes削除失敗 : $e");
-        });
+        try {
+          await recipesCollection.doc(doc.id).delete();
+          debugPrint("recipes削除成功");
+        } catch (e) {
+          debugPrint("recipes削除失敗 : $e");
+        }
       });
 
       // Firestoreのコレクションを参照
@@ -139,12 +157,19 @@ class Firebase {
       // 取得したドキュメントを処理
       queryIndexSnapshot.docs.forEach((doc) async {
         // ドキュメントのデータを取得
-        await indexCollection.doc("${doc.id}").delete().then((value) {
-          print("index削除成功");
+        await indexCollection.doc(doc.id).delete().then((value) {
+          debugPrint("index削除成功");
         }).catchError((e) {
-          print("index削除失敗 : $e");
+          debugPrint("index削除失敗 : $e");
         });
       });
     });
+  }
+
+  ///
+  /// ログインユーザのユーザIDを取得する
+  ///
+  Future<String?> _fetchUid() async {
+    return await FirebaseAuthentication.fetchSignedInUserId();
   }
 }

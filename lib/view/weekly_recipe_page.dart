@@ -31,7 +31,7 @@ class WeeklyRecipePage extends ConsumerWidget {
     }, error: (e, s) {
       return AsyncValue.error(e, s);
     }, loading: () {
-      return AsyncValue.loading();
+      return const AsyncValue.loading();
     });
 
     ///
@@ -69,9 +69,9 @@ class WeeklyRecipePage extends ConsumerWidget {
 
               if (value != null) {
                 regetRecipeData();
-                print("更新ボタンがクリックされました");
+                debugPrint("更新ボタンがクリックされました");
               } else {
-                print("閉じるボタンがクリックされました");
+                debugPrint("閉じるボタンがクリックされました");
               }
             },
             child: const Icon(Icons.refresh),

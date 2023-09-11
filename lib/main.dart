@@ -5,12 +5,17 @@ import 'package:recipe_suggestion/provider/login_user.dart';
 import 'package:recipe_suggestion/view/function_list_page.dart';
 import 'package:recipe_suggestion/view/login_page.dart';
 import 'firebase_options.dart';
+import 'package:recipe_suggestion/domain/repository/firebase.dart'
+    as rep_firebase;
+
+late List<Map<String, dynamic>> categoryAllData;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  categoryAllData = await rep_firebase.Firebase.searchAllCategories();
   const scope = ProviderScope(child: MyApp());
   runApp(scope);
 }
@@ -41,7 +46,7 @@ class Main extends ConsumerWidget {
     return signedInUserWatch.when(
       data: (user) =>
           // ログイン済みであれば、機能一覧画面へ遷移する
-          user != null ? const FunctionListPage() : const LoginPage(),
+          user != null ? FunctionListPage() : const LoginPage(),
       loading: () => const CircularProgressIndicator(),
       error: (err, stack) => Text('Error: $err'),
     );

@@ -24,13 +24,13 @@ class RecipeListPage extends ConsumerWidget {
     final recipesWatch = ref.watch(recipesDataNotifierProvider);
 
     // 監視データからデータ抽出
-    AsyncValue<List<Recipe>> fetchedRecipesData = recipesWatch.when(data: (d) {
+    AsyncValue<List<Recipe>?> fetchedRecipesData = recipesWatch.when(data: (d) {
       return AsyncValue.data(d);
     }, error: (e, s) {
       _outputErrorLog(e, s);
       return AsyncValue.error(e, s);
     }, loading: () {
-      return AsyncValue.loading();
+      return const AsyncValue.loading();
     });
 
     List<Recipe> recipeList = [];
@@ -86,10 +86,10 @@ class RecipeListPage extends ConsumerWidget {
                     categoryDataList: categoryList);
               });
           if (isReloadSelected) {
-            print("更新ボタンがクリックされました");
+            debugPrint("更新ボタンがクリックされました");
             reacquireRecipeData();
           } else {
-            print("閉じるボタンがクリックされました");
+            debugPrint("閉じるボタンがクリックされました");
           }
         },
         tooltip: "データ登録",
@@ -116,10 +116,10 @@ class RecipeListPage extends ConsumerWidget {
               });
 
           if (isReloadSelected) {
-            print("更新ボタンをクリックしました");
+            debugPrint("更新ボタンをクリックしました");
             reacquireRecipeData();
           } else {
-            print("閉じるボタンをクリックしました");
+            debugPrint("閉じるボタンをクリックしました");
           }
         },
         style: ButtonStyle(
@@ -159,10 +159,10 @@ class RecipeListPage extends ConsumerWidget {
                     categoryDataList: categoryList);
               });
           if (isReloadSelected) {
-            print("削除ボタンをクリックしました");
+            debugPrint("削除ボタンをクリックしました");
             reacquireRecipeData();
           } else {
-            print("閉じるボタンをクリックしました");
+            debugPrint("閉じるボタンをクリックしました");
           }
         },
         style: ButtonStyle(
@@ -205,8 +205,7 @@ class RecipeListPage extends ConsumerWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10.0),
-                                    child:
-                                        Text("${recipeCategoryList[index][0]}"),
+                                    child: Text(recipeCategoryList[index][0]),
                                   ),
                                 ),
                                 // レシピ名
@@ -215,8 +214,7 @@ class RecipeListPage extends ConsumerWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10.0),
-                                    child:
-                                        Text("${recipeCategoryList[index][1]}"),
+                                    child: Text(recipeCategoryList[index][1]),
                                   ),
                                 ),
                                 // ボタンオブジェクトを右寄せするため

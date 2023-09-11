@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:recipe_suggestion/data/recipe.dart';
+import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:recipe_suggestion/domain/repository/firebase.dart';
 part 'recipes_data.g.dart';
@@ -9,8 +11,8 @@ part 'recipes_data.g.dart';
 class RecipesDataNotifier extends _$RecipesDataNotifier {
   @override
   // 初期化処理
-  Future<List<Recipe>> build() async {
-    return _fetchAllRecipesData();
+  Future<List<Recipe>?> build() async {
+    return await _fetchAllRecipesData();
   }
 
   // レシピデータ更新処理
@@ -19,9 +21,12 @@ class RecipesDataNotifier extends _$RecipesDataNotifier {
   }
 
   // レシピデータを全件取得
-  Future<List<Recipe>> _fetchAllRecipesData() async {
+  Future<List<Recipe>?> _fetchAllRecipesData() async {
+    final uid = await FirebaseAuthentication.fetchSignedInUserId();
+
     Firebase firebase = Firebase();
-    List<Recipe> data = await firebase.searchAllRecipes();
+    List<Recipe>? data = await firebase.fetchAllRecipes(uid);
+
     return data;
   }
 }

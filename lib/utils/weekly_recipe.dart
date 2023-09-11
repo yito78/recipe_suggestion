@@ -67,7 +67,7 @@ class WeeklyRecipe {
   ///
   List<String> _fetchRandomDataForLessSeven(recipeList) {
     List<String> storingList = ["", "", "", "", "", "", ""];
-    int recipeListLength = recipeList.length - 1;
+    int recipeListLength = recipeList.length > 1 ? recipeList.length - 1 : 1;
     Random random = Random();
 
     for (int i = storingList.length - 1; i >= 0; i--) {
