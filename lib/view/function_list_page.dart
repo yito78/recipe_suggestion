@@ -49,9 +49,20 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
     });
     final categories = fetchedCategoriesData.value;
 
-    // 1週間のレシピ一覧画面の活性状態を判定(各カテゴリに1件以上データ登録あれば、活性化)
-    Map<String, dynamic> validationResultMap =
-        _selectInvalidCategoryIdAndIsActivated(recipes, categories);
+    List<String> invalidCategoryNames = [];
+    bool isNormalAsyncValue = true; // true: 正常データ, false: 異常データ
+    bool isActivatedForWeeklyRecipe =
+        false; // true: 1週間レシピ一覧画面表示する, false: 表示しない
+    if (recipes == null || categories == null) {
+      // レシピデータ、カテゴリデータが欠損しているため異常データ
+      // 異常データの場合、画面表示メッセージを再取得およびシステム管理者への連絡を促すメッセージにする
+      isNormalAsyncValue = false;
+    } else {
+      // 未登録のカテゴリ種別名を取得
+      invalidCategoryNames = _selectInvalidCategoryIds(recipes, categories);
+      // 未登録カテゴリ種別名がなければ、1週間レシピ一覧画面を利用可能とする
+      isActivatedForWeeklyRecipe = invalidCategoryNames.isEmpty ? true : false;
+    }
 
     return SafeArea(
       child: Scaffold(
@@ -63,13 +74,13 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
         body: Column(
           children: [
             _createButton(context, const WeeklyRecipePage(),
-                const Text("1週間のレシピ一覧"), validationResultMap["isActivated"]),
+                const Text("1週間のレシピ一覧"), isActivatedForWeeklyRecipe),
             _createButton(
                 context, const RecipeListPage(), const Text("登録レシピ一覧")),
-            validationResultMap["isActivated"]
+            isActivatedForWeeklyRecipe
                 ? Container()
                 : _displayPromoteRegisterMessage(
-                    validationResultMap["validCategoryNames"]),
+                    isNormalAsyncValue, invalidCategoryNames),
           ],
         ),
         // firestoreデータ再取得ボタン
@@ -163,27 +174,17 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
   }
 
   ///
-  /// 1週間レシピ機能の利用判定を実施
-  ///   各カテゴリにレシピデータが1件以上登録されていれば、利用可能
+  /// 不正カテゴリ種別名を取得する
   ///
   /// [recipes] レシピデータ
   /// [categories] カテゴリデータ
   ///
-  ///　戻り値::true 利用可能
-  /// selectInvalidCategoryIdAndIsActivated
-  Map<String, dynamic> _selectInvalidCategoryIdAndIsActivated(
-      List<Recipe>? recipes, List<Map<String, dynamic>>? categories) {
+  ///　戻り値::不正カテゴリ種別名のリスト
+  ///
+  List<String> _selectInvalidCategoryIds(
+      List<Recipe> recipes, List<Map<String, dynamic>> categories) {
     Map<int, dynamic> checkerByCategoryId = {};
     List<String> validCategoryNames = [];
-    Map<String, dynamic> resultData = {
-      "isActivated": false,
-      "validCategoryNames": validCategoryNames,
-    };
-
-    // データバリデーション
-    if (recipes == null || categories == null) {
-      return resultData;
-    }
 
     // カテゴリ種別を抽出し、後続処理で各カテゴリ種別にデータが存在するかチェックさせる
     for (var category in categories) {
@@ -202,28 +203,25 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
       }
     }
 
-    // 不正カテゴリ種別がある場合、利用不可の判定
-    if (validCategoryNames.isNotEmpty) {
-      resultData["validCategoryNames"] = validCategoryNames;
-    } else {
-      resultData["isActivated"] = true;
-    }
-
-    return resultData;
+    return validCategoryNames;
   }
 
   ///
   /// レシピデータの登録を促すメッセージを表示する
   ///
-  /// [validCategoryId] 不正なカテゴリ種別
+  /// [validCategoryNames] 不正なカテゴリ種別名称リスト
+  /// [isNormalAsyncValue] レシピ、カテゴリデータが正常な場合、true、異常な場合は、false
   ///
   /// 戻り値::メッセージ
   ///
-  Widget _displayPromoteRegisterMessage(List<String> validCategoryNames) {
+  Widget _displayPromoteRegisterMessage(
+      bool isNormalAsyncValue, List<String> validCategoryNames) {
+    final String displayMessage = isNormalAsyncValue
+        ? "※登録レシピ一覧機能より、以下カテゴリ種別のレシピデータを登録してください\n\nカテゴリ種別: ${validCategoryNames.toString()}"
+        : "不正データとなります。画面右下の更新ボタンをクリックし再度データを取得してください。\n改善しない場合、システム管理者へ連絡してください。";
     return Container(
       padding: const EdgeInsets.all(30.0),
-      child: Text(
-          "※登録レシピ一覧機能より、以下カテゴリ種別のレシピデータを登録してください\n\nカテゴリ種別: ${validCategoryNames.toString()}",
+      child: Text(displayMessage,
           style: const TextStyle(
             color: Colors.red,
             fontWeight: FontWeight.bold,
