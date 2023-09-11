@@ -27,7 +27,7 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
     final categoriesWatch = ref.watch(categoriesDataNotifierProvider);
 
     // recipesデータからデータ抽出
-    AsyncValue<List<Recipe>?> fetchedRecipesData = recipesWatch.when(data: (d) {
+    final fetchedRecipes = recipesWatch.when(data: (d) {
       return AsyncValue.data(d);
     }, error: (e, s) {
       _outputErrorLog(e, s);
@@ -35,11 +35,10 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
     }, loading: () {
       return const AsyncValue.loading();
     });
-    final recipes = fetchedRecipesData.value;
+    final recipes = fetchedRecipes.value;
 
     // categoriesデータからデータ抽出
-    AsyncValue<List<Map<String, dynamic>>?> fetchedCategoriesData =
-        categoriesWatch.when(data: (d) {
+    final fetchedCategoriesData = categoriesWatch.when(data: (d) {
       return AsyncValue.data(d);
     }, error: (e, s) {
       _outputErrorLog(e, s);
@@ -85,7 +84,7 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
         ),
         // firestoreデータ再取得ボタン
         floatingActionButton:
-            _floatingActionButton(context, fetchedRecipesData, ref),
+            _floatingActionButton(context, fetchedRecipes, ref),
       ),
     );
   }
@@ -134,12 +133,12 @@ class _FunctionListPageState extends ConsumerState<FunctionListPage> {
   /// 画面描画時、firestoreからデータ取得失敗時を想定し、ボタン設置
   ///
   /// [context] BuilderContextオブジェクト
-  /// [fetchedRecipesData] firestoreデータ
+  /// [fetchedRecipes] firestoreデータ
   /// [ref] recipeデータの監視データ
   ///
   /// 戻り値::FloatingActionButton Widget
   ///
-  Widget _floatingActionButton(context, fetchedRecipesData, ref) {
+  Widget _floatingActionButton(context, fetchedRecipes, ref) {
     return FloatingActionButton(
       onPressed: () async {
         final recipeNotifier = ref.read(recipesDataNotifierProvider.notifier);
