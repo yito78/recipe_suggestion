@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recipe_suggestion/domain/repository/firebase.dart';
 import 'package:recipe_suggestion/provider/randomed_recipes_data.dart';
 import 'package:recipe_suggestion/utils/weekly_recipe.dart';
 import 'package:recipe_suggestion/view/weekly_recipe_modal_page.dart';
@@ -21,6 +22,8 @@ class WeeklyRecipePage extends ConsumerWidget {
     WeeklyRecipe weeklyRecipe = WeeklyRecipe();
     Map<String, String> dateByWeekday = weeklyRecipe.createWeeklyDateWeekday();
 
+    debugPrint(
+        "1111111111111111111 ${Firebase.fetchAllWeeklyRecipes("zzLaxszXS3cKZdPUsRhG2rFd9gO2")}");
     // recipesデータの監視
     final recipesWatch = ref.watch(randomedRecipesDataNotifierProvider);
 
@@ -33,6 +36,8 @@ class WeeklyRecipePage extends ConsumerWidget {
     }, loading: () {
       return const AsyncValue.loading();
     });
+
+    debugPrint("1111111111111111111 $fetchedRecipesData");
 
     ///
     /// モーダル画面でfirestoreにデータ操作した際に、

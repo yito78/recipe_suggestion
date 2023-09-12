@@ -172,4 +172,36 @@ class Firebase {
   Future<String?> _fetchUid() async {
     return await FirebaseAuthentication.fetchSignedInUserId();
   }
+
+  ///
+  /// 1週間レシピ画面表示用レシピコレクションに登録されたデータを全件取得す
+  ///
+  /// [uid] ログインユーザID
+  ///
+  /// 戻り値::recipesコレクションのデータ
+  ///
+  static Future<List<Recipe>?> fetchAllWeeklyRecipes(uid) async {
+    // recipesコレクションのデータ
+    final recipeList = <Recipe>[];
+    final testList = [];
+
+    // usersコレクションのデータを取得
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection('weekly_recipes')
+        .get()
+        .then((QuerySnapshot recipesQS) {
+      recipesQS.docs.forEach((doc) {
+        // firestoreデータを格納できるように型変換
+        final data = doc.data();
+        // お試し
+        testList.add(data);
+      });
+    });
+
+    debugPrint("$testList");
+
+    return recipeList;
+  }
 }
