@@ -7,7 +7,7 @@ part of 'randomed_recipes_data.dart';
 // **************************************************************************
 
 String _$randomedRecipesDataNotifierHash() =>
-    r'50705fefb603f76a1a666756d1a731b5e6b66e56';
+    r'bdfdbc1607b1e48ad3eb07d04fc80d8b9d7879ed';
 
 /// See also [RandomedRecipesDataNotifier].
 @ProviderFor(RandomedRecipesDataNotifier)

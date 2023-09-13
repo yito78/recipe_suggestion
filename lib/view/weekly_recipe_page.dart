@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/domain/repository/firebase.dart';
 import 'package:recipe_suggestion/provider/randomed_recipes_data.dart';
+import 'package:recipe_suggestion/provider/weekly_recipes_data.dart';
 import 'package:recipe_suggestion/utils/weekly_recipe.dart';
 import 'package:recipe_suggestion/view/weekly_recipe_modal_page.dart';
 
@@ -24,12 +25,24 @@ class WeeklyRecipePage extends ConsumerWidget {
 
     debugPrint(
         "1111111111111111111 ${Firebase.fetchAllWeeklyRecipes("zzLaxszXS3cKZdPUsRhG2rFd9gO2")}");
+
+    // weekly_recipesデータを監視する
+    final weeklyRecipesWatch = ref.watch(weeklyRecipesDataNotifierProvider);
+    // weekly_recipesデータを取得する
+    final fetchedWeeklyRecipesData = weeklyRecipesWatch.when(data: (d) {
+      return AsyncValue.data(d);
+    }, error: (e, s) {
+      return AsyncValue.error(e, s);
+    }, loading: () {
+      return const AsyncValue.loading();
+    });
+    // 表示用にデータを加工する
+
     // recipesデータの監視
     final recipesWatch = ref.watch(randomedRecipesDataNotifierProvider);
 
     // 監視データからデータ抽出
-    AsyncValue<Map<int, List<dynamic>>> fetchedRecipesData =
-        recipesWatch.when(data: (d) {
+    final fetchedRecipesData = recipesWatch.when(data: (d) {
       return AsyncValue.data(d);
     }, error: (e, s) {
       return AsyncValue.error(e, s);

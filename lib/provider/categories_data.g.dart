@@ -7,7 +7,7 @@ part of 'categories_data.dart';
 // **************************************************************************
 
 String _$categoriesDataNotifierHash() =>
-    r'4eed9358ae3c4e3d758a61418e55f54894204556';
+    r'376623e8accba61d9cbfad7d9d367487058a1096';
 
 /// See also [CategoriesDataNotifier].
 @ProviderFor(CategoriesDataNotifier)
