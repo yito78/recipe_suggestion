@@ -1,3 +1,6 @@
+import 'dart:ffi';
+import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/domain/repository/firebase.dart';
@@ -36,7 +39,6 @@ class WeeklyRecipePage extends ConsumerWidget {
     }, loading: () {
       return const AsyncValue.loading();
     });
-    // 表示用にデータを加工する
 
     // recipesデータの監視
     final recipesWatch = ref.watch(randomedRecipesDataNotifierProvider);
@@ -50,7 +52,7 @@ class WeeklyRecipePage extends ConsumerWidget {
       return const AsyncValue.loading();
     });
 
-    debugPrint("1111111111111111111 $fetchedRecipesData");
+    // debugPrint("1111111111111111111 $fetchedRecipesData");
 
     ///
     /// モーダル画面でfirestoreにデータ操作した際に、
@@ -106,8 +108,8 @@ class WeeklyRecipePage extends ConsumerWidget {
         children: [
           TableRow(
             children: [
-              _cardWidget("月曜日", setHeight, imagePath, fetchedRecipesData,
-                  dateByWeekday["月曜日"]),
+              _cardCustomWidget("月曜日", setHeight, imagePath, fetchedRecipesData,
+                  dateByWeekday["月曜日"], fetchedWeeklyRecipesData),
               _cardWidget("火曜日", setHeight, imagePath, fetchedRecipesData,
                   dateByWeekday["火曜日"]),
             ],
@@ -189,6 +191,91 @@ class WeeklyRecipePage extends ConsumerWidget {
                             ? ""
                             : recipeByCategoryId.value[0]
                                 [selectTargetIndex[weekdayText]]),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    _titleAndRecipeName(
+                        imagePath["sub"],
+                        "副菜レシピ名",
+                        recipeByCategoryId.value == null
+                            ? ""
+                            : recipeByCategoryId.value[1]
+                                [selectTargetIndex[weekdayText]]),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    _titleAndRecipeName(
+                        imagePath["dessert"],
+                        "デザートレシピ名",
+                        recipeByCategoryId.value == null
+                            ? ""
+                            : recipeByCategoryId.value[2]
+                                [selectTargetIndex[weekdayText]]),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ));
+  }
+
+  Widget _cardCustomWidget(weekdayText, setHeight, imagePath,
+      recipeByCategoryId, displayDate, fetchedWeeklyRecipesData) {
+    Map<String, int> selectTargetIndex = {
+      "月曜日": 0,
+      "火曜日": 1,
+      "水曜日": 2,
+      "木曜日": 3,
+      "金曜日": 4,
+      "土曜日": 5,
+      "日曜日": 6,
+    };
+    List<String> selectCustomTargetIndex = [
+      "月曜日",
+      "火曜日",
+      "水曜日",
+      "木曜日",
+      "金曜日",
+      "土曜日",
+      "日曜日",
+    ];
+
+    List<dynamic> mainRecipes = [];
+    List<dynamic> subRecipes = [];
+    List<dynamic> desertRecipes = [];
+
+    int recipeIndex = selectCustomTargetIndex.indexOf(weekdayText);
+
+    if (fetchedWeeklyRecipesData.value != null) {
+      mainRecipes = fetchedWeeklyRecipesData.value[0]["0"]["recipes"];
+      subRecipes = fetchedWeeklyRecipesData.value[0]["1"]["recipes"];
+      desertRecipes = fetchedWeeklyRecipesData.value[0]["2"]["recipes"];
+    }
+    return SizedBox(
+        height: setHeight,
+        child: Card(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    weekdayText + "(" + displayDate + ")",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    _titleAndRecipeName(
+                        imagePath["main"],
+                        "主菜レシピ名",
+                        fetchedWeeklyRecipesData.value == null
+                            ? ""
+                            : mainRecipes[recipeIndex]),
                     const SizedBox(
                       height: 10.0,
                     ),

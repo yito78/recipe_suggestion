@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:recipe_suggestion/data/recipe.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

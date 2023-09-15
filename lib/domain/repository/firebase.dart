@@ -180,7 +180,7 @@ class Firebase {
   ///
   /// 戻り値::recipesコレクションのデータ
   ///
-  static Future<List<Recipe>?> fetchAllWeeklyRecipes(uid) async {
+  static Future<List<dynamic>?> fetchAllWeeklyRecipes(uid) async {
     // recipesコレクションのデータ
     final recipeList = <Recipe>[];
     final testList = [];
@@ -202,6 +202,6 @@ class Firebase {
 
     debugPrint("$testList");
 
-    return recipeList;
+    return testList;
   }
 }
