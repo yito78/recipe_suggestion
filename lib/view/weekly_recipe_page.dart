@@ -5,6 +5,7 @@ import 'package:recipe_suggestion/provider/weekly_recipes_data.dart';
 import 'package:recipe_suggestion/utils/weekly_recipe.dart';
 import 'package:recipe_suggestion/view/weekly_recipe_modal_page.dart';
 
+/// 1週間レシピ一覧画面
 class WeeklyRecipePage extends ConsumerWidget {
   const WeeklyRecipePage({Key? key}) : super(key: key);
 
