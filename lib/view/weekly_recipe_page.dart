@@ -1,6 +1,3 @@
-import 'dart:ffi';
-import 'dart:js_interop';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/domain/repository/firebase.dart';
@@ -25,9 +22,6 @@ class WeeklyRecipePage extends ConsumerWidget {
     /// 1週間分の日付と曜日のハッシュ情報取得
     WeeklyRecipe weeklyRecipe = WeeklyRecipe();
     Map<String, String> dateByWeekday = weeklyRecipe.createWeeklyDateWeekday();
-
-    debugPrint(
-        "1111111111111111111 ${Firebase.fetchAllWeeklyRecipes("zzLaxszXS3cKZdPUsRhG2rFd9gO2")}");
 
     // weekly_recipesデータを監視する
     final weeklyRecipesWatch = ref.watch(weeklyRecipesDataNotifierProvider);
@@ -109,7 +103,7 @@ class WeeklyRecipePage extends ConsumerWidget {
           TableRow(
             children: [
               _cardCustomWidget("月曜日", setHeight, imagePath, fetchedRecipesData,
-                  dateByWeekday["月曜日"], fetchedWeeklyRecipesData),
+                  dateByWeekday["月曜日"]),
               _cardWidget("火曜日", setHeight, imagePath, fetchedRecipesData,
                   dateByWeekday["火曜日"]),
             ],
@@ -150,6 +144,7 @@ class WeeklyRecipePage extends ConsumerWidget {
   /// imagePath::アイコン表示用パス
   /// recipeByCategoryId::{categoryId: レシピ名}
   /// displayDate::画面表示用日付(yyyy/mm/dd)
+  /// fetchedWeeklyRecipesData::画面表示用レシピデータ
   ///
   /// 戻り値::月曜から日曜までのレシピ表示領域ウィジェット
   ///
@@ -220,17 +215,8 @@ class WeeklyRecipePage extends ConsumerWidget {
   }
 
   Widget _cardCustomWidget(weekdayText, setHeight, imagePath,
-      recipeByCategoryId, displayDate, fetchedWeeklyRecipesData) {
-    Map<String, int> selectTargetIndex = {
-      "月曜日": 0,
-      "火曜日": 1,
-      "水曜日": 2,
-      "木曜日": 3,
-      "金曜日": 4,
-      "土曜日": 5,
-      "日曜日": 6,
-    };
-    List<String> selectCustomTargetIndex = [
+      fetchedWeeklyRecipesData, displayDate) {
+    List<String> selectTargetIndex = [
       "月曜日",
       "火曜日",
       "水曜日",
@@ -244,7 +230,8 @@ class WeeklyRecipePage extends ConsumerWidget {
     List<dynamic> subRecipes = [];
     List<dynamic> desertRecipes = [];
 
-    int recipeIndex = selectCustomTargetIndex.indexOf(weekdayText);
+    // 曜日に合致するレシピインデックスを取得する
+    int recipeIndex = selectTargetIndex.indexOf(weekdayText);
 
     if (fetchedWeeklyRecipesData.value != null) {
       mainRecipes = fetchedWeeklyRecipesData.value[0]["0"]["recipes"];
@@ -282,20 +269,18 @@ class WeeklyRecipePage extends ConsumerWidget {
                     _titleAndRecipeName(
                         imagePath["sub"],
                         "副菜レシピ名",
-                        recipeByCategoryId.value == null
+                        fetchedWeeklyRecipesData.value == null
                             ? ""
-                            : recipeByCategoryId.value[1]
-                                [selectTargetIndex[weekdayText]]),
+                            : subRecipes[recipeIndex]),
                     const SizedBox(
                       height: 10.0,
                     ),
                     _titleAndRecipeName(
                         imagePath["dessert"],
                         "デザートレシピ名",
-                        recipeByCategoryId.value == null
+                        fetchedWeeklyRecipesData.value == null
                             ? ""
-                            : recipeByCategoryId.value[2]
-                                [selectTargetIndex[weekdayText]]),
+                            : desertRecipes[recipeIndex]),
                   ],
                 ),
               ),
