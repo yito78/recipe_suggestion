@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:recipe_suggestion/domain/repository/firebase.dart';
 import 'package:recipe_suggestion/provider/randomed_recipes_data.dart';
 import 'package:recipe_suggestion/provider/weekly_recipes_data.dart';
 import 'package:recipe_suggestion/utils/weekly_recipe.dart';
@@ -33,20 +32,6 @@ class WeeklyRecipePage extends ConsumerWidget {
     }, loading: () {
       return const AsyncValue.loading();
     });
-
-    // recipesデータの監視
-    final recipesWatch = ref.watch(randomedRecipesDataNotifierProvider);
-
-    // 監視データからデータ抽出
-    final fetchedRecipesData = recipesWatch.when(data: (d) {
-      return AsyncValue.data(d);
-    }, error: (e, s) {
-      return AsyncValue.error(e, s);
-    }, loading: () {
-      return const AsyncValue.loading();
-    });
-
-    // debugPrint("1111111111111111111 $fetchedRecipesData");
 
     ///
     /// モーダル画面でfirestoreにデータ操作した際に、
@@ -102,31 +87,31 @@ class WeeklyRecipePage extends ConsumerWidget {
         children: [
           TableRow(
             children: [
-              _cardCustomWidget("月曜日", setHeight, imagePath, fetchedRecipesData,
+              _cardWidget("月曜日", setHeight, imagePath, fetchedWeeklyRecipesData,
                   dateByWeekday["月曜日"]),
-              _cardWidget("火曜日", setHeight, imagePath, fetchedRecipesData,
+              _cardWidget("火曜日", setHeight, imagePath, fetchedWeeklyRecipesData,
                   dateByWeekday["火曜日"]),
             ],
           ),
           TableRow(
             children: [
-              _cardWidget("水曜日", setHeight, imagePath, fetchedRecipesData,
+              _cardWidget("水曜日", setHeight, imagePath, fetchedWeeklyRecipesData,
                   dateByWeekday["水曜日"]),
-              _cardWidget("木曜日", setHeight, imagePath, fetchedRecipesData,
+              _cardWidget("木曜日", setHeight, imagePath, fetchedWeeklyRecipesData,
                   dateByWeekday["木曜日"]),
             ],
           ),
           TableRow(
             children: [
-              _cardWidget("金曜日", setHeight, imagePath, fetchedRecipesData,
+              _cardWidget("金曜日", setHeight, imagePath, fetchedWeeklyRecipesData,
                   dateByWeekday["金曜日"]),
-              _cardWidget("土曜日", setHeight, imagePath, fetchedRecipesData,
+              _cardWidget("土曜日", setHeight, imagePath, fetchedWeeklyRecipesData,
                   dateByWeekday["土曜日"]),
             ],
           ),
           TableRow(
             children: [
-              _cardWidget("日曜日", setHeight, imagePath, fetchedRecipesData,
+              _cardWidget("日曜日", setHeight, imagePath, fetchedWeeklyRecipesData,
                   dateByWeekday["日曜日"]),
               floatActionButton(setHeight, context),
             ],
@@ -142,79 +127,12 @@ class WeeklyRecipePage extends ConsumerWidget {
   /// weekdayText::画面表示する曜日のテキスト情報
   /// setHeight::表示領域の高さ指定
   /// imagePath::アイコン表示用パス
-  /// recipeByCategoryId::{categoryId: レシピ名}
-  /// displayDate::画面表示用日付(yyyy/mm/dd)
   /// fetchedWeeklyRecipesData::画面表示用レシピデータ
+  /// displayDate::画面表示用日付(yyyy/mm/dd)
   ///
   /// 戻り値::月曜から日曜までのレシピ表示領域ウィジェット
   ///
-  Widget _cardWidget(
-      weekdayText, setHeight, imagePath, recipeByCategoryId, displayDate) {
-    Map<String, int> selectTargetIndex = {
-      "月曜日": 0,
-      "火曜日": 1,
-      "水曜日": 2,
-      "木曜日": 3,
-      "金曜日": 4,
-      "土曜日": 5,
-      "日曜日": 6,
-    };
-
-    return SizedBox(
-        height: setHeight,
-        child: Card(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    weekdayText + "(" + displayDate + ")",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    _titleAndRecipeName(
-                        imagePath["main"],
-                        "主菜レシピ名",
-                        recipeByCategoryId.value == null
-                            ? ""
-                            : recipeByCategoryId.value[0]
-                                [selectTargetIndex[weekdayText]]),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    _titleAndRecipeName(
-                        imagePath["sub"],
-                        "副菜レシピ名",
-                        recipeByCategoryId.value == null
-                            ? ""
-                            : recipeByCategoryId.value[1]
-                                [selectTargetIndex[weekdayText]]),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    _titleAndRecipeName(
-                        imagePath["dessert"],
-                        "デザートレシピ名",
-                        recipeByCategoryId.value == null
-                            ? ""
-                            : recipeByCategoryId.value[2]
-                                [selectTargetIndex[weekdayText]]),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ));
-  }
-
-  Widget _cardCustomWidget(weekdayText, setHeight, imagePath,
+  Widget _cardWidget(weekdayText, setHeight, imagePath,
       fetchedWeeklyRecipesData, displayDate) {
     List<String> selectTargetIndex = [
       "月曜日",
@@ -243,16 +161,7 @@ class WeeklyRecipePage extends ConsumerWidget {
         child: Card(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    weekdayText + "(" + displayDate + ")",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
+              _createCardHeader(weekdayText, displayDate),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -318,6 +227,27 @@ class WeeklyRecipePage extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  ///
+  /// 各曜日タイルのヘッダ箇所を作成する
+  ///
+  /// [weekdayText] 曜日テキスト
+  /// [displayDate] 日付テキスト
+  ///
+  /// 戻り値::各曜日タイルのヘッダ
+  ///
+  Widget _createCardHeader(weekdayText, displayDate) {
+    return Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          weekdayText + "(" + displayDate + ")",
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
     );
   }
 }
