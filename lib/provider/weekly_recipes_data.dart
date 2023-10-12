@@ -22,7 +22,7 @@ class WeeklyRecipesDataNotifier extends _$WeeklyRecipesDataNotifier {
     List<dynamic>? data = await Firebase.fetchAllWeeklyRecipes(uid);
 
     // 表示用にデータを加工する
-    debugPrint("222222222222222222222222 $data");
+    debugPrint("222222222222222222222222");
 
     return data;
   }

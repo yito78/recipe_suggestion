@@ -181,27 +181,50 @@ class Firebase {
   /// 戻り値::recipesコレクションのデータ
   ///
   static Future<List<dynamic>?> fetchAllWeeklyRecipes(uid) async {
-    // recipesコレクションのデータ
-    final recipeList = <Recipe>[];
-    final testList = [];
-
+    // 1週間の日付リスト [yyyymmdd, yyyymmdd, ]
+    List<String> weekList = [
+      "20231009",
+      "20231010",
+      "20231011",
+      "20231012",
+      "20231013",
+      "20231014",
+      "20231015",
+    ];
     // usersコレクションのデータを取得
+    List<Map<String, dynamic>> list = [];
+
+    weekList.forEach((date) async {
+      final docRef = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .collection('weekly_menu')
+          .doc(date);
+
+      final docSnapshot = await docRef.get();
+      final data = docSnapshot.data();
+      final breakfast = await data!["breakfast"].get();
+      final lunch = await data["lunch"].get();
+      final dinner = await data["dinner"].get();
+
+      debugPrint("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+      debugPrint("${breakfast["name"]}");
+      debugPrint("${lunch["name"]}");
+      debugPrint("${dinner["name"]}");
+    });
     await FirebaseFirestore.instance
         .collection("users")
         .doc(uid)
-        .collection('weekly_recipes')
+        .collection('weekly_menu')
         .get()
-        .then((QuerySnapshot recipesQS) {
-      recipesQS.docs.forEach((doc) {
+        .then((value) {
+      value.docs.forEach((element) {
         // firestoreデータを格納できるように型変換
-        final data = doc.data();
-        // お試し
-        testList.add(data);
+        final data = element.data();
+        list.add(data);
       });
     });
 
-    debugPrint("$testList");
-
-    return testList;
+    return list;
   }
 }
