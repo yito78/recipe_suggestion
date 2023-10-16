@@ -174,57 +174,57 @@ class Firebase {
   }
 
   ///
-  /// 1週間レシピ画面表示用レシピコレクションに登録されたデータを全件取得す
+  /// 1週間レシピ画面表示用のレシピデータを指定された日付のデータを取得する
   ///
   /// [uid] ログインユーザID
+  /// [targetDateList] weekly_menuコレクションから取得する対象の日付リスト
   ///
-  /// 戻り値::recipesコレクションのデータ
+  /// 戻り値::weekly_menuコレクションのデータ
+  /// {
+  ///   "yyyymmdd": {
+  ///     "breakfast": "レシピ名"
+  ///     "lunch": "レシピ名"
+  ///     "dinner": "レシピ名"
+  ///   },
+  ///   "yyyymmdd": {
+  ///     "breakfast": "レシピ名"
+  ///     "lunch": "レシピ名"
+  ///     "dinner": "レシピ名"
+  ///   },
+  /// }
   ///
-  static Future<List<dynamic>?> fetchAllWeeklyRecipes(uid) async {
-    // 1週間の日付リスト [yyyymmdd, yyyymmdd, ]
-    List<String> weekList = [
-      "20231009",
-      "20231010",
-      "20231011",
-      "20231012",
-      "20231013",
-      "20231014",
-      "20231015",
-    ];
-    // usersコレクションのデータを取得
-    List<Map<String, dynamic>> list = [];
+  static Future<Map<String, Map<String, dynamic>>> searchAllWeeklyRecipes(
+      uid, targetDateList) async {
+    Map<String, Map<String, dynamic>> weeklyMenuByDate = {};
 
-    weekList.forEach((date) async {
-      final docRef = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(uid)
-          .collection('weekly_menu')
-          .doc(date);
+    for (var date in targetDateList) {
+      try {
+        final menuByDateRef = FirebaseFirestore.instance
+            .collection("users")
+            .doc(uid)
+            .collection('weekly_menu')
+            .doc(date);
 
-      final docSnapshot = await docRef.get();
-      final data = docSnapshot.data();
-      final breakfast = await data!["breakfast"].get();
-      final lunch = await data["lunch"].get();
-      final dinner = await data["dinner"].get();
+        final menuByDateSnapshot = await menuByDateRef.get();
+        final menuByDate = menuByDateSnapshot.data();
+        if (menuByDate != null) {
+          // Map多重ネストする場合、ネスト単位で初期化しないとダメ？
+          weeklyMenuByDate[date] = {};
 
-      debugPrint("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-      debugPrint("${breakfast["name"]}");
-      debugPrint("${lunch["name"]}");
-      debugPrint("${dinner["name"]}");
-    });
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(uid)
-        .collection('weekly_menu')
-        .get()
-        .then((value) {
-      value.docs.forEach((element) {
-        // firestoreデータを格納できるように型変換
-        final data = element.data();
-        list.add(data);
-      });
-    });
+          final breakfast = await menuByDate["breakfast"].get();
+          weeklyMenuByDate[date]?["breakfast"] = breakfast["name"];
 
-    return list;
+          final lunch = await menuByDate["lunch"].get();
+          weeklyMenuByDate[date]?["lunch"] = lunch["name"];
+
+          final dinner = await menuByDate["dinner"].get();
+          weeklyMenuByDate[date]?["dinner"] = dinner["name"];
+        }
+      } catch (e) {
+        debugPrint("1週間レシピデータの取得(対象日: $date)に失敗しました : $e");
+      }
+    }
+
+    return weeklyMenuByDate;
   }
 }
