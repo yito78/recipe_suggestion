@@ -94,7 +94,7 @@ class WeeklyRecipePage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text("1週間のレシピ一覧")),
+        title: const Center(child: Text("1週間のレシピ一覧(夕食)")),
       ),
       body: Table(
         children: [
@@ -153,6 +153,8 @@ class WeeklyRecipePage extends ConsumerWidget {
     String dessertRecipes = "";
 
     if (weeklyMenuData.value != null) {
+      // TODO 将来の機能にて、朝食タブ、昼食タブ、夕食タブを実装する予定
+      //      現状は、夕食メニューのみを表示する想定のため、dinnerをキーに指定する
       mainRecipes = weeklyMenuData.value[weeklyDate]["dinner"]["main"];
       subRecipes = weeklyMenuData.value[weeklyDate]["dinner"]["sub"];
       dessertRecipes = weeklyMenuData.value[weeklyDate]["dinner"]["dessert"];
