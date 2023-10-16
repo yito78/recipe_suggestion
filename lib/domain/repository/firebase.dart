@@ -203,8 +203,8 @@ class Firebase {
   ///     },
   ///   }
   ///
-  static Future<Map<String, Map<String, dynamic>>> searchAllWeeklyRecipes(
-      uid, targetDateList) async {
+  static Future<Map<String, Map<String, dynamic>>> searchWeeklyRecipes(
+      final String? uid, final List<String> targetDateList) async {
     Map<String, Map<String, dynamic>> weeklyMenuByDate = {};
 
     // TODO 別issue化する::パス単位のキャッシュを用意する
