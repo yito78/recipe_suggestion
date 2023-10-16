@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:recipe_suggestion/data/recipe.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:recipe_suggestion/domain/repository/firebase.dart';
@@ -17,7 +15,7 @@ class WeeklyRecipesDataNotifier extends _$WeeklyRecipesDataNotifier {
 
   // 1週間レシピデータを全件取得
   Future<Map<String, dynamic>> _fetchAllWeeklyRecipesData() async {
-    // 1週間の日付リスト [yyyymmdd, yyyymmdd, ]
+    // TODO 以下変数は引数でもらうようにする(現在仮実装)
     List<String> targetDateList = [
       "20231009",
       "20231010",
@@ -30,14 +28,9 @@ class WeeklyRecipesDataNotifier extends _$WeeklyRecipesDataNotifier {
 
     final uid = await FirebaseAuthentication.fetchSignedInUserId();
 
-    Map<String, Map<String, dynamic>> data =
+    Map<String, Map<String, dynamic>> weeklyMenuByDate =
         await Firebase.searchAllWeeklyRecipes(uid, targetDateList);
 
-    // 表示用にデータを加工する
-    debugPrint("222222222222222222222222");
-
-    debugPrint("$data");
-
-    return data;
+    return weeklyMenuByDate;
   }
 }

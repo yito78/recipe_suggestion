@@ -180,22 +180,34 @@ class Firebase {
   /// [targetDateList] weekly_menuコレクションから取得する対象の日付リスト
   ///
   /// 戻り値::weekly_menuコレクションのデータ
-  /// {
-  ///   "yyyymmdd": {
-  ///     "breakfast": "レシピ名"
-  ///     "lunch": "レシピ名"
-  ///     "dinner": "レシピ名"
-  ///   },
-  ///   "yyyymmdd": {
-  ///     "breakfast": "レシピ名"
-  ///     "lunch": "レシピ名"
-  ///     "dinner": "レシピ名"
-  ///   },
-  /// }
+  ///   {
+  ///     "yyyymmdd": {
+  ///       "breakfast": {
+  ///         "main": "レシピ名"
+  ///         "sub": "レシピ名"
+  ///         "dessert": "レシピ名"
+  ///       }
+  ///       "lunch": {
+  ///         "main": "レシピ名"
+  ///         "sub": "レシピ名"
+  ///         "dessert": "レシピ名"
+  ///       }
+  ///       "dinner": {
+  ///         "main": "レシピ名"
+  ///         "sub": "レシピ名"
+  ///         "dessert": "レシピ名"
+  ///       }
+  ///     },
+  ///     "yyyymmdd": {
+  ///       ・・・
+  ///     },
+  ///   }
   ///
   static Future<Map<String, Map<String, dynamic>>> searchAllWeeklyRecipes(
       uid, targetDateList) async {
     Map<String, Map<String, dynamic>> weeklyMenuByDate = {};
+
+    // TODO 別issue化する::パス単位のキャッシュを用意する
 
     for (var date in targetDateList) {
       try {
@@ -208,17 +220,35 @@ class Firebase {
         final menuByDateSnapshot = await menuByDateRef.get();
         final menuByDate = menuByDateSnapshot.data();
         if (menuByDate != null) {
-          // Map多重ネストする場合、ネスト単位で初期化しないとダメ？
-          weeklyMenuByDate[date] = {};
+          final menu = <String, dynamic>{
+            "breakfast": {"main": "", "sub": "", "dessert": ""},
+            "lunch": {"main": "", "sub": "", "dessert": ""},
+            "dinner": {"main": "", "sub": "", "dessert": ""},
+          };
 
-          final breakfast = await menuByDate["breakfast"].get();
-          weeklyMenuByDate[date]?["breakfast"] = breakfast["name"];
+          final breakfastMain = await menuByDate["breakfast"]["main"].get();
+          final breakfastSub = await menuByDate["breakfast"]["sub"].get();
+          final breakfastDessert =
+              await menuByDate["breakfast"]["dessert"].get();
+          menu["breakfast"]["main"] = breakfastMain["name"];
+          menu["breakfast"]["sub"] = breakfastSub["name"];
+          menu["breakfast"]["dessert"] = breakfastDessert["name"];
 
-          final lunch = await menuByDate["lunch"].get();
-          weeklyMenuByDate[date]?["lunch"] = lunch["name"];
+          final lunchMain = await menuByDate["lunch"]["main"].get();
+          final lunchSub = await menuByDate["lunch"]["sub"].get();
+          final lunchDessert = await menuByDate["lunch"]["dessert"].get();
+          menu["lunch"]["main"] = lunchMain["name"];
+          menu["lunch"]["sub"] = lunchSub["name"];
+          menu["lunch"]["dessert"] = lunchDessert["name"];
 
-          final dinner = await menuByDate["dinner"].get();
-          weeklyMenuByDate[date]?["dinner"] = dinner["name"];
+          final dinnerMain = await menuByDate["dinner"]["main"].get();
+          final dinnerSub = await menuByDate["dinner"]["sub"].get();
+          final dinnerDessert = await menuByDate["dinner"]["dessert"].get();
+          menu["dinner"]["main"] = dinnerMain["name"];
+          menu["dinner"]["sub"] = dinnerSub["name"];
+          menu["dinner"]["dessert"] = dinnerDessert["name"];
+
+          weeklyMenuByDate[date] = menu;
         }
       } catch (e) {
         debugPrint("1週間レシピデータの取得(対象日: $date)に失敗しました : $e");

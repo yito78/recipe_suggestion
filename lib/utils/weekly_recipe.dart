@@ -186,13 +186,73 @@ class WeeklyRecipe {
   String _calclateDate(
       DateTime datetime, int calcTargetWeekday, int baseWeekday) {
     if (baseWeekday >= calcTargetWeekday) {
-      DateTime calclatedDate =
+      DateTime date =
           datetime.subtract(Duration(days: baseWeekday - calcTargetWeekday));
-      return "${calclatedDate.year}/${calclatedDate.month}/${calclatedDate.day}";
+      return "${date.year}/${date.month}/${date.day}";
     } else {
-      DateTime calclatedDate =
+      DateTime date =
           datetime.add(Duration(days: calcTargetWeekday - baseWeekday));
-      return "${calclatedDate.year}/${calclatedDate.month}/${calclatedDate.day}";
+      return "${date.year}/${date.month}/${date.day}";
+    }
+  }
+
+  ///
+  /// 1週間分の日付リスト作成処理
+  ///
+  /// 戻り値::
+  ///   ["yyyymmdd", "yyyymmdd", "yyyymmdd", "yyyymmdd", "yyyymmdd", "yyyymmdd", "yyyymmdd"]
+  ///
+  List<String> createWeeklyDate() {
+    DateTime datetime = DateTime.now();
+    int weekdayInt = datetime.weekday;
+
+    List<String> weeklyDateList = [
+      _calclateDateForList(datetime, 1, weekdayInt),
+      _calclateDateForList(datetime, 2, weekdayInt),
+      _calclateDateForList(datetime, 3, weekdayInt),
+      _calclateDateForList(datetime, 4, weekdayInt),
+      _calclateDateForList(datetime, 5, weekdayInt),
+      _calclateDateForList(datetime, 6, weekdayInt),
+      _calclateDateForList(datetime, 7, weekdayInt),
+    ];
+
+    return weeklyDateList;
+  }
+
+  ///
+  /// 基準曜日(アプリ利用日)をもとに該当週の日付を計算する
+  /// 計算対象曜日が基準曜日以前である場合、基準曜日の日付から減算する
+  /// 逆の場合は、基準曜日の日付に対して加算する
+  ///
+  ///   例
+  ///     基準曜日(アプリ利用日)が水曜日で、計算対象曜日が月曜日の場合の計算について
+  ///     水曜日のDateTime.weekday : 3
+  ///     月曜日のDateTime.weekday : 1
+  ///       3 - 1 = 2
+  ///     水曜日のDateTime.nowから2日前として計算する
+  ///
+  ///     基準曜日(アプリ利用日)が水曜日で、計算対象曜日が木曜日の場合の計算について
+  ///     水曜日のDateTime.weekday : 3
+  ///     木曜日のDateTime.weekday : 4
+  ///       4 - 3 = 1
+  ///     水曜日のDateTime.nowから1日後として計算する
+  ///
+  /// [datetime] DateTimeオブジェクト
+  /// [calcTargetWeekday] 計算対象曜日(月曜なら1, 火曜なら2…)
+  /// [baseWeekday] 基準曜日(月曜なら1, 火曜なら2…)
+  ///
+  /// 戻り値::"yyyymmdd"
+  ///
+  String _calclateDateForList(
+      DateTime datetime, int calcTargetWeekday, int baseWeekday) {
+    if (baseWeekday >= calcTargetWeekday) {
+      DateTime date =
+          datetime.subtract(Duration(days: baseWeekday - calcTargetWeekday));
+      return "${date.year}${date.month}${date.day}";
+    } else {
+      DateTime date =
+          datetime.add(Duration(days: calcTargetWeekday - baseWeekday));
+      return "${date.year}${date.month}${date.day}";
     }
   }
 }
