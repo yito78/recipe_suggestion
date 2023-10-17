@@ -238,20 +238,19 @@ class WeeklyRecipe {
   ///     水曜日のDateTime.nowから1日後として計算する
   ///
   /// [datetime] DateTimeオブジェクト
-  /// [calcTargetWeekday] 計算対象曜日(月曜なら1, 火曜なら2…)
+  /// [targetWeekday] 計算対象曜日(月曜なら1, 火曜なら2…)
   /// [baseWeekday] 基準曜日(月曜なら1, 火曜なら2…)
   ///
   /// 戻り値::"yyyymmdd"
   ///
   String _calclateDateForList(
-      DateTime datetime, int calcTargetWeekday, int baseWeekday) {
-    if (baseWeekday >= calcTargetWeekday) {
+      DateTime datetime, int targetWeekday, int baseWeekday) {
+    if (baseWeekday >= targetWeekday) {
       DateTime date =
-          datetime.subtract(Duration(days: baseWeekday - calcTargetWeekday));
+          datetime.subtract(Duration(days: baseWeekday - targetWeekday));
       return "${date.year}${date.month}${date.day}";
     } else {
-      DateTime date =
-          datetime.add(Duration(days: calcTargetWeekday - baseWeekday));
+      DateTime date = datetime.add(Duration(days: targetWeekday - baseWeekday));
       return "${date.year}${date.month}${date.day}";
     }
   }
