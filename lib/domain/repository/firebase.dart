@@ -178,6 +178,7 @@ class Firebase {
   ///
   /// [uid] ログインユーザID
   /// [targetDateList] weekly_menuコレクションから取得する対象の日付リスト
+  ///                  リスト内の日付は【yyyymmdd】のフォーマットとする
   ///
   /// 戻り値::weekly_menuコレクションのデータ
   ///   {
@@ -219,37 +220,36 @@ class Firebase {
 
         final menuByDateSnapshot = await menuByDateRef.get();
         final menuByDate = menuByDateSnapshot.data();
-        if (menuByDate != null) {
-          final menu = <String, dynamic>{
-            "breakfast": {"main": "", "sub": "", "dessert": ""},
-            "lunch": {"main": "", "sub": "", "dessert": ""},
-            "dinner": {"main": "", "sub": "", "dessert": ""},
-          };
+        if (menuByDate == null) continue;
+        final menu = <String, dynamic>{
+          "breakfast": {"main": "", "sub": "", "dessert": ""},
+          "lunch": {"main": "", "sub": "", "dessert": ""},
+          "dinner": {"main": "", "sub": "", "dessert": ""},
+        };
 
-          final breakfastMain = await menuByDate["breakfast"]["main"].get();
-          final breakfastSub = await menuByDate["breakfast"]["sub"].get();
-          final breakfastDessert =
-              await menuByDate["breakfast"]["dessert"].get();
-          menu["breakfast"]["main"] = breakfastMain["name"];
-          menu["breakfast"]["sub"] = breakfastSub["name"];
-          menu["breakfast"]["dessert"] = breakfastDessert["name"];
+        final breakfastMain = await menuByDate["breakfast"]["main"].get();
+        final breakfastSub = await menuByDate["breakfast"]["sub"].get();
+        final breakfastDessert =
+            await menuByDate["breakfast"]["dessert"].get();
+        menu["breakfast"]["main"] = breakfastMain["name"];
+        menu["breakfast"]["sub"] = breakfastSub["name"];
+        menu["breakfast"]["dessert"] = breakfastDessert["name"];
 
-          final lunchMain = await menuByDate["lunch"]["main"].get();
-          final lunchSub = await menuByDate["lunch"]["sub"].get();
-          final lunchDessert = await menuByDate["lunch"]["dessert"].get();
-          menu["lunch"]["main"] = lunchMain["name"];
-          menu["lunch"]["sub"] = lunchSub["name"];
-          menu["lunch"]["dessert"] = lunchDessert["name"];
+        final lunchMain = await menuByDate["lunch"]["main"].get();
+        final lunchSub = await menuByDate["lunch"]["sub"].get();
+        final lunchDessert = await menuByDate["lunch"]["dessert"].get();
+        menu["lunch"]["main"] = lunchMain["name"];
+        menu["lunch"]["sub"] = lunchSub["name"];
+        menu["lunch"]["dessert"] = lunchDessert["name"];
 
-          final dinnerMain = await menuByDate["dinner"]["main"].get();
-          final dinnerSub = await menuByDate["dinner"]["sub"].get();
-          final dinnerDessert = await menuByDate["dinner"]["dessert"].get();
-          menu["dinner"]["main"] = dinnerMain["name"];
-          menu["dinner"]["sub"] = dinnerSub["name"];
-          menu["dinner"]["dessert"] = dinnerDessert["name"];
+        final dinnerMain = await menuByDate["dinner"]["main"].get();
+        final dinnerSub = await menuByDate["dinner"]["sub"].get();
+        final dinnerDessert = await menuByDate["dinner"]["dessert"].get();
+        menu["dinner"]["main"] = dinnerMain["name"];
+        menu["dinner"]["sub"] = dinnerSub["name"];
+        menu["dinner"]["dessert"] = dinnerDessert["name"];
 
-          weeklyMenuByDate[date] = menu;
-        }
+        weeklyMenuByDate[date] = menu;
       } catch (e) {
         debugPrint("1週間レシピデータの取得(対象日: $date)に失敗しました : $e");
       }
