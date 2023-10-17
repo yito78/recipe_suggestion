@@ -224,20 +224,22 @@ class WeeklyRecipe {
   /// 計算対象曜日が基準曜日以前である場合、基準曜日の日付から減算する
   /// 逆の場合は、基準曜日の日付に対して加算する
   ///
-  ///   例
-  ///     基準曜日(アプリ利用日)が水曜日で、計算対象曜日が月曜日の場合の計算について
-  ///     水曜日のDateTime.weekday : 3
-  ///     月曜日のDateTime.weekday : 1
-  ///       3 - 1 = 2
-  ///     水曜日のDateTime.nowから2日前として計算する
+  ///   以下表は、baseWeekdayを2(火曜日)とした場合の日付算出式を一覧にしたものとなる
   ///
-  ///     基準曜日(アプリ利用日)が水曜日で、計算対象曜日が木曜日の場合の計算について
-  ///     水曜日のDateTime.weekday : 3
-  ///     木曜日のDateTime.weekday : 4
-  ///       4 - 3 = 1
-  ///     水曜日のDateTime.nowから1日後として計算する
+  ///   baseWeekday | targetWeekday | 算出式
+  ///   ----------------------------------------------------
+  ///    2(火曜日)   | 1(月曜日)      | アプリ利用日 - (2(baseWeekday) - 1(targetWeekday))
+  ///    2          | 2(火曜日)      | アプリ利用日 - (2(baseWeekday) - 2(targetWeekday))
+  ///    2          | 3(水曜日)      | アプリ利用日 + (3(targetWeekday) - 2(baseWeekday)) ※
+  ///    2          | 4(木曜日)      | アプリ利用日 + (4(targetWeekday) - 2(baseWeekday))
+  ///    2          | 5(金曜日)      | アプリ利用日 + (5(targetWeekday) - 2(baseWeekday))
+  ///    2          | 6(土曜日)      | アプリ利用日 + (6(targetWeekday) - 2(baseWeekday))
+  ///    2          | 7(日曜日)      | アプリ利用日 + (7(targetWeekday) - 2(baseWeekday))
   ///
-  /// [datetime] DateTimeオブジェクト
+  ///   ※行で、baseWeekday(アプリ利用日)よりtargetWeekday(計算対象曜日)を上回り、
+  ///   アプリ利用日に対して加算を行うため、式を反転させる
+  ///
+  /// [datetime] アプリ利用日となり、曜日情報をもとに各曜日の日付を算出するために利用する
   /// [targetWeekday] 計算対象曜日(月曜なら1, 火曜なら2…)
   /// [baseWeekday] 基準曜日(月曜なら1, 火曜なら2…)
   ///

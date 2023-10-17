@@ -24,7 +24,7 @@ class WeeklyRecipePage extends ConsumerWidget {
     Map<String, String> dateByWeekday = weeklyRecipe.createWeeklyDateWeekday();
 
     // TODO 新データ構造の登録処理が完了後に以下処理のコメントアウトを解除する
-    // final weeklyDate = weeklyRecipe.createWeeklyDate();
+    final testWeeklyDate = weeklyRecipe.createWeeklyDate();
     final weeklyDate = [
       "20231009",
       "20231010",
