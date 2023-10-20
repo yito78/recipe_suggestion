@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/provider/randomed_recipes_data.dart';
+import 'package:recipe_suggestion/provider/update_promotion_data.dart';
 import 'package:recipe_suggestion/provider/weekly_recipes_data.dart';
 import 'package:recipe_suggestion/utils/weekly_recipe.dart';
 import 'package:recipe_suggestion/view/weekly_recipe_modal_page.dart';
@@ -39,6 +40,17 @@ class WeeklyRecipePage extends ConsumerWidget {
     final weeklyRecipesWatch = ref.watch(weeklyRecipesDataNotifierProvider);
     // weekly_recipesデータを取得する
     final weeklyMenuData = weeklyRecipesWatch.when(data: (d) {
+      return AsyncValue.data(d);
+    }, error: (e, s) {
+      return AsyncValue.error(e, s);
+    }, loading: () {
+      return const AsyncValue.loading();
+    });
+
+    // 更新促進画面表示判定フラグデータを監視する
+    final updatePromotionWatch = ref.watch(updatePromotionDataNotifierProvider);
+    // 更新促進画面表示判定フラグデータを取得する
+    final isPopupUpdatePromotion = updatePromotionWatch.when(data: (d) {
       return AsyncValue.data(d);
     }, error: (e, s) {
       return AsyncValue.error(e, s);

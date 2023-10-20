@@ -496,6 +496,15 @@ class MockFirebase extends _i1.Mock implements _i7.Firebase {
         ),
         returnValue: _i5.Future<dynamic>.value(),
       ) as _i5.Future<dynamic>);
+  @override
+  _i5.Future<bool> isUpdateWeeklyMenu(String? targetDate) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isUpdateWeeklyMenu,
+          [targetDate],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 }
 
 /// A class which mocks [RecipeListRegisterModalData].
