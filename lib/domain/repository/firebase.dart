@@ -229,8 +229,7 @@ class Firebase {
 
         final breakfastMain = await menuByDate["breakfast"]["main"].get();
         final breakfastSub = await menuByDate["breakfast"]["sub"].get();
-        final breakfastDessert =
-            await menuByDate["breakfast"]["dessert"].get();
+        final breakfastDessert = await menuByDate["breakfast"]["dessert"].get();
         menu["breakfast"]["main"] = breakfastMain["name"];
         menu["breakfast"]["sub"] = breakfastSub["name"];
         menu["breakfast"]["dessert"] = breakfastDessert["name"];
@@ -256,5 +255,38 @@ class Firebase {
     }
 
     return weeklyMenuByDate;
+  }
+
+  ///
+  /// 1週間レシピ一覧画面のデータ更新が必要かについて判定する
+  /// [判定条件について]
+  ///   呼び出し元から週初めの日付をもらい、以下ドキュメントを取得する
+  ///   user/{user_id}/weekly_menu/yyyymmdd
+  ///     取得できない場合 -> メニュー更新必要
+  ///     取得できる場合   -> メニュー更新不要
+  ///
+  ///   週初めのデータがあれば、該当週のデータがあると判断
+  ///
+  /// [targetDate] 週初めの日付(yyyymmdd)となり、該当ドキュメントに存在するかのチェック用データ
+  ///
+  /// 戻り値::true  -> メニュー更新必要
+  ///        false -> メニュー更新不要
+  ///
+  Future<bool> isUpdateWeeklyMenu(final String targetDate) async {
+    final menuByDateRef = FirebaseFirestore.instance
+        .collection("users")
+        .doc(await _fetchUid())
+        .collection('weekly_menu')
+        .doc(targetDate);
+    final menuByDateSnapshot = await menuByDateRef.get();
+    final menuByDate = menuByDateSnapshot.data();
+
+    if (menuByDate != null) {
+      // メニュー更新不要
+      return false;
+    } else {
+      // メニュー更新必要
+      return true;
+    }
   }
 }
