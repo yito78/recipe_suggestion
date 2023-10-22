@@ -4,14 +4,20 @@ import 'package:recipe_suggestion/provider/randomed_recipes_data.dart';
 import 'package:recipe_suggestion/provider/update_promotion_data.dart';
 import 'package:recipe_suggestion/provider/weekly_recipes_data.dart';
 import 'package:recipe_suggestion/utils/weekly_recipe.dart';
+import 'package:recipe_suggestion/view/update_promotion_weekly_recipe_modal_page.dart';
 import 'package:recipe_suggestion/view/weekly_recipe_modal_page.dart';
 
 /// 1週間レシピ一覧画面
-class WeeklyRecipePage extends ConsumerWidget {
-  const WeeklyRecipePage({Key? key}) : super(key: key);
+class WeeklyRecipePage extends ConsumerStatefulWidget {
+  const WeeklyRecipePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  WeeklyRecipePageState createState() => WeeklyRecipePageState();
+}
+
+class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
+  @override
+  Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var setHeight = screenSize.height * 0.22;
     Map<String, String> imagePath = {
@@ -49,7 +55,6 @@ class WeeklyRecipePage extends ConsumerWidget {
 
     // 更新促進画面表示判定フラグデータを監視する
     final updatePromotionWatch = ref.watch(updatePromotionDataNotifierProvider);
-    // 更新促進画面表示判定フラグデータを取得する
     final isPopupUpdatePromotion = updatePromotionWatch.when(data: (d) {
       return AsyncValue.data(d);
     }, error: (e, s) {
@@ -57,6 +62,17 @@ class WeeklyRecipePage extends ConsumerWidget {
     }, loading: () {
       return const AsyncValue.loading();
     });
+
+    if (isPopupUpdatePromotion.value) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // 画面が描画された後、モーダルダイアログを表示
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const UpdatePromotionWeeklyRecipeModalPage();
+            });
+      });
+    }
 
     ///
     /// モーダル画面でfirestoreにデータ操作した際に、
