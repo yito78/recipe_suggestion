@@ -30,11 +30,7 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var setHeight = screenSize.height * 0.22;
-    Map<String, String> imagePath = {
-      "main": "assets/images/main.png",
-      "sub": "assets/images/sub.png",
-      "dessert": "assets/images/dessert.png",
-    };
+    Map<String, String> imagePath = _setImage();
 
     // 1週間分の日付と曜日のハッシュ情報取得
     WeeklyRecipe weeklyRecipe = WeeklyRecipe();
@@ -75,16 +71,7 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
 
     if (isExecutedPopupUpdatePromotion == false &&
         isPopupUpdatePromotion.value) {
-      isExecutedPopupUpdatePromotion = true;
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        // 画面が描画された後、モーダルダイアログを表示
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return const UpdatePromotionWeeklyRecipeModalPage();
-            });
-      });
+      _executePopupUpdatePromotion(context);
     }
 
     ///
@@ -298,5 +285,34 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
         ],
       ),
     );
+  }
+
+  ///
+  /// 各曜日カード内で表示するメニューアイコンを設定する
+  ///
+  Map<String, String> _setImage() {
+    return {
+      "main": "assets/images/main.png",
+      "sub": "assets/images/sub.png",
+      "dessert": "assets/images/dessert.png",
+    };
+  }
+
+  ///
+  /// 更新促進画面を表示する
+  ///
+  /// [context] build時のcontext
+  ///
+  void _executePopupUpdatePromotion(context) {
+    isExecutedPopupUpdatePromotion = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 画面が描画された後、モーダルダイアログを表示
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const UpdatePromotionWeeklyRecipeModalPage();
+          });
+    });
   }
 }
