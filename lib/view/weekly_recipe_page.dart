@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/provider/randomed_recipes_data.dart';
-import 'package:recipe_suggestion/provider/update_promotion_data.dart';
+import 'package:recipe_suggestion/provider/data_update_promotion.dart';
 import 'package:recipe_suggestion/provider/weekly_recipes_data.dart';
 import 'package:recipe_suggestion/utils/weekly_recipe.dart';
 import 'package:recipe_suggestion/view/update_promotion_weekly_recipe_modal_page.dart';
@@ -15,7 +15,17 @@ class WeeklyRecipePage extends ConsumerStatefulWidget {
   WeeklyRecipePageState createState() => WeeklyRecipePageState();
 }
 
+// 更新促進画面実施済みフラグ
+late bool isExecutedPopupUpdatePromotion;
+
 class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    isExecutedPopupUpdatePromotion = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -54,7 +64,7 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
     });
 
     // 更新促進画面表示判定フラグデータを監視する
-    final updatePromotionWatch = ref.watch(updatePromotionDataNotifierProvider);
+    final updatePromotionWatch = ref.watch(dataUpdatePromotionNotifierProvider);
     final isPopupUpdatePromotion = updatePromotionWatch.when(data: (d) {
       return AsyncValue.data(d);
     }, error: (e, s) {
@@ -63,7 +73,10 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
       return const AsyncValue.loading();
     });
 
-    if (isPopupUpdatePromotion.value) {
+    if (isExecutedPopupUpdatePromotion == false &&
+        isPopupUpdatePromotion.value) {
+      isExecutedPopupUpdatePromotion = true;
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         // 画面が描画された後、モーダルダイアログを表示
         showDialog(
