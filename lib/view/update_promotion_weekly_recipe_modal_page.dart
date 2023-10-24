@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:recipe_suggestion/domain/repository/firebase.dart';
+import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 
 class UpdatePromotionWeeklyRecipeModalPage extends StatelessWidget {
   const UpdatePromotionWeeklyRecipeModalPage({Key? key}) : super(key: key);
@@ -20,7 +22,13 @@ class UpdatePromotionWeeklyRecipeModalPage extends StatelessWidget {
               width: 10.0,
             ),
             ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () async{
+                // 登録データを今週の日付で再登録する
+                Firebase firebase = Firebase();
+                firebase.insertWeeklyMenu(await FirebaseAuthentication.fetchSignedInUserId(), weeklyMenu)
+
+                Navigator.of(context).pop();
+              },
               child: const Text("いいえ"),
             ),
           ],

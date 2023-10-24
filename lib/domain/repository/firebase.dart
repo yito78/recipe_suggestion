@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
+import 'package:recipe_suggestion/utils/weekly_recipe.dart';
 
 import '../../data/recipe.dart';
 
@@ -288,5 +289,57 @@ class Firebase {
       // メニュー更新必要
       return true;
     }
+  }
+
+  ///
+  /// 1週間メニューデータを今週の日付で再登録する
+  ///
+  /// [uid] ログインユーザID
+  /// [weeklyMenu] 1週間のメニュー情報がリスト形式で格納、取得した日付単位でデータ登録を行う
+  ///
+  insertWeeklyMenu(
+      final String? uid, final List<Map<String, String>> weeklyMenu) async {
+    // 今週の日付を取得する
+    WeeklyRecipe weeklyRecipe = WeeklyRecipe();
+    List<String> weeklyDateList = weeklyRecipe.createWeeklyDate();
+
+    // 1週間分のメニューを登録する
+    for (var date in weeklyDateList) {
+      if (uid == null) {
+        return;
+      }
+
+      var weeklyMenuByDate = await _getWeeklyMenuByDate(uid, date);
+
+      if (weeklyMenuByDate == null) {
+        return;
+      }
+
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .collection("weekly_menu")
+          .doc(date)
+          .set(weeklyMenuByDate);
+    }
+  }
+
+  ///
+  /// 1週間メニューデータを1日単位で取得する
+  ///
+  /// [uid] ログインユーザID
+  /// [date] 1週間メニューの内の取得対象日を指定する(文字列型'yyyymmdd')
+  ///
+  Future<Map<String, dynamic>?> _getWeeklyMenuByDate(
+      final String uid, final String date) async {
+    final menuByDateRef = FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection('weekly_menu')
+        .doc(date);
+
+    final menuByDateSnapshot = await menuByDateRef.get();
+    final menuByDate = menuByDateSnapshot.data();
+    return menuByDate;
   }
 }
