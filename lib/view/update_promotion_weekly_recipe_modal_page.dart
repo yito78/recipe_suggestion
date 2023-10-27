@@ -22,12 +22,13 @@ class UpdatePromotionWeeklyRecipeModalPage extends StatelessWidget {
               width: 10.0,
             ),
             ElevatedButton(
-              onPressed: () async{
+              onPressed: () async {
                 // 登録データを今週の日付で再登録する
                 Firebase firebase = Firebase();
-                firebase.insertWeeklyMenu(await FirebaseAuthentication.fetchSignedInUserId(), weeklyMenu)
-
-                Navigator.of(context).pop();
+                await firebase.insertWeeklyMenu(true);
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
               },
               child: const Text("いいえ"),
             ),

@@ -70,7 +70,8 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
     });
 
     if (isExecutedPopupUpdatePromotion == false &&
-        isPopupUpdatePromotion.value) {
+        isPopupUpdatePromotion.value &&
+        weeklyMenuData.value != null) {
       _executePopupUpdatePromotion(context);
     }
 

@@ -293,15 +293,31 @@ class Firebase {
 
   ///
   /// 1週間メニューデータを今週の日付で再登録する
+  /// [isSame]がtrueであれば、現状の1週間メニューデータをそのまま登録し直す
   ///
   /// [uid] ログインユーザID
-  /// [weeklyMenu] 1週間のメニュー情報がリスト形式で格納、取得した日付単位でデータ登録を行う
   ///
-  insertWeeklyMenu(
-      final String? uid, final List<Map<String, String>> weeklyMenu) async {
+  insertWeeklyMenu([bool isSame = false]) async {
+    final uid = await FirebaseAuthentication.fetchSignedInUserId();
+
     // 今週の日付を取得する
     WeeklyRecipe weeklyRecipe = WeeklyRecipe();
     List<String> weeklyDateList = weeklyRecipe.createWeeklyDate();
+
+    if (uid != null && isSame) {
+      // 登録済みデータを取得する
+      var weeklyMenu = await _getRegisteredWeeklyMenuByDate(uid);
+      var data = _createWeeklyMenuForIsSame(weeklyDateList, weeklyMenu);
+
+      for (var menu in data.entries) {
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(uid)
+            .collection("weekly_menu")
+            .doc(menu.key)
+            .set(menu.value);
+      }
+    }
 
     // 1週間分のメニューを登録する
     for (var date in weeklyDateList) {
@@ -341,5 +357,86 @@ class Firebase {
     final menuByDateSnapshot = await menuByDateRef.get();
     final menuByDate = menuByDateSnapshot.data();
     return menuByDate;
+  }
+
+  ///
+  /// 登録済みの1週間日付を取得する
+  ///
+  /// [uid] ログインユーザID
+  ///
+  Future<Map<String, dynamic>?> _getRegisteredWeeklyMenuByDate(
+      final String uid) async {
+    final menuByDateRef = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection('weekly_menu')
+        .get();
+
+    Map<String, dynamic> registeredWeeklyMenu = {};
+    menuByDateRef.docs.forEach((doc) {
+      registeredWeeklyMenu[doc.id] = doc.data();
+    });
+
+    return registeredWeeklyMenu;
+  }
+
+  ///
+  /// 既存1週間レシピデータを元にデータ作成する
+  ///
+  /// [weeklyMenuList] 既存1週間レシピデータのリスト情報
+  ///
+  /// 戻り値::weekly_menuコレクションのデータ
+  ///   {
+  ///     [weeklyDateList] : {
+  ///       "breakfast": {
+  ///         "main": reference
+  ///         "sub": reference
+  ///         "dessert": reference
+  ///       }
+  ///       "lunch": {
+  ///         "main": reference
+  ///         "sub": reference
+  ///         "dessert": reference
+  ///       }
+  ///       "dinner": {
+  ///         "main": reference
+  ///         "sub": reference
+  ///         "dessert": reference
+  ///       }
+  ///     },
+  ///     [weeklyDateList] : {
+  ///       ・・・
+  ///     },
+  ///   }
+  ///
+  Map<String, dynamic> _createWeeklyMenuForIsSame(
+      weeklyDateList, weeklyMenuList) {
+    Map<String, dynamic> menu = {};
+
+    // 日付キーを設定するためのカウンタ
+    int dateCounter = 0;
+    for (var data in weeklyMenuList.entries) {
+      menu["${weeklyDateList[dateCounter]}"] = {
+        "breakfast": {
+          "main": data.value["breakfast"]["main"],
+          "sub": data.value["breakfast"]["sub"],
+          "dessert": data.value["breakfast"]["dessert"]
+        },
+        "lunch": {
+          "main": data.value["lunch"]["main"],
+          "sub": data.value["lunch"]["sub"],
+          "dessert": data.value["lunch"]["dessert"]
+        },
+        "dinner": {
+          "main": data.value["dinner"]["main"],
+          "sub": data.value["dinner"]["sub"],
+          "dessert": data.value["dinner"]["dessert"]
+        },
+      };
+
+      dateCounter += 1;
+    }
+
+    return menu;
   }
 }
