@@ -15,7 +15,13 @@ class UpdatePromotionWeeklyRecipeModalPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () => Navigator.of(context).pop("@@@"),
+              onPressed: () async {
+                // 登録データを今週の日付で再登録する
+                Firebase firebase = Firebase();
+                await firebase.insertWeeklyMenu();
+
+                Navigator.of(context).pop("@@@");
+              },
               child: const Text("更新"),
             ),
             const SizedBox(

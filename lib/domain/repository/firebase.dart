@@ -38,6 +38,42 @@ class Firebase {
     return recipeList;
   }
 
+  ///
+  /// recipesコレクションに登録されたデータを全件取得する(type safe)
+  ///
+  /// [uid] ログインユーザID
+  ///
+  /// 戻り値::recipesコレクションのデータ
+  ///
+  Future<Map<int, dynamic>> fetchAllRecipesForRefs(uid) async {
+    // recipesコレクションのデータ
+    final Map<int, dynamic> recipeByCategoryId = {};
+
+    // usersコレクションのデータを取得
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection('recipes')
+        .get()
+        .then((QuerySnapshot recipesQS) {
+      recipesQS.docs.forEach((doc) {
+        // firestoreデータを格納できるように型変換
+        final data = doc;
+        final id = doc.id;
+        final ids = id.split("_");
+        final index = int.parse(ids[0]);
+        if (recipeByCategoryId[index] == null) {
+          recipeByCategoryId[index] = [];
+        }
+        recipeByCategoryId[index].add(data.reference);
+      });
+    }).catchError((e) {
+      debugPrint("$e");
+    });
+
+    return recipeByCategoryId;
+  }
+
   static Future<List<Map<String, dynamic>>> searchAllCategories() async {
     // recipesコレクションのデータ
     List<Map<String, dynamic>> categoriesData = [];
@@ -260,7 +296,7 @@ class Firebase {
 
   ///
   /// 1週間レシピ一覧画面のデータ更新が必要かについて判定する
-  /// [判定条件について]
+  /// 【判定条件について】
   ///   呼び出し元から週初めの日付をもらい、以下ドキュメントを取得する
   ///   user/{user_id}/weekly_menu/yyyymmdd
   ///     取得できない場合 -> メニュー更新必要
@@ -310,12 +346,42 @@ class Firebase {
       var data = _createWeeklyMenuForIsSame(weeklyDateList, weeklyMenu);
 
       for (var menu in data.entries) {
-        await FirebaseFirestore.instance
-            .collection("users")
-            .doc(uid)
-            .collection("weekly_menu")
-            .doc(menu.key)
-            .set(menu.value);
+        try {
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(uid)
+              .collection("weekly_menu")
+              .doc(menu.key)
+              .set(menu.value);
+        } catch (e) {
+          debugPrint("1週間レシピデータの登録に失敗しました : $e");
+        }
+      }
+      return;
+    }
+
+    if (uid != null && !isSame) {
+      // 登録データを作成する
+      Firebase firebase = Firebase();
+      Map<int, dynamic> data = await firebase.fetchAllRecipesForRefs(uid);
+      WeeklyRecipe weeklyRecipe = WeeklyRecipe();
+      var weeklyData = await weeklyRecipe.createWeeklyRecipeForRefs(data);
+
+      debugPrint("weeklyData---------------------------------------------");
+      debugPrint("$weeklyData");
+
+      // weekly_menuにデータを登録する
+      for (var date in weeklyDateList) {
+        try {
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(uid)
+              .collection("weekly_menu");
+          // .doc(menu.key)
+          // .set(menu.value);
+        } catch (e) {
+          debugPrint("1週間レシピデータの登録に失敗しました : $e");
+        }
       }
     }
 

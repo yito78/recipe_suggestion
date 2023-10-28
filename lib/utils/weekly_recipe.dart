@@ -29,6 +29,27 @@ class WeeklyRecipe {
   }
 
   ///
+  /// 1週間レシピを作成
+  ///
+  /// recipeData::
+  ///
+  /// 戻り値::1週間レシピのハッシュ情報
+  /// Map<int, dynamic>
+  /// {
+  ///   0: [ "月曜の主菜レシピ名", "火曜の主菜レシピ名", "水曜の主菜レシピ名", … ],
+  ///   1: [ "月曜の副菜レシピ名", "火曜の副菜レシピ名", "水曜の副菜レシピ名", … ],
+  ///   2: [ "月曜のデザートレシピ名", "火曜のデザートレシピ名", "水曜のデザートレシピ名", … ],
+  /// }
+  ///
+  Future<Map<int, List<dynamic>>> createWeeklyRecipeForRefs(recipeData) async {
+    // 各カテゴリごとにデータをランダム抽出する
+    Map<int, List<dynamic>> randomData = {};
+    await _createDisplayRecipeData(recipeData, randomData);
+
+    return randomData;
+  }
+
+  ///
   /// 各カテゴリのレシピ情報を月曜から日曜までの情報を作成
   ///
   /// recipeList::カテゴリ分けされたレシピ情報の配列
@@ -65,8 +86,8 @@ class WeeklyRecipe {
   /// 戻り値::1週間レシピの配列情報
   ///   [ "月曜のレシピ名", "火曜のレシピ名", "水曜のレシピ名", … ]
   ///
-  List<String> _fetchRandomDataForLessSeven(recipeList) {
-    List<String> storingList = ["", "", "", "", "", "", ""];
+  List<dynamic> _fetchRandomDataForLessSeven(recipeList) {
+    List<dynamic> storingList = ["", "", "", "", "", "", ""];
     int recipeListLength = recipeList.length > 1 ? recipeList.length - 1 : 1;
     Random random = Random();
 
