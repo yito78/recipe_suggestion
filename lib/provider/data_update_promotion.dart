@@ -10,6 +10,7 @@ class DataUpdatePromotionNotifier extends _$DataUpdatePromotionNotifier {
   // 初期化処理
   Future<bool> build() async {
     Firebase updateWeeklyMenu = Firebase();
+    // TODO 20231101はテストデータとなるため、別Issueで差し替える
     return await updateWeeklyMenu.isUpdateWeeklyMenu("20231101");
   }
 }
