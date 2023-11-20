@@ -343,8 +343,10 @@ class Firebase {
     if (uid != null && isSame) {
       // 同一データを再登録する処理
       // 登録済みデータを取得する
-      var weeklyMenu = await _getRegisteredWeeklyMenuByDate(uid);
-      var data = _createWeeklyMenuForIsSame(weeklyDateList, weeklyMenu);
+      Map<String, dynamic>? weeklyMenu =
+          await _getRegisteredWeeklyMenuByDate(uid);
+      Map<String, dynamic> data =
+          _createWeeklyMenuForIsSame(weeklyDateList, weeklyMenu);
 
       for (var menu in data.entries) {
         try {
@@ -366,10 +368,11 @@ class Firebase {
       Firebase firebase = Firebase();
       Map<int, dynamic> data = await firebase.fetchAllRecipesForRefs(uid);
       WeeklyRecipe weeklyRecipe = WeeklyRecipe();
-      var weeklyDataRefs = await weeklyRecipe.createWeeklyRecipeForRefs(data);
+      Map<int, List<dynamic>> weeklyDataRefs =
+          await weeklyRecipe.createWeeklyRecipeForRefs(data);
 
       // 各レシピデータを取得する
-      var weeklyData = await _createWeeklyRecipeDataForRefs(
+      Map<String, dynamic> weeklyData = await _createWeeklyRecipeDataForRefs(
           uid, weeklyDataRefs, weeklyDateList);
 
       for (var menu in weeklyData.entries) {
