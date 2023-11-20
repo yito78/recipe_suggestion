@@ -389,25 +389,6 @@ class Firebase {
   }
 
   ///
-  /// 1週間メニューデータを1日単位で取得する
-  ///
-  /// [uid] ログインユーザID
-  /// [date] 1週間メニューの内の取得対象日を指定する(文字列型'yyyymmdd')
-  ///
-  Future<Map<String, dynamic>?> _getWeeklyMenuByDate(
-      final String uid, final String date) async {
-    final menuByDateRef = FirebaseFirestore.instance
-        .collection("users")
-        .doc(uid)
-        .collection('weekly_menu')
-        .doc(date);
-
-    final menuByDateSnapshot = await menuByDateRef.get();
-    final menuByDate = menuByDateSnapshot.data();
-    return menuByDate;
-  }
-
-  ///
   /// 登録済みの1週間メニューを取得する
   ///
   /// [uid] ログインユーザID
@@ -517,7 +498,7 @@ class Firebase {
   ///
   /// [uid] ログインユーザID
   ///
-  _createWeeklyRecipeDataForRefs(
+  Future<Map<String, dynamic>> _createWeeklyRecipeDataForRefs(
       String uid, Map<int, List> weeklyDataRefs, weeklyDateList) async {
     Map<String, dynamic> menu = {};
 
