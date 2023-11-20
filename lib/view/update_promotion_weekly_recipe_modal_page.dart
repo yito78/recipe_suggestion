@@ -7,8 +7,11 @@ class UpdatePromotionWeeklyRecipeModalPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      title: const Center(
+        child: Text("今週のメニュー作成"),
+      ),
       content: const Text(
-          "今週のメニューを新規に設定しますか？\nその場合、更新ボタンをクリックしてください。\n前回のメニューを継続する場合はいいえボタンをクリックしてください。"),
+          "今週のメニューを作成しますか？\nその場合、作成ボタンをクリックしてください。\n前回のメニューをコピーする場合はコピーボタンをクリックしてください。"),
       actions: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -22,7 +25,7 @@ class UpdatePromotionWeeklyRecipeModalPage extends StatelessWidget {
                   Navigator.of(context).pop("@@@");
                 }
               },
-              child: const Text("更新"),
+              child: const Text("作成"),
             ),
             const SizedBox(
               width: 10.0,
@@ -36,7 +39,7 @@ class UpdatePromotionWeeklyRecipeModalPage extends StatelessWidget {
                   Navigator.of(context).pop();
                 }
               },
-              child: const Text("いいえ"),
+              child: const Text("コピー"),
             ),
           ],
         ),
