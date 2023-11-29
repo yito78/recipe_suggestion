@@ -351,9 +351,7 @@ class Firebase {
   ///
   /// [uid] ログインユーザID
   ///
-  insertWeeklyMenu([bool isSame = false]) async {
-    final uid = await FirebaseAuthentication.fetchSignedInUserId();
-
+  insertWeeklyMenu(uid, [bool isSame = false]) async {
     // 今週の日付を取得する
     WeeklyRecipe weeklyRecipe = WeeklyRecipe();
     List<String> weeklyDateList = weeklyRecipe.createWeeklyDate();
