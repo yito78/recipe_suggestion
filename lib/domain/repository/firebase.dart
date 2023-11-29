@@ -18,22 +18,19 @@ class Firebase {
     // recipesコレクションのデータ
     final recipeList = <Recipe>[];
 
-    // usersコレクションのデータを取得
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(uid)
-        .collection('recipes')
-        .get()
-        .then((QuerySnapshot recipesQS) {
-      recipesQS.docs.forEach((doc) {
+    try {
+      // usersコレクションのデータを取得
+      final recipesQS = await fetchAllRecipesDocument(uid);
+      final docs = recipesQS.docs;
+
+      for (final doc in docs) {
         // firestoreデータを格納できるように型変換
-        final data = doc.data() as Map<String, dynamic>;
-        // お試し
+        final data = doc.data();
         recipeList.add(Recipe.fromJson(data));
-      });
-    }).catchError((e) {
+      }
+    } catch (e) {
       debugPrint("$e");
-    });
+    }
 
     return recipeList;
   }
@@ -52,28 +49,46 @@ class Firebase {
 
     // usersコレクションのデータを取得
     try {
-      final recipesQS = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(uid)
-          .collection('recipes')
-          .get();
+      final recipesQS = await fetchAllRecipesDocument(uid);
 
       final docs = recipesQS.docs;
-      for (final doc in docs) {
-        // firestoreデータを格納できるように型変換
-        final data = doc;
-        final id = doc.id;
-        final ids = id.split("_");
-        final index = int.parse(ids[0]);
-        if (recipeByCategoryId[index] == null) {
-          recipeByCategoryId[index] = [];
-        }
-        recipeByCategoryId[index]?.add(data.reference);
-      }
+      _groupByCategoryId(docs, recipeByCategoryId);
     } catch (e) {
       debugPrint("$e");
     }
 
+    return recipeByCategoryId;
+  }
+
+  ///
+  /// [uid]に合致するRecipesデータを全件取得する
+  ///
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchAllRecipesDocument(
+      String uid) async {
+    return await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection("recipes")
+        .get();
+  }
+
+  ///
+  /// [recipeByCategoryId]に対して、カテゴリIDをキーにしたRecipe情報[docs]を格納する
+  ///
+  Map<int, List<DocumentReference<Object?>>> _groupByCategoryId(
+      List<DocumentSnapshot> docs,
+      Map<int, List<DocumentReference>> recipeByCategoryId) {
+    for (final doc in docs) {
+      // firestoreデータを格納できるように型変換
+      final data = doc;
+      final id = doc.id;
+      final ids = id.split("_");
+      final index = int.parse(ids[0]);
+      if (recipeByCategoryId[index] == null) {
+        recipeByCategoryId[index] = [];
+      }
+      recipeByCategoryId[index]?.add(data.reference);
+    }
     return recipeByCategoryId;
   }
 
