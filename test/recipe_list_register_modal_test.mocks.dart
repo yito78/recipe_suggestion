@@ -448,6 +448,36 @@ class MockFirebase extends _i1.Mock implements _i7.Firebase {
         returnValue: _i5.Future<List<_i8.Recipe>?>.value(),
       ) as _i5.Future<List<_i8.Recipe>?>);
   @override
+  _i5.Future<
+      Map<int, List<_i4.DocumentReference<Object?>>>> fetchAllRecipesForRefs(
+          dynamic uid) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchAllRecipesForRefs,
+          [uid],
+        ),
+        returnValue:
+            _i5.Future<Map<int, List<_i4.DocumentReference<Object?>>>>.value(
+                <int, List<_i4.DocumentReference<Object?>>>{}),
+      ) as _i5.Future<Map<int, List<_i4.DocumentReference<Object?>>>>);
+  @override
+  _i5.Future<_i4.QuerySnapshot<Map<String, dynamic>>> fetchAllRecipesDocument(
+          String? uid) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #fetchAllRecipesDocument,
+          [uid],
+        ),
+        returnValue: _i5.Future<_i4.QuerySnapshot<Map<String, dynamic>>>.value(
+            _FakeQuerySnapshot_5<Map<String, dynamic>>(
+          this,
+          Invocation.method(
+            #fetchAllRecipesDocument,
+            [uid],
+          ),
+        )),
+      ) as _i5.Future<_i4.QuerySnapshot<Map<String, dynamic>>>);
+  @override
   _i5.Future<dynamic> insertRecipes(
     dynamic name,
     dynamic category,
@@ -497,14 +527,26 @@ class MockFirebase extends _i1.Mock implements _i7.Firebase {
         returnValue: _i5.Future<dynamic>.value(),
       ) as _i5.Future<dynamic>);
   @override
-  _i5.Future<bool> isUpdateWeeklyMenu(String? targetDate) =>
+  _i5.Future<bool> isNeedCreateWeeklyMenu(
+    String? targetDate,
+    dynamic uid,
+  ) =>
       (super.noSuchMethod(
         Invocation.method(
-          #isUpdateWeeklyMenu,
-          [targetDate],
+          #isNeedCreateWeeklyMenu,
+          [
+            targetDate,
+            uid,
+          ],
         ),
         returnValue: _i5.Future<bool>.value(false),
       ) as _i5.Future<bool>);
+  @override
+  dynamic insertWeeklyMenu([bool? isSame = false]) =>
+      super.noSuchMethod(Invocation.method(
+        #insertWeeklyMenu,
+        [isSame],
+      ));
 }
 
 /// A class which mocks [RecipeListRegisterModalData].
