@@ -39,7 +39,7 @@ class Firebase {
   }
 
   ///
-  /// recipesコレクションに登録されたデータを全件取得する(type safe)
+  /// recipesコレクションに登録されたデータを全件取得する
   ///
   /// [uid] ログインユーザID
   ///
@@ -51,13 +51,15 @@ class Firebase {
     final Map<int, dynamic> recipeByCategoryId = {};
 
     // usersコレクションのデータを取得
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(uid)
-        .collection('recipes')
-        .get()
-        .then((QuerySnapshot recipesQS) {
-      recipesQS.docs.forEach((doc) {
+    try {
+      final recipesQS = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .collection('recipes')
+          .get();
+
+      final docs = recipesQS.docs;
+      for (final doc in docs) {
         // firestoreデータを格納できるように型変換
         final data = doc;
         final id = doc.id;
@@ -67,10 +69,10 @@ class Firebase {
           recipeByCategoryId[index] = [];
         }
         recipeByCategoryId[index].add(data.reference);
-      });
-    }).catchError((e) {
+      }
+    } catch (e) {
       debugPrint("$e");
-    });
+    }
 
     return recipeByCategoryId;
   }
