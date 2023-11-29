@@ -46,9 +46,9 @@ class Firebase {
   /// 戻り値::キーがRecipesのカテゴリーID、
   ///        値がキーで示されるカテゴリーIDに属するRecipesのDocumentReferenceのリスト
   ///
-  Future<Map<int, dynamic>> fetchAllRecipesForRefs(uid) async {
+  Future<Map<int, List<DocumentReference>>> fetchAllRecipesForRefs(uid) async {
     // recipesコレクションのデータ
-    final Map<int, dynamic> recipeByCategoryId = {};
+    final Map<int, List<DocumentReference>> recipeByCategoryId = {};
 
     // usersコレクションのデータを取得
     try {
@@ -68,7 +68,7 @@ class Firebase {
         if (recipeByCategoryId[index] == null) {
           recipeByCategoryId[index] = [];
         }
-        recipeByCategoryId[index].add(data.reference);
+        recipeByCategoryId[index]?.add(data.reference);
       }
     } catch (e) {
       debugPrint("$e");
