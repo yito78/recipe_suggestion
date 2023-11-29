@@ -43,7 +43,8 @@ class Firebase {
   ///
   /// [uid] ログインユーザID
   ///
-  /// 戻り値::recipesコレクションのデータ
+  /// 戻り値::キーがRecipesのカテゴリーID、
+  ///        値がキーで示されるカテゴリーIDに属するRecipesのDocumentReferenceのリスト
   ///
   Future<Map<int, dynamic>> fetchAllRecipesForRefs(uid) async {
     // recipesコレクションのデータ
