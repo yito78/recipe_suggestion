@@ -25,7 +25,7 @@ class UpdatePromotionWeeklyRecipeModalPage extends StatelessWidget {
                 Firebase firebase = Firebase();
                 await firebase.insertWeeklyMenu(uid);
                 if (context.mounted) {
-                  Navigator.of(context).pop("@@@");
+                  Navigator.of(context).pop();
                 }
               },
               child: const Text("作成"),
