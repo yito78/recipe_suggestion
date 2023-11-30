@@ -328,8 +328,6 @@ class Firebase {
   ///        false -> メニュー作成不要
   ///
   Future<bool> isNeedCreateWeeklyMenu(final String targetDate, uid) async {
-    bool isNeedCreate = false;
-
     final menuByDateRef = FirebaseFirestore.instance
         .collection("users")
         .doc(uid)
@@ -338,12 +336,7 @@ class Firebase {
     final menuByDateSnapshot = await menuByDateRef.get();
     final menuByDate = menuByDateSnapshot.data();
 
-    if (menuByDate == null) {
-      // メニュー作成必要
-      isNeedCreate = true;
-    }
-
-    return isNeedCreate;
+    return menuByDate == null;
   }
 
   ///
