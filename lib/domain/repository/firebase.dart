@@ -352,11 +352,16 @@ class Firebase {
   /// [uid] ログインユーザID
   ///
   insertWeeklyMenu(uid, [bool isSame = false]) async {
+    if (uid == null) {
+      debugPrint("ユーザIDが不正のため、データ登録処理をスキップします");
+      return;
+    }
+
     // 今週の日付を取得する
     WeeklyRecipe weeklyRecipe = WeeklyRecipe();
     List<String> weeklyDateList = weeklyRecipe.createWeeklyDate();
 
-    if (uid != null && isSame) {
+    if (isSame) {
       // 同一データを再登録する処理
       // 登録済みデータを取得する
       Map<String, dynamic>? weeklyMenu =
@@ -377,9 +382,7 @@ class Firebase {
         }
       }
       return;
-    }
-
-    if (uid != null && !isSame) {
+    } else {
       // 登録データを作成する
       Firebase firebase = Firebase();
       Map<int, dynamic> data = await firebase.fetchAllRecipesForRefs(uid);
