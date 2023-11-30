@@ -345,7 +345,7 @@ class Firebase {
   ///
   /// [uid] ログインユーザID
   ///
-  insertWeeklyMenu(uid, [bool isSame = false]) async {
+  Future<void> insertWeeklyMenu(uid, [bool isSame = false]) async {
     if (uid == null) {
       debugPrint("ユーザIDが不正のため、データ登録処理をスキップします");
       return;
