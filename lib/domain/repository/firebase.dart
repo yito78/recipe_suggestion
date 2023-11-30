@@ -324,10 +324,12 @@ class Firebase {
   ///
   /// [targetDate] 週初めの日付(yyyymmdd)となり、該当ドキュメントに存在するかのチェック用データ
   ///
-  /// 戻り値::true  -> メニュー更新必要
-  ///        false -> メニュー更新不要
+  /// 戻り値::true  -> メニュー作成必要
+  ///        false -> メニュー作成不要
   ///
   Future<bool> isNeedCreateWeeklyMenu(final String targetDate, uid) async {
+    bool isNeedCreate = false;
+
     final menuByDateRef = FirebaseFirestore.instance
         .collection("users")
         .doc(uid)
@@ -336,13 +338,12 @@ class Firebase {
     final menuByDateSnapshot = await menuByDateRef.get();
     final menuByDate = menuByDateSnapshot.data();
 
-    if (menuByDate != null) {
-      // メニュー更新不要
-      return false;
-    } else {
-      // メニュー更新必要
-      return true;
+    if (menuByDate == null) {
+      // メニュー作成必要
+      isNeedCreate = true;
     }
+
+    return isNeedCreate;
   }
 
   ///
