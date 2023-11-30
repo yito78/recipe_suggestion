@@ -371,46 +371,42 @@ class Firebase {
           _createWeeklyMenuForIsSame(weeklyDateList, weeklyMenu);
 
       for (var menu in data.entries) {
-        try {
-          await FirebaseFirestore.instance
-              .collection("users")
-              .doc(uid)
-              .collection("weekly_menu")
-              .doc(menu.key)
-              .set(menu.value);
-        } catch (e) {
-          debugPrint("1週間レシピデータの登録に失敗しました : $e");
-        }
+        _createWeeklyMenus(uid, menu);
       }
       return;
-    } else {
-      // 登録データを作成する
-      Firebase firebase = Firebase();
-      Map<int, dynamic> data = await firebase.fetchAllRecipesForRefs(uid);
-      WeeklyRecipe weeklyRecipe = WeeklyRecipe();
-      Map<int, List<dynamic>> weeklyDataRefs =
-          await weeklyRecipe.createWeeklyRecipeForRefs(data);
+    }
 
-      // 各レシピデータを取得する
-      Map<String, dynamic> weeklyData = await _createWeeklyRecipeDataForRefs(
-          uid, weeklyDataRefs, weeklyDateList);
+    // 新規登録データを作成する
+    Firebase firebase = Firebase();
+    Map<int, List<DocumentReference<Object?>>> data =
+        await firebase.fetchAllRecipesForRefs(uid);
+    Map<int, List<dynamic>> weeklyDataRefs =
+        await weeklyRecipe.createWeeklyRecipeForRefs(data);
 
-      for (var menu in weeklyData.entries) {
-        try {
-          await FirebaseFirestore.instance
-              .collection("users")
-              .doc(uid)
-              .collection("weekly_menu")
-              .doc(menu.key)
-              .set(menu.value);
-        } catch (e) {
-          debugPrint("1週間レシピデータの登録に失敗しました : $e");
-        }
-      }
+    // 各レシピデータを取得する
+    Map<String, dynamic> weeklyData = await _createWeeklyRecipeDataForRefs(
+        uid, weeklyDataRefs, weeklyDateList);
 
-      // TODO 既存データの削除処理を実装する
+    for (var menu in weeklyData.entries) {
+      _createWeeklyMenus(uid, menu);
+    }
 
-      return;
+    // TODO 既存データの削除処理を実装する
+  }
+
+  ///
+  /// 複数のメニューデータ[menu]を作成する
+  ///
+  Future<void> _createWeeklyMenus(uid, menu) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .collection("weekly_menu")
+          .doc(menu.key)
+          .set(menu.value);
+    } catch (e) {
+      debugPrint("1週間レシピデータの登録に失敗しました : $e");
     }
   }
 
