@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
+import 'package:recipe_suggestion/utils/weekly_recipe.dart';
 
 import '../../data/recipe.dart';
 
@@ -17,24 +18,78 @@ class Firebase {
     // recipesコレクションのデータ
     final recipeList = <Recipe>[];
 
-    // usersコレクションのデータを取得
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(uid)
-        .collection('recipes')
-        .get()
-        .then((QuerySnapshot recipesQS) {
-      recipesQS.docs.forEach((doc) {
+    try {
+      // usersコレクションのデータを取得
+      final recipesQS = await fetchAllRecipesDocument(uid);
+      final docs = recipesQS.docs;
+
+      for (final doc in docs) {
         // firestoreデータを格納できるように型変換
-        final data = doc.data() as Map<String, dynamic>;
-        // お試し
+        final data = doc.data();
         recipeList.add(Recipe.fromJson(data));
-      });
-    }).catchError((e) {
+      }
+    } catch (e) {
       debugPrint("$e");
-    });
+    }
 
     return recipeList;
+  }
+
+  ///
+  /// recipesコレクションに登録されたデータを全件取得する
+  ///
+  /// [uid] ログインユーザID
+  ///
+  /// 戻り値::キーがRecipesのカテゴリーID、
+  ///        値がキーで示されるカテゴリーIDに属するRecipesのDocumentReferenceのリスト
+  ///
+  Future<Map<int, List<DocumentReference>>> fetchAllRecipesForRefs(uid) async {
+    // recipesコレクションのデータ
+    final Map<int, List<DocumentReference>> recipeByCategoryId = {};
+
+    // usersコレクションのデータを取得
+    try {
+      final recipesQS = await fetchAllRecipesDocument(uid);
+
+      final docs = recipesQS.docs;
+      _groupByCategoryId(docs, recipeByCategoryId);
+    } catch (e) {
+      debugPrint("$e");
+    }
+
+    return recipeByCategoryId;
+  }
+
+  ///
+  /// [uid]に合致するRecipesデータを全件取得する
+  ///
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchAllRecipesDocument(
+      String uid) async {
+    return await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection("recipes")
+        .get();
+  }
+
+  ///
+  /// [recipeByCategoryId]に対して、カテゴリIDをキーにしたRecipe情報[docs]を格納する
+  ///
+  Map<int, List<DocumentReference<Object?>>> _groupByCategoryId(
+      List<DocumentSnapshot> docs,
+      Map<int, List<DocumentReference>> recipeByCategoryId) {
+    for (final doc in docs) {
+      // firestoreデータを格納できるように型変換
+      final data = doc;
+      final id = doc.id;
+      final ids = id.split("_");
+      final index = int.parse(ids[0]);
+      if (recipeByCategoryId[index] == null) {
+        recipeByCategoryId[index] = [];
+      }
+      recipeByCategoryId[index]?.add(data.reference);
+    }
+    return recipeByCategoryId;
   }
 
   static Future<List<Map<String, dynamic>>> searchAllCategories() async {
@@ -184,20 +239,20 @@ class Firebase {
   ///   {
   ///     "yyyymmdd": {
   ///       "breakfast": {
-  ///         "main": "レシピ名"
-  ///         "sub": "レシピ名"
-  ///         "dessert": "レシピ名"
-  ///       }
+  ///         "main": "レシピ名",
+  ///         "sub": "レシピ名",
+  ///         "dessert": "レシピ名",
+  ///       },
   ///       "lunch": {
-  ///         "main": "レシピ名"
-  ///         "sub": "レシピ名"
-  ///         "dessert": "レシピ名"
-  ///       }
+  ///         "main": "レシピ名",
+  ///         "sub": "レシピ名",
+  ///         "dessert": "レシピ名",
+  ///       },
   ///       "dinner": {
-  ///         "main": "レシピ名"
-  ///         "sub": "レシピ名"
-  ///         "dessert": "レシピ名"
-  ///       }
+  ///         "main": "レシピ名",
+  ///         "sub": "レシピ名",
+  ///         "dessert": "レシピ名",
+  ///       },
   ///     },
   ///     "yyyymmdd": {
   ///       ・・・
@@ -229,8 +284,7 @@ class Firebase {
 
         final breakfastMain = await menuByDate["breakfast"]["main"].get();
         final breakfastSub = await menuByDate["breakfast"]["sub"].get();
-        final breakfastDessert =
-            await menuByDate["breakfast"]["dessert"].get();
+        final breakfastDessert = await menuByDate["breakfast"]["dessert"].get();
         menu["breakfast"]["main"] = breakfastMain["name"];
         menu["breakfast"]["sub"] = breakfastSub["name"];
         menu["breakfast"]["dessert"] = breakfastDessert["name"];
@@ -256,5 +310,248 @@ class Firebase {
     }
 
     return weeklyMenuByDate;
+  }
+
+  ///
+  /// 1週間レシピ一覧画面のデータ作成が必要かについて判定する
+  /// 【判定条件について】
+  ///   呼び出し元から週初めの日付をもらい、以下ドキュメントを取得する
+  ///   user/{user_id}/weekly_menu/yyyymmdd
+  ///     取得できない場合 -> メニュー作成必要
+  ///     取得できる場合   -> メニュー作成不要
+  ///
+  ///   週初めのデータがあれば、該当週のデータがあると判断
+  ///
+  /// [targetDate] 週初めの日付(yyyymmdd)となり、該当ドキュメントに存在するかのチェック用データ
+  ///
+  /// 戻り値::true  -> メニュー作成必要
+  ///        false -> メニュー作成不要
+  ///
+  Future<bool> isNeedCreateWeeklyMenu(final String targetDate, uid) async {
+    final menuByDateRef = FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection('weekly_menu')
+        .doc(targetDate);
+    final menuByDateSnapshot = await menuByDateRef.get();
+    final menuByDate = menuByDateSnapshot.data();
+
+    return menuByDate == null;
+  }
+
+  ///
+  /// 1週間メニューデータを今週の日付で登録する
+  ///
+  /// TODO
+  ///   また、以前のメニューデータを削除する
+  ///
+  Future<void> registerWeeklyMenu(uid, [bool isSame = false]) async {
+    await insertWeeklyMenu(uid, isSame);
+
+    // TODO 既存データの削除処理を実装する
+  }
+
+  ///
+  /// 1週間メニューデータを今週の日付で再登録する
+  /// [isSame]がtrueであれば、アプリ利用日の1週間メニューデータをそのまま登録し直す
+  ///
+  /// [uid] ログインユーザID
+  ///
+  Future<void> insertWeeklyMenu(uid, isSame) async {
+    if (uid == null) {
+      debugPrint("ユーザIDが不正のため、データ登録処理をスキップします");
+      return;
+    }
+
+    // 今週の日付を取得する
+    WeeklyRecipe weeklyRecipe = WeeklyRecipe();
+    List<String> weeklyDateList = weeklyRecipe.createWeeklyDate();
+
+    if (isSame) {
+      // 同一データを再登録する処理
+      // 登録済みデータを取得する
+      Map<String, dynamic>? weeklyMenu =
+          await _getRegisteredWeeklyMenuByDate(uid);
+      Map<String, dynamic> data =
+          _createWeeklyMenuForIsSame(weeklyDateList, weeklyMenu);
+
+      for (var menu in data.entries) {
+        _createWeeklyMenus(uid, menu);
+      }
+      return;
+    }
+
+    // 新規登録データを作成する
+    Firebase firebase = Firebase();
+    Map<int, List<DocumentReference<Object?>>> data =
+        await firebase.fetchAllRecipesForRefs(uid);
+    Map<int, List<dynamic>> weeklyDataRefs =
+        await weeklyRecipe.createWeeklyRecipeForRefs(data);
+
+    // 各レシピデータを取得する
+    Map<String, dynamic> weeklyData = await _createWeeklyRecipeDataForRefs(
+        uid, weeklyDataRefs, weeklyDateList);
+
+    for (var menu in weeklyData.entries) {
+      _createWeeklyMenus(uid, menu);
+    }
+  }
+
+  ///
+  /// 複数のメニューデータ[menu]を作成する
+  ///
+  Future<void> _createWeeklyMenus(uid, menu) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .collection("weekly_menu")
+          .doc(menu.key)
+          .set(menu.value);
+    } catch (e) {
+      debugPrint("1週間レシピデータの登録に失敗しました : $e");
+    }
+  }
+
+  ///
+  /// 登録済みの1週間メニューを取得する
+  ///
+  /// [uid] ログインユーザID
+  ///
+  Future<Map<String, dynamic>?> _getRegisteredWeeklyMenuByDate(
+      final String uid) async {
+    final menuByDateRef = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .collection('weekly_menu')
+        .get();
+
+    Map<String, dynamic> registeredWeeklyMenu = {};
+    menuByDateRef.docs.forEach((doc) {
+      registeredWeeklyMenu[doc.id] = doc.data();
+    });
+
+    return registeredWeeklyMenu;
+  }
+
+  ///
+  /// 既存1週間レシピデータを元にデータ作成する
+  ///
+  /// [weeklyMenuList] 既存1週間レシピデータのリスト情報
+  ///
+  /// 戻り値::weekly_menuコレクションのデータ
+  ///   {
+  ///     [weeklyDateList] : {
+  ///       "breakfast": {
+  ///         "main": reference
+  ///         "sub": reference
+  ///         "dessert": reference
+  ///       }
+  ///       "lunch": {
+  ///         "main": reference
+  ///         "sub": reference
+  ///         "dessert": reference
+  ///       }
+  ///       "dinner": {
+  ///         "main": reference
+  ///         "sub": reference
+  ///         "dessert": reference
+  ///       }
+  ///     },
+  ///     [weeklyDateList] : {
+  ///       ・・・
+  ///     },
+  ///   }
+  ///
+  Map<String, dynamic> _createWeeklyMenuForIsSame(
+      weeklyDateList, weeklyMenuList) {
+    Map<String, dynamic> menu = {};
+
+    // 日付キーを設定するためのカウンタ
+    int dateCounter = 0;
+    for (var data in weeklyMenuList.entries) {
+      menu["${weeklyDateList[dateCounter]}"] = {
+        "breakfast": {
+          "main": data.value["breakfast"]["main"],
+          "sub": data.value["breakfast"]["sub"],
+          "dessert": data.value["breakfast"]["dessert"]
+        },
+        "lunch": {
+          "main": data.value["lunch"]["main"],
+          "sub": data.value["lunch"]["sub"],
+          "dessert": data.value["lunch"]["dessert"]
+        },
+        "dinner": {
+          "main": data.value["dinner"]["main"],
+          "sub": data.value["dinner"]["sub"],
+          "dessert": data.value["dinner"]["dessert"]
+        },
+      };
+
+      dateCounter += 1;
+    }
+
+    return menu;
+  }
+
+  ///
+  /// Recipesコレクションの参照型データ[weeklyDataRefs]をweeklyMenuコレクション用の
+  /// データ構造に格納する
+  ///
+  ///   {
+  ///     [weeklyDateList] : {
+  ///       "breakfast": {
+  ///         "main": reference
+  ///         "sub": reference
+  ///         "dessert": reference
+  ///       }
+  ///       "lunch": {
+  ///         "main": reference
+  ///         "sub": reference
+  ///         "dessert": reference
+  ///       }
+  ///       "dinner": {
+  ///         "main": reference
+  ///         "sub": reference
+  ///         "dessert": reference
+  ///       }
+  ///     },
+  ///     [weeklyDateList] : {
+  ///       ・・・
+  ///     },
+  ///   }
+  ///
+  /// [uid] ログインユーザID
+  ///
+  Future<Map<String, dynamic>> _createWeeklyRecipeDataForRefs(
+      String uid, Map<int, List> weeklyDataRefs, weeklyDateList) async {
+    Map<String, dynamic> menu = {};
+
+    // 日付キーを設定するためのカウンタ
+    for (int weeklyCounter = 0; weeklyCounter < 7; weeklyCounter++) {
+      try {
+        menu["${weeklyDateList[weeklyCounter]}"] = {
+          "breakfast": {
+            "main": weeklyDataRefs[0]?[weeklyCounter],
+            "sub": weeklyDataRefs[1]?[weeklyCounter],
+            "dessert": weeklyDataRefs[2]?[weeklyCounter]
+          },
+          "lunch": {
+            "main": weeklyDataRefs[0]?[weeklyCounter],
+            "sub": weeklyDataRefs[1]?[weeklyCounter],
+            "dessert": weeklyDataRefs[2]?[weeklyCounter]
+          },
+          "dinner": {
+            "main": weeklyDataRefs[0]?[weeklyCounter],
+            "sub": weeklyDataRefs[1]?[weeklyCounter],
+            "dessert": weeklyDataRefs[2]?[weeklyCounter]
+          },
+        };
+      } catch (e) {
+        debugPrint("1週間レシピデータの登録に失敗しました : $e");
+      }
+    }
+
+    return menu;
   }
 }

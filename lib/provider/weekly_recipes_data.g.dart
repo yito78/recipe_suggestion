@@ -7,7 +7,7 @@ part of 'weekly_recipes_data.dart';
 // **************************************************************************
 
 String _$weeklyRecipesDataNotifierHash() =>
-    r'517dfc5314dec06fe54e6e3dad559da5039c929e';
+    r'45f99797c5719bb1cba5f166858f035126331877';
 
 /// weekly_recipesデータのNotifierクラス
 ///

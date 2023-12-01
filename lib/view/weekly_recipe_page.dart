@@ -1,23 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe_suggestion/provider/randomed_recipes_data.dart';
+import 'package:recipe_suggestion/provider/data_update_promotion.dart';
 import 'package:recipe_suggestion/provider/weekly_recipes_data.dart';
 import 'package:recipe_suggestion/utils/weekly_recipe.dart';
+import 'package:recipe_suggestion/view/update_promotion_weekly_recipe_modal_page.dart';
 import 'package:recipe_suggestion/view/weekly_recipe_modal_page.dart';
 
 /// 1週間レシピ一覧画面
-class WeeklyRecipePage extends ConsumerWidget {
-  const WeeklyRecipePage({Key? key}) : super(key: key);
+class WeeklyRecipePage extends ConsumerStatefulWidget {
+  const WeeklyRecipePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  WeeklyRecipePageState createState() => WeeklyRecipePageState();
+}
+
+// 更新促進画面実施済みフラグ
+late bool isExecutedPopupUpdatePromotion;
+
+class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    isExecutedPopupUpdatePromotion = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     var setHeight = screenSize.height * 0.22;
-    Map<String, String> imagePath = {
-      "main": "assets/images/main.png",
-      "sub": "assets/images/sub.png",
-      "dessert": "assets/images/dessert.png",
-    };
+    Map<String, String> imagePath = _setImage();
 
     // 1週間分の日付と曜日のハッシュ情報取得
     WeeklyRecipe weeklyRecipe = WeeklyRecipe();
@@ -45,6 +58,22 @@ class WeeklyRecipePage extends ConsumerWidget {
     }, loading: () {
       return const AsyncValue.loading();
     });
+
+    // 更新促進画面表示判定フラグデータを監視する
+    final updatePromotionWatch = ref.watch(dataUpdatePromotionNotifierProvider);
+    final isPopupUpdatePromotion = updatePromotionWatch.when(data: (d) {
+      return AsyncValue.data(d);
+    }, error: (e, s) {
+      return AsyncValue.error(e, s);
+    }, loading: () {
+      return const AsyncValue.loading();
+    });
+
+    if (isExecutedPopupUpdatePromotion == false &&
+        isPopupUpdatePromotion.value &&
+        weeklyMenuData.value != null) {
+      _executePopupUpdatePromotion(context);
+    }
 
     ///
     /// モーダル画面でfirestoreにデータ操作した際に、
@@ -257,5 +286,34 @@ class WeeklyRecipePage extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  ///
+  /// 各曜日カード内で表示するメニューアイコンを設定する
+  ///
+  Map<String, String> _setImage() {
+    return {
+      "main": "assets/images/main.png",
+      "sub": "assets/images/sub.png",
+      "dessert": "assets/images/dessert.png",
+    };
+  }
+
+  ///
+  /// 更新促進画面を表示する
+  ///
+  /// [context] build時のcontext
+  ///
+  void _executePopupUpdatePromotion(context) {
+    isExecutedPopupUpdatePromotion = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 画面が描画された後、モーダルダイアログを表示
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const UpdatePromotionWeeklyRecipeModalPage();
+          });
+    });
   }
 }

@@ -1,7 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
-
 ///
 /// 1週間レシピ一覧画面に表示するレシピ情報を作成する
 ///
@@ -26,6 +24,27 @@ class WeeklyRecipe {
     // 各カテゴリごとにデータをランダム抽出する
     Map<int, List<dynamic>> randomData = {};
     await _createDisplayRecipeData(categorizedData, randomData);
+
+    return randomData;
+  }
+
+  ///
+  /// 1週間レシピを作成
+  ///
+  /// recipeData::
+  ///
+  /// 戻り値::1週間レシピのハッシュ情報
+  /// Map<int, dynamic>
+  /// {
+  ///   0: [ "月曜の主菜レシピ名", "火曜の主菜レシピ名", "水曜の主菜レシピ名", … ],
+  ///   1: [ "月曜の副菜レシピ名", "火曜の副菜レシピ名", "水曜の副菜レシピ名", … ],
+  ///   2: [ "月曜のデザートレシピ名", "火曜のデザートレシピ名", "水曜のデザートレシピ名", … ],
+  /// }
+  ///
+  Future<Map<int, List<dynamic>>> createWeeklyRecipeForRefs(recipeData) async {
+    // 各カテゴリごとにデータをランダム抽出する
+    Map<int, List<dynamic>> randomData = {};
+    await _createDisplayRecipeData(recipeData, randomData);
 
     return randomData;
   }
@@ -67,8 +86,8 @@ class WeeklyRecipe {
   /// 戻り値::1週間レシピの配列情報
   ///   [ "月曜のレシピ名", "火曜のレシピ名", "水曜のレシピ名", … ]
   ///
-  List<String> _fetchRandomDataForLessSeven(recipeList) {
-    List<String> storingList = ["", "", "", "", "", "", ""];
+  List<dynamic> _fetchRandomDataForLessSeven(recipeList) {
+    List<dynamic> storingList = ["", "", "", "", "", "", ""];
     int recipeListLength = recipeList.length > 1 ? recipeList.length - 1 : 1;
     Random random = Random();
 
@@ -165,37 +184,30 @@ class WeeklyRecipe {
 
   ///
   /// 基準曜日(アプリ利用日)をもとに該当週の日付を計算する
-  /// 計算対象曜日が基準曜日以前である場合、基準曜日の日付から減算する
-  /// 逆の場合は、基準曜日の日付に対して加算する
+  ///   1. 計算対象曜日から基準曜日を減算する
+  ///   2. アプリ利用日に1の結果を加算する
   ///
-  ///   例
-  ///     基準曜日(アプリ利用日)が水曜日で、計算対象曜日が月曜日の場合の計算について
-  ///     水曜日のDateTime.weekday : 3
-  ///     月曜日のDateTime.weekday : 1
-  ///       3 - 1 = 2
-  ///     水曜日のDateTime.nowから2日前として計算する
+  ///   以下表は、baseWeekdayを2(火曜日)とした場合の日付算出式を一覧にしたものとなる
   ///
-  ///     基準曜日(アプリ利用日)が水曜日で、計算対象曜日が木曜日の場合の計算について
-  ///     水曜日のDateTime.weekday : 3
-  ///     木曜日のDateTime.weekday : 4
-  ///       4 - 3 = 1
-  ///     水曜日のDateTime.nowから1日後として計算する
+  ///   baseWeekday | targetWeekday | 算出式
+  ///   ----------------------------------------------------
+  ///    2(火曜日)   | 1(月曜日)      | アプリ利用日 + (1(targetWeekday) - 2(baseWeekday))
+  ///    2          | 2(火曜日)      | アプリ利用日 + (2(targetWeekday) - 2(baseWeekday))
+  ///    2          | 3(水曜日)      | アプリ利用日 + (3(targetWeekday) - 2(baseWeekday))
+  ///    2          | 4(木曜日)      | アプリ利用日 + (4(targetWeekday) - 2(baseWeekday))
+  ///    2          | 5(金曜日)      | アプリ利用日 + (5(targetWeekday) - 2(baseWeekday))
+  ///    2          | 6(土曜日)      | アプリ利用日 + (6(targetWeekday) - 2(baseWeekday))
+  ///    2          | 7(日曜日)      | アプリ利用日 + (7(targetWeekday) - 2(baseWeekday))
   ///
-  /// datetime::DateTimeオブジェクト
-  /// calcTargetWeekday::計算対象曜日(月曜なら1, 火曜なら2…)
-  /// baseWeekday::基準曜日(月曜なら1, 火曜なら2…)
+  /// [datetime] アプリ利用日となり、曜日情報をもとに各曜日の日付を算出するために利用する
+  /// [calcTargetWeekday] 計算対象曜日(月曜なら1, 火曜なら2…)
+  /// [baseWeekday] 基準曜日(月曜なら1, 火曜なら2…)
   ///
   String _calclateDate(
       DateTime datetime, int calcTargetWeekday, int baseWeekday) {
-    if (baseWeekday >= calcTargetWeekday) {
-      DateTime date =
-          datetime.subtract(Duration(days: baseWeekday - calcTargetWeekday));
-      return "${date.year}/${date.month}/${date.day}";
-    } else {
-      DateTime date =
-          datetime.add(Duration(days: calcTargetWeekday - baseWeekday));
-      return "${date.year}/${date.month}/${date.day}";
-    }
+    DateTime date =
+        datetime.add(Duration(days: calcTargetWeekday - baseWeekday));
+    return "${date.year}/${date.month}/${date.day}";
   }
 
   ///
