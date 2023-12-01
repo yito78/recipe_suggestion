@@ -340,8 +340,10 @@ class Firebase {
   }
 
   ///
+  /// 1週間メニューデータを今週の日付で登録する
   ///
-  ///
+  /// TODO
+  ///   また、以前のメニューデータを削除する
   ///
   Future<void> registerWeeklyMenu(uid, [bool isSame = false]) async {
     await insertWeeklyMenu(uid, isSame);
@@ -355,7 +357,7 @@ class Firebase {
   ///
   /// [uid] ログインユーザID
   ///
-  Future<void> insertWeeklyMenu(uid, [bool isSame = false]) async {
+  Future<void> insertWeeklyMenu(uid, isSame) async {
     if (uid == null) {
       debugPrint("ユーザIDが不正のため、データ登録処理をスキップします");
       return;
