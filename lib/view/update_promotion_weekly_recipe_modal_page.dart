@@ -23,7 +23,7 @@ class UpdatePromotionWeeklyRecipeModalPage extends StatelessWidget {
                 String? uid =
                     await FirebaseAuthentication.fetchSignedInUserId();
                 Firebase firebase = Firebase();
-                await firebase.insertWeeklyMenu(uid);
+                await firebase.registerWeeklyMenu(uid);
                 if (context.mounted) {
                   Navigator.of(context).pop();
                 }
@@ -39,7 +39,7 @@ class UpdatePromotionWeeklyRecipeModalPage extends StatelessWidget {
                 String? uid =
                     await FirebaseAuthentication.fetchSignedInUserId();
                 Firebase firebase = Firebase();
-                await firebase.insertWeeklyMenu(uid, true);
+                await firebase.registerWeeklyMenu(uid, true);
                 if (context.mounted) {
                   Navigator.of(context).pop();
                 }

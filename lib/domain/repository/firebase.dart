@@ -340,6 +340,16 @@ class Firebase {
   }
 
   ///
+  ///
+  ///
+  ///
+  Future<void> registerWeeklyMenu(uid, [bool isSame = false]) async {
+    await insertWeeklyMenu(uid, isSame);
+
+    // TODO 既存データの削除処理を実装する
+  }
+
+  ///
   /// 1週間メニューデータを今週の日付で再登録する
   /// [isSame]がtrueであれば、アプリ利用日の1週間メニューデータをそのまま登録し直す
   ///
@@ -383,8 +393,6 @@ class Firebase {
     for (var menu in weeklyData.entries) {
       _createWeeklyMenus(uid, menu);
     }
-
-    // TODO 既存データの削除処理を実装する
   }
 
   ///
