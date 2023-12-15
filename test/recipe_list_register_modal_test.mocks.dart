@@ -542,11 +542,37 @@ class MockFirebase extends _i1.Mock implements _i7.Firebase {
         returnValue: _i5.Future<bool>.value(false),
       ) as _i5.Future<bool>);
   @override
-  dynamic insertWeeklyMenu([bool? isSame = false]) =>
-      super.noSuchMethod(Invocation.method(
-        #insertWeeklyMenu,
-        [isSame],
-      ));
+  _i5.Future<void> registerWeeklyMenu(
+    dynamic uid, [
+    bool? isSame = false,
+  ]) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #registerWeeklyMenu,
+          [
+            uid,
+            isSame,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
+  _i5.Future<void> insertWeeklyMenu(
+    dynamic uid,
+    dynamic isSame,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #insertWeeklyMenu,
+          [
+            uid,
+            isSame,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }
 
 /// A class which mocks [RecipeListRegisterModalData].

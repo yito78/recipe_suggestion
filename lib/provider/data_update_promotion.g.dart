@@ -7,7 +7,7 @@ part of 'data_update_promotion.dart';
 // **************************************************************************
 
 String _$dataUpdatePromotionNotifierHash() =>
-    r'eef0a86dccd656ba7dd985b78e44d19a244a4196';
+    r'da4210bdaee880160706a696835cf65d8e4397aa';
 
 /// 更新促進画面表示判定データのNotifierクラス
 ///

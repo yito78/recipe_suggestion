@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:recipe_suggestion/domain/repository/firebase.dart';
@@ -12,7 +13,11 @@ class DataUpdatePromotionNotifier extends _$DataUpdatePromotionNotifier {
   Future<bool> build() async {
     Firebase updateWeeklyMenu = Firebase();
     String? uid = await FirebaseAuthentication.fetchSignedInUserId();
-    // TODO 20231101はテストデータとなるため、別Issueで差し替える
-    return await updateWeeklyMenu.isNeedCreateWeeklyMenu("20231101", uid);
+
+    DateTime now = DateTime.now();
+    DateFormat dateFormat = DateFormat('yyyyMMdd');
+    String date = dateFormat.format(now);
+
+    return await updateWeeklyMenu.isNeedCreateWeeklyMenu(date, uid);
   }
 }

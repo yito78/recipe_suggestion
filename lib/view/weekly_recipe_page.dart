@@ -171,6 +171,18 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
     String subRecipes = "";
     String dessertRecipes = "";
 
+    if (weeklyMenuData == null) {
+      return SizedBox(
+          height: setHeight,
+          child: Card(
+            child: Column(
+              children: [
+                _createCardHeader(weekdayText, displayDate),
+              ],
+            ),
+          ));
+    }
+
     if (weeklyMenuData.value != null) {
       // TODO 将来の機能にて、朝食タブ、昼食タブ、夕食タブを実装する予定
       //      現状は、夕食メニューのみを表示する想定のため、dinnerをキーに指定する
