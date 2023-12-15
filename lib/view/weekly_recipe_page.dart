@@ -36,17 +36,7 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
     WeeklyRecipe weeklyRecipe = WeeklyRecipe();
     Map<String, String> dateByWeekday = weeklyRecipe.createWeeklyDateWeekday();
 
-    // TODO 新データ構造の登録処理が完了後に以下処理のコメントアウトを解除する
-    // final testWeeklyDate = weeklyRecipe.createWeeklyDate();
-    final weeklyDate = [
-      "20231009",
-      "20231010",
-      "20231011",
-      "20231012",
-      "20231013",
-      "20231014",
-      "20231015"
-    ];
+    final weeklyDate = weeklyRecipe.createWeeklyDate();
 
     // weekly_recipesデータを監視する
     final weeklyRecipesWatch = ref.watch(weeklyRecipesDataNotifierProvider);

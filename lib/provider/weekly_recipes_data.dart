@@ -1,4 +1,5 @@
 import 'package:recipe_suggestion/domain/repository/firebase_authentication.dart';
+import 'package:recipe_suggestion/utils/weekly_recipe.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:recipe_suggestion/domain/repository/firebase.dart';
 part 'weekly_recipes_data.g.dart';
@@ -42,16 +43,8 @@ class WeeklyRecipesDataNotifier extends _$WeeklyRecipesDataNotifier {
   ///
   ///
   Future<Map<String, dynamic>> _fetchAllWeeklyRecipesData() async {
-    // TODO 以下変数は引数でもらうようにする(現在仮実装)
-    List<String> targetDateList = [
-      "20231009",
-      "20231010",
-      "20231011",
-      "20231012",
-      "20231013",
-      "20231014",
-      "20231015",
-    ];
+    WeeklyRecipe weeklyRecipe = WeeklyRecipe();
+    List<String> targetDateList = weeklyRecipe.createWeeklyDate();
 
     final uid = await FirebaseAuthentication.fetchSignedInUserId();
 
