@@ -380,11 +380,15 @@ class Firebase {
       }
       return;
     }
+    debugPrint(
+        "1111111111111111111111111111111111111111-----------------------");
 
     // 新規登録データを作成する
     Firebase firebase = Firebase();
     Map<int, List<DocumentReference<Object?>>> data =
         await firebase.fetchAllRecipesForRefs(uid);
+    debugPrint(
+        "weeklyRecipe.createWeeklyRecipeForRefs前-----------------------");
     Map<int, List<dynamic>> weeklyDataRefs =
         await weeklyRecipe.createWeeklyRecipeForRefs(data);
 

@@ -119,32 +119,74 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
         children: [
           TableRow(
             children: [
-              _cardWidget("月曜日", setHeight, imagePath, weeklyMenuData,
-                  dateByWeekday["月曜日"], weeklyDate[0]),
-              _cardWidget("火曜日", setHeight, imagePath, weeklyMenuData,
-                  dateByWeekday["火曜日"], weeklyDate[1]),
+              _cardWidget(
+                  "月曜日",
+                  setHeight,
+                  imagePath,
+                  weeklyMenuData,
+                  dateByWeekday["月曜日"],
+                  weeklyDate[0],
+                  isPopupUpdatePromotion.value),
+              _cardWidget(
+                  "火曜日",
+                  setHeight,
+                  imagePath,
+                  weeklyMenuData,
+                  dateByWeekday["火曜日"],
+                  weeklyDate[1],
+                  isPopupUpdatePromotion.value),
             ],
           ),
           TableRow(
             children: [
-              _cardWidget("水曜日", setHeight, imagePath, weeklyMenuData,
-                  dateByWeekday["水曜日"], weeklyDate[2]),
-              _cardWidget("木曜日", setHeight, imagePath, weeklyMenuData,
-                  dateByWeekday["木曜日"], weeklyDate[3]),
+              _cardWidget(
+                  "水曜日",
+                  setHeight,
+                  imagePath,
+                  weeklyMenuData,
+                  dateByWeekday["水曜日"],
+                  weeklyDate[2],
+                  isPopupUpdatePromotion.value),
+              _cardWidget(
+                  "木曜日",
+                  setHeight,
+                  imagePath,
+                  weeklyMenuData,
+                  dateByWeekday["木曜日"],
+                  weeklyDate[3],
+                  isPopupUpdatePromotion.value),
             ],
           ),
           TableRow(
             children: [
-              _cardWidget("金曜日", setHeight, imagePath, weeklyMenuData,
-                  dateByWeekday["金曜日"], weeklyDate[4]),
-              _cardWidget("土曜日", setHeight, imagePath, weeklyMenuData,
-                  dateByWeekday["土曜日"], weeklyDate[5]),
+              _cardWidget(
+                  "金曜日",
+                  setHeight,
+                  imagePath,
+                  weeklyMenuData,
+                  dateByWeekday["金曜日"],
+                  weeklyDate[4],
+                  isPopupUpdatePromotion.value),
+              _cardWidget(
+                  "土曜日",
+                  setHeight,
+                  imagePath,
+                  weeklyMenuData,
+                  dateByWeekday["土曜日"],
+                  weeklyDate[5],
+                  isPopupUpdatePromotion.value),
             ],
           ),
           TableRow(
             children: [
-              _cardWidget("日曜日", setHeight, imagePath, weeklyMenuData,
-                  dateByWeekday["日曜日"], weeklyDate[6]),
+              _cardWidget(
+                  "日曜日",
+                  setHeight,
+                  imagePath,
+                  weeklyMenuData,
+                  dateByWeekday["日曜日"],
+                  weeklyDate[6],
+                  isPopupUpdatePromotion.value),
               floatActionButton(setHeight, context),
             ],
           ),
@@ -162,16 +204,18 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
   /// [weeklyMenuData] 画面表示用レシピデータ
   /// [displayDate] 画面表示用日付("yyyy/mm/dd")
   /// [weeklyDate] 動作確認用日付("yyyymmdd")
+  /// [isPopupUpdatePromotion] 更新促進画面表示判定フラグ
   ///
   /// 戻り値::月曜から日曜までのレシピ表示領域ウィジェット
   ///
   Widget _cardWidget(weekdayText, setHeight, imagePath, weeklyMenuData,
-      displayDate, weeklyDate) {
+      displayDate, weeklyDate, isPopupUpdatePromotion) {
     String mainRecipes = "";
     String subRecipes = "";
     String dessertRecipes = "";
 
-    if (weeklyMenuData == null) {
+    // 更新促進画面表示時は、ヘッダー情報のみ表示する(レシピデータが空のため後続レシピ情報取得処理でエラーとなる)
+    if (isPopupUpdatePromotion) {
       return SizedBox(
           height: setHeight,
           child: Card(

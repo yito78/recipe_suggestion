@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
+
 ///
 /// 1週間レシピ一覧画面に表示するレシピ情報を作成する
 ///
@@ -42,6 +44,7 @@ class WeeklyRecipe {
   /// }
   ///
   Future<Map<int, List<dynamic>>> createWeeklyRecipeForRefs(recipeData) async {
+    debugPrint("2222222222222222222222222222222222222222222222222222222");
     // 各カテゴリごとにデータをランダム抽出する
     Map<int, List<dynamic>> randomData = {};
     await _createDisplayRecipeData(recipeData, randomData);
@@ -140,6 +143,7 @@ class WeeklyRecipe {
   ///
   _createDisplayRecipeData(
       Map<int, dynamic> categorizedData, Map<int, List> randomData) {
+    debugPrint("$categorizedData");
     categorizedData.forEach((key, list) {
       if (list.length >= 7) {
         // 1週間分のレシピが存在する場合
@@ -149,7 +153,7 @@ class WeeklyRecipe {
         randomData[key] = _fetchRandomDataForLessSeven(list);
       }
     });
-
+    debugPrint("$randomData");
     return randomData;
   }
 
