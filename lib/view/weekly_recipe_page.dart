@@ -37,8 +37,6 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
     Map<String, String> dateByWeekday = weeklyRecipe.createWeeklyDateWeekday();
 
     // 更新促進画面表示判定フラグデータを監視する
-    // TODO dataUpdatePromotionNotifierProviderが意図した挙動していない
-    //      今週のデータを投入しても、再度判定処理が実行されない
     final updatePromotionWatch = ref.watch(dataUpdatePromotionNotifierProvider);
     final isPopupUpdatePromotion = updatePromotionWatch.when(data: (d) {
       return AsyncValue.data(d);
@@ -238,24 +236,26 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
           ));
     }
 
-    if (weeklyMenuData.value != null) {
+    if (weeklyMenuData.value != null && !weeklyMenuData.value.isEmpty) {
       // TODO 将来の機能にて、朝食タブ、昼食タブ、夕食タブを実装する予定
       //      現状は、夕食メニューのみを表示する想定のため、dinnerをキーに指定する
       mainRecipes = weeklyMenuData.value[weeklyDate]["dinner"]["main"];
       subRecipes = weeklyMenuData.value[weeklyDate]["dinner"]["sub"];
       dessertRecipes = weeklyMenuData.value[weeklyDate]["dinner"]["dessert"];
+
+      return SizedBox(
+          height: setHeight,
+          child: Card(
+            child: Column(
+              children: [
+                _createCardHeader(weekdayText, displayDate),
+                _createCardBody(imagePath, weeklyMenuData, mainRecipes,
+                    subRecipes, dessertRecipes),
+              ],
+            ),
+          ));
     }
-    return SizedBox(
-        height: setHeight,
-        child: Card(
-          child: Column(
-            children: [
-              _createCardHeader(weekdayText, displayDate),
-              _createCardBody(imagePath, weeklyMenuData, mainRecipes,
-                  subRecipes, dessertRecipes),
-            ],
-          ),
-        ));
+    return Container();
   }
 
   ///
