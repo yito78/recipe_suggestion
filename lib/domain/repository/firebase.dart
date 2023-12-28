@@ -336,9 +336,6 @@ class Firebase {
     final menuByDateSnapshot = await menuByDateRef.get();
     final menuByDate = menuByDateSnapshot.data();
 
-    debugPrint("menuByDate----------------------------------------");
-    debugPrint("${menuByDate == null}");
-
     return menuByDate == null;
   }
 
@@ -383,15 +380,11 @@ class Firebase {
       }
       return;
     }
-    debugPrint(
-        "1111111111111111111111111111111111111111-----------------------");
 
     // 新規登録データを作成する
     Firebase firebase = Firebase();
     Map<int, List<DocumentReference<Object?>>> data =
         await firebase.fetchAllRecipesForRefs(uid);
-    debugPrint(
-        "weeklyRecipe.createWeeklyRecipeForRefs前-----------------------");
     Map<int, List<dynamic>> weeklyDataRefs =
         await weeklyRecipe.createWeeklyRecipeForRefs(data);
 

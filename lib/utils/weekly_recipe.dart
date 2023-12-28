@@ -91,7 +91,7 @@ class WeeklyRecipe {
   ///
   List<dynamic> _fetchRandomDataForLessSeven(recipeList) {
     List<dynamic> storingList = ["", "", "", "", "", "", ""];
-    int recipeListLength = recipeList.length > 1 ? recipeList.length - 1 : 1;
+    int recipeListLength = recipeList.length > 1 ? recipeList.length : 1;
     Random random = Random();
 
     for (int i = storingList.length - 1; i >= 0; i--) {
