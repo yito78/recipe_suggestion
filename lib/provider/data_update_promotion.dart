@@ -20,4 +20,18 @@ class DataUpdatePromotionNotifier extends _$DataUpdatePromotionNotifier {
 
     return await updateWeeklyMenu.isNeedCreateWeeklyMenu(date, uid);
   }
+
+  changeIsNeedCreateWeeklyMenu() async {
+    Firebase updateWeeklyMenu = Firebase();
+    String? uid = await FirebaseAuthentication.fetchSignedInUserId();
+
+    DateTime now = DateTime.now();
+    DateFormat dateFormat = DateFormat('yyyyMMdd');
+    String date = dateFormat.format(now);
+
+    AsyncValue<bool> stateData = AsyncValue.data(
+        await updateWeeklyMenu.isNeedCreateWeeklyMenu(date, uid));
+
+    state = stateData;
+  }
 }

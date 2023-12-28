@@ -8,7 +8,6 @@ final userProvider = StreamProvider<User?>((ref) async* {
   final auth = FirebaseAuth.instance;
   final userStream = auth.authStateChanges();
   await for (final user in userStream) {
-    debugPrint("-------------user: $user");
     yield user;
   }
 });

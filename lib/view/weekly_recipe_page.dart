@@ -36,6 +36,22 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
     WeeklyRecipe weeklyRecipe = WeeklyRecipe();
     Map<String, String> dateByWeekday = weeklyRecipe.createWeeklyDateWeekday();
 
+    // 更新促進画面表示判定フラグデータを監視する
+    // TODO dataUpdatePromotionNotifierProviderが意図した挙動していない
+    //      今週のデータを投入しても、再度判定処理が実行されない
+    final updatePromotionWatch = ref.watch(dataUpdatePromotionNotifierProvider);
+    final isPopupUpdatePromotion = updatePromotionWatch.when(data: (d) {
+      return AsyncValue.data(d);
+    }, error: (e, s) {
+      return AsyncValue.error(e, s);
+    }, loading: () {
+      return const AsyncValue.loading();
+    });
+
+    debugPrint(
+        "22222222222222222222222222222222222222222222222222222222222222222");
+    debugPrint("isPopupUpdatePromotion: ${isPopupUpdatePromotion.value} ");
+
     final weeklyDate = weeklyRecipe.createWeeklyDate();
 
     // weekly_recipesデータを監視する
@@ -48,21 +64,12 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
     }, loading: () {
       return const AsyncValue.loading();
     });
-
-    // 更新促進画面表示判定フラグデータを監視する
-    final updatePromotionWatch = ref.watch(dataUpdatePromotionNotifierProvider);
-    final isPopupUpdatePromotion = updatePromotionWatch.when(data: (d) {
-      return AsyncValue.data(d);
-    }, error: (e, s) {
-      return AsyncValue.error(e, s);
-    }, loading: () {
-      return const AsyncValue.loading();
-    });
+    debugPrint("weeklyMenuData: ${weeklyMenuData.value}");
 
     if (isExecutedPopupUpdatePromotion == false &&
         isPopupUpdatePromotion.value &&
         weeklyMenuData.value != null) {
-      _executePopupUpdatePromotion(context);
+      _executePopupUpdatePromotion(context, ref);
     }
 
     ///
@@ -350,16 +357,25 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
   ///
   /// [context] build時のcontext
   ///
-  void _executePopupUpdatePromotion(context) {
+  void _executePopupUpdatePromotion(context, ref) {
     isExecutedPopupUpdatePromotion = true;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       // 画面が描画された後、モーダルダイアログを表示
-      showDialog(
+      await showDialog(
           context: context,
           builder: (BuildContext context) {
             return const UpdatePromotionWeeklyRecipeModalPage();
           });
+      ref
+          .read(dataUpdatePromotionNotifierProvider.notifier)
+          .changeIsNeedCreateWeeklyMenu();
+
+      ref
+          .read(weeklyRecipesDataNotifierProvider.notifier)
+          .updateWeeklyMenuState();
+
+      setState(() {});
     });
   }
 }

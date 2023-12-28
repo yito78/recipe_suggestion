@@ -336,6 +336,9 @@ class Firebase {
     final menuByDateSnapshot = await menuByDateRef.get();
     final menuByDate = menuByDateSnapshot.data();
 
+    debugPrint("menuByDate----------------------------------------");
+    debugPrint("${menuByDate == null}");
+
     return menuByDate == null;
   }
 

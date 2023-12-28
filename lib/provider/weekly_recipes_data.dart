@@ -14,6 +14,13 @@ class WeeklyRecipesDataNotifier extends _$WeeklyRecipesDataNotifier {
     return await _fetchAllWeeklyRecipesData();
   }
 
+  updateWeeklyMenuState() async {
+    AsyncValue<Map<String, dynamic>> stateData =
+        AsyncValue.data(await _fetchAllWeeklyRecipesData());
+
+    state = stateData;
+  }
+
   ///
   /// 1週間レシピデータを取得
   ///
