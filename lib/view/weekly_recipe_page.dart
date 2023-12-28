@@ -48,10 +48,6 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
       return const AsyncValue.loading();
     });
 
-    debugPrint(
-        "22222222222222222222222222222222222222222222222222222222222222222");
-    debugPrint("isPopupUpdatePromotion: ${isPopupUpdatePromotion.value} ");
-
     final weeklyDate = weeklyRecipe.createWeeklyDate();
 
     // weekly_recipesデータを監視する
@@ -64,13 +60,6 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
     }, loading: () {
       return const AsyncValue.loading();
     });
-    debugPrint("weeklyMenuData: ${weeklyMenuData.value}");
-
-    if (isExecutedPopupUpdatePromotion == false &&
-        isPopupUpdatePromotion.value &&
-        weeklyMenuData.value != null) {
-      _executePopupUpdatePromotion(context, ref);
-    }
 
     ///
     /// モーダル画面でfirestoreにデータ操作した際に、
@@ -118,88 +107,103 @@ class WeeklyRecipePageState extends ConsumerState<WeeklyRecipePage> {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Center(child: Text("1週間のレシピ一覧(夕食)")),
-      ),
-      body: Table(
-        children: [
-          TableRow(
-            children: [
-              _cardWidget(
-                  "月曜日",
-                  setHeight,
-                  imagePath,
-                  weeklyMenuData,
-                  dateByWeekday["月曜日"],
-                  weeklyDate[0],
-                  isPopupUpdatePromotion.value),
-              _cardWidget(
-                  "火曜日",
-                  setHeight,
-                  imagePath,
-                  weeklyMenuData,
-                  dateByWeekday["火曜日"],
-                  weeklyDate[1],
-                  isPopupUpdatePromotion.value),
-            ],
-          ),
-          TableRow(
-            children: [
-              _cardWidget(
-                  "水曜日",
-                  setHeight,
-                  imagePath,
-                  weeklyMenuData,
-                  dateByWeekday["水曜日"],
-                  weeklyDate[2],
-                  isPopupUpdatePromotion.value),
-              _cardWidget(
-                  "木曜日",
-                  setHeight,
-                  imagePath,
-                  weeklyMenuData,
-                  dateByWeekday["木曜日"],
-                  weeklyDate[3],
-                  isPopupUpdatePromotion.value),
-            ],
-          ),
-          TableRow(
-            children: [
-              _cardWidget(
-                  "金曜日",
-                  setHeight,
-                  imagePath,
-                  weeklyMenuData,
-                  dateByWeekday["金曜日"],
-                  weeklyDate[4],
-                  isPopupUpdatePromotion.value),
-              _cardWidget(
-                  "土曜日",
-                  setHeight,
-                  imagePath,
-                  weeklyMenuData,
-                  dateByWeekday["土曜日"],
-                  weeklyDate[5],
-                  isPopupUpdatePromotion.value),
-            ],
-          ),
-          TableRow(
-            children: [
-              _cardWidget(
-                  "日曜日",
-                  setHeight,
-                  imagePath,
-                  weeklyMenuData,
-                  dateByWeekday["日曜日"],
-                  weeklyDate[6],
-                  isPopupUpdatePromotion.value),
-              floatActionButton(setHeight, context),
-            ],
-          ),
-        ],
-      ),
-    );
+    if (isPopupUpdatePromotion.value == null && weeklyMenuData.value == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Center(child: Text("1週間のレシピ一覧(夕食)")),
+        ),
+        body: Container(),
+      );
+    } else {
+      // 今週のレシピデータが存在しない場合、更新促進画面を表示する
+      if (isExecutedPopupUpdatePromotion == false &&
+          isPopupUpdatePromotion.value == true) {
+        _executePopupUpdatePromotion(context, ref);
+      }
+
+      return Scaffold(
+        appBar: AppBar(
+          title: const Center(child: Text("1週間のレシピ一覧(夕食)")),
+        ),
+        body: Table(
+          children: [
+            TableRow(
+              children: [
+                _cardWidget(
+                    "月曜日",
+                    setHeight,
+                    imagePath,
+                    weeklyMenuData,
+                    dateByWeekday["月曜日"],
+                    weeklyDate[0],
+                    isPopupUpdatePromotion.value),
+                _cardWidget(
+                    "火曜日",
+                    setHeight,
+                    imagePath,
+                    weeklyMenuData,
+                    dateByWeekday["火曜日"],
+                    weeklyDate[1],
+                    isPopupUpdatePromotion.value),
+              ],
+            ),
+            TableRow(
+              children: [
+                _cardWidget(
+                    "水曜日",
+                    setHeight,
+                    imagePath,
+                    weeklyMenuData,
+                    dateByWeekday["水曜日"],
+                    weeklyDate[2],
+                    isPopupUpdatePromotion.value),
+                _cardWidget(
+                    "木曜日",
+                    setHeight,
+                    imagePath,
+                    weeklyMenuData,
+                    dateByWeekday["木曜日"],
+                    weeklyDate[3],
+                    isPopupUpdatePromotion.value),
+              ],
+            ),
+            TableRow(
+              children: [
+                _cardWidget(
+                    "金曜日",
+                    setHeight,
+                    imagePath,
+                    weeklyMenuData,
+                    dateByWeekday["金曜日"],
+                    weeklyDate[4],
+                    isPopupUpdatePromotion.value),
+                _cardWidget(
+                    "土曜日",
+                    setHeight,
+                    imagePath,
+                    weeklyMenuData,
+                    dateByWeekday["土曜日"],
+                    weeklyDate[5],
+                    isPopupUpdatePromotion.value),
+              ],
+            ),
+            TableRow(
+              children: [
+                _cardWidget(
+                    "日曜日",
+                    setHeight,
+                    imagePath,
+                    weeklyMenuData,
+                    dateByWeekday["日曜日"],
+                    weeklyDate[6],
+                    isPopupUpdatePromotion.value),
+                floatActionButton(setHeight, context),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   ///
