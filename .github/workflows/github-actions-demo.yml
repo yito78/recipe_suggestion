@@ -1,0 +1,76 @@
+# flutterのWebブラウザ用のコードをfirebaseにデプロイするワークフロー
+#
+# 補足
+# 
+# このワークフローを正常に動作させるためには、GitHubの設定で Firebase_Deploy という名前で  
+# Environment Secretsを作成し、その作成したEnvironment Secrets に、FIREBASE_TOKENという  
+# 名前でfirebaseにアクセスするためのトークンを格納する必要がある.
+# 
+# firebaseへのアクセストークンは、
+#
+# ```sh
+# firebase login:ci
+# ```
+#
+# コマンドを実行して取得する方法がある.
+# 
+# 参考
+#
+# GitHub Secrets については、 https://docs.github.com/ja/actions/security-guides/encrypted-secrets を参照
+name: push後にfirebaseにデプロイする
+
+# 実行のトリガーを設定
+on:
+  # mainブランチへのpushイベントに対して実行
+  push:
+    branches:
+    - main
+
+# 実行するワークフローを記述
+jobs:
+  deploy:
+    # ubuntuの最新版の上でこワークフローを動作させる
+    runs-on: ubuntu-latest
+    
+    # 読み込むGitHubのEnvironment Secretsの名前を指定
+    environment:
+      # Firebase_Deployという名前の Environment Secrets を使用する
+      # 1つの Environment Secrets に複数のSecrets(${{ secrets.XXXX }} でアクセス可能な変数)を格納することができる
+      name: Firebase_Deploy
+
+    # ワークフローのステップを記述
+    steps:
+      # ブランチを取り出す(checkoutする)
+      # usesで指定するアクションは https://github.com/marketplace?type=actions で探す
+      # https://github.com/marketplace/actions/checkout
+      - name: ブランチを取り出す
+        uses: actions/checkout@v3
+
+      # flutterコマンドを使用できる環境を整える
+      # https://github.com/marketplace/actions/flutter-action
+      - name: flutterコマンドを使用できる環境を整える
+        uses: subosito/flutter-action@v3
+        with:
+          flutter-version: 3.10.x
+          channel: stable
+          
+      # pubspec.yamlに記述した必要なパッケージをインストール
+      # runで指定したコマンドがworkflowを実行しているサーバーで実行される
+      - name: pubspec.yamlに記述した必要なパッケージをインストールする
+        run: flutter pub get
+
+      # Web用にプロジェクトをビルド
+      - name: web用にプロジェクトをビルド
+        run: flutter build web
+
+      # firebaseにビルドしたものをデプロイ
+      # https://github.com/marketplace/actions/github-action-for-firebase
+      - name: firebaseにデプロイ
+        uses: w9jds/firebase-action@v2.0.0
+        with:
+          args: deploy
+        env:
+          # FIREBASEにアクセスするためのトークン
+          # firebaseのトークンの取得はfirebaseの以下のコマンドを実行して取得し、このワークフローが動作するプロジェクトの Secrets に FIREBASE_TOKEN という名前で保存しておく
+          # > firebase login:ci
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
