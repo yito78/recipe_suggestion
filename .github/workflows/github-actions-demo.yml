@@ -44,7 +44,7 @@ jobs:
       # usesで指定するアクションは https://github.com/marketplace?type=actions で探す
       # https://github.com/marketplace/actions/checkout
       - name: ブランチを取り出す
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # flutterコマンドを使用できる環境を整える
       # https://github.com/marketplace/actions/flutter-action
