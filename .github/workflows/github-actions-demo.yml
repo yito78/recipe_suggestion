@@ -49,7 +49,7 @@ jobs:
       # flutterコマンドを使用できる環境を整える
       # https://github.com/marketplace/actions/flutter-action
       - name: flutterコマンドを使用できる環境を整える
-        uses: subosito/flutter-action@v3
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.10.x
           channel: stable
