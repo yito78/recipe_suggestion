@@ -4,6 +4,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
+    "target": "recipe", 
     "public": "build/web",
     "ignore": [
       "firebase.json",
