@@ -1,39 +1,39 @@
 rules_version = '2';
-// service cloud.firestore {
-//   match /databases/{database}/documents {
-    // match /categories/{document=**} {
-    //   allow read, write: if true;
-    // }
+match /databases/{database}/documents {
+  service cloud.firestore {
+    match /categories/{document=**} {
+      allow read, write: if true;
+    }
 
-    // match /index/{document=**} {
-    //   allow read, write: if true;
-    // }
+    match /index/{document=**} {
+      allow read, write: if true;
+    }
 
-    // match /users/{document=**} {
-    //   allow read, write: if true;
-    // }
+    match /users/{document=**} {
+      allow read, write: if true;
+    }
     
-    // match /users/{userId} {
-    //   allow read, write: if request.auth != null && request.auth.uid == userId;
-    // }
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
 
-    // match /recipes/{document=**} {
-    //   allow read, delete: if true;
+    match /recipes/{document=**} {
+      allow read, delete: if true;
 
-    //   // カテゴリIDが許可された値であるかチェック
-    //   function checkCategory(document){
-    //       return exists(/databases/$(database)/documents/categories/$(document));
-    //   }
+      // カテゴリIDが許可された値であるかチェック
+      function checkCategory(document){
+          return exists(/databases/$(database)/documents/categories/$(document));
+      }
 
-    //   // カテゴリIDとレシピ名の組み合わせで、既に登録済みかチェック
-    //   // 登録済みの場合、書き込みを許可しない
-    //   function checkDuplication(category, name){
-    //       return !exists(/databases/$(database)/documents/index/$(category)/recipes/$(name));
-    //   }
+      // カテゴリIDとレシピ名の組み合わせで、既に登録済みかチェック
+      // 登録済みの場合、書き込みを許可しない
+      function checkDuplication(category, name){
+          return !exists(/databases/$(database)/documents/index/$(category)/recipes/$(name));
+      }
 
-    //   // カテゴリIDの存在チェック、データ重複チェック
-    //   allow write, update: if checkCategory(request.resource.data.category) &&
-    //                           checkDuplication(request.resource.data.category, request.resource.data.name);
-    // }
-//   }
-// }
+      // カテゴリIDの存在チェック、データ重複チェック
+      allow write, update: if checkCategory(request.resource.data.category) &&
+                              checkDuplication(request.resource.data.category, request.resource.data.name);
+    }
+  }
+}
