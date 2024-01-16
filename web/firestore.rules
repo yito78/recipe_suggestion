@@ -1,13 +1,13 @@
 rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /categories/{document=**} {
-      allow read, write: if true;
-    }
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+    // match /categories/{document=**} {
+    //   allow read, write: if true;
+    // }
 
-    match /index/{document=**} {
-      allow read, write: if true;
-    }
+    // match /index/{document=**} {
+    //   allow read, write: if true;
+    // }
 
     // match /users/{document=**} {
     //   allow read, write: if true;
@@ -35,5 +35,5 @@ service cloud.firestore {
     //   allow write, update: if checkCategory(request.resource.data.category) &&
     //                           checkDuplication(request.resource.data.category, request.resource.data.name);
     // }
-  }
-}
+//   }
+// }
