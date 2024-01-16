@@ -66,11 +66,15 @@ jobs:
       # firebaseにビルドしたものをデプロイ
       # https://github.com/marketplace/actions/github-action-for-firebase
       - name: firebaseにデプロイ
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy
+        # uses: w9jds/firebase-action@master
+        # with:
+        #   args: deploy
+        # env:
+        #   # FIREBASEにアクセスするためのトークン
+        #   # firebaseのトークンの取得はfirebaseの以下のコマンドを実行して取得し、このワークフローが動作するプロジェクトの Secrets に FIREBASE_TOKEN という名前で保存しておく
+        #   # > firebase login:ci
+        #   FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_FOR_RECIPE }}
+        run: |
+            firebase deploy --token $FIREBASE_TOKEN
         env:
-          # FIREBASEにアクセスするためのトークン
-          # firebaseのトークンの取得はfirebaseの以下のコマンドを実行して取得し、このワークフローが動作するプロジェクトの Secrets に FIREBASE_TOKEN という名前で保存しておく
-          # > firebase login:ci
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_FOR_RECIPE }}
+            FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_FOR_RECIPE }}
