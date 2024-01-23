@@ -21,7 +21,7 @@ name: push後にfirebaseにデプロイする
 
 # 実行のトリガーを設定
 on:
-  # mainブランチへのpushイベントに対して実行
+  # developブランチへのpushイベントに対して実行
   push:
     branches:
     - dummy
@@ -44,47 +44,34 @@ jobs:
       # usesで指定するアクションは https://github.com/marketplace?type=actions で探す
       # https://github.com/marketplace/actions/checkout
       - name: ブランチを取り出す
-        uses: actions/checkout@v4
-      - name: setup Node
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v3
+
+      # flutterコマンドを使用できる環境を整える
+      # https://github.com/marketplace/actions/flutter-action
+      - name: flutterコマンドを使用できる環境を整える
+        uses: subosito/flutter-action@v2
         with:
-            node-version: 18.x
-            registry-url: "https://registry.npmjs.org"
-      - name: Install Dependencies
-        run: yarn
-      - name: Build
-        run: |
-            npm install
-            npm install -g firebase-tools          
+          flutter-version: 3.10.x
+          channel: stable
+          
+      # pubspec.yamlに記述した必要なパッケージをインストール
+      # runで指定したコマンドがworkflowを実行しているサーバーで実行される
+      - name: pubspec.yamlに記述した必要なパッケージをインストールする
+        run: flutter pub get
 
-      # # flutterコマンドを使用できる環境を整える
-      # # https://github.com/marketplace/actions/flutter-action
-      # - name: flutterコマンドを使用できる環境を整える
-      #   uses: subosito/flutter-action@v2
-      #   with:
-      #     flutter-version: 3.10.x
-      #     channel: stable
-      # # pubspec.yamlに記述した必要なパッケージをインストール
-      # # runで指定したコマンドがworkflowを実行しているサーバーで実行される
-      # - name: pubspec.yamlに記述した必要なパッケージをインストールする
-      #   run: flutter pub get
-
-      # # Web用にプロジェクトをビルド
-      # - name: web用にプロジェクトをビルド
-      #   run: flutter build web
+      # Web用にプロジェクトをビルド
+      - name: web用にプロジェクトをビルド
+        run: flutter build web
 
       # firebaseにビルドしたものをデプロイ
       # https://github.com/marketplace/actions/github-action-for-firebase
       - name: firebaseにデプロイ
-        # uses: w9jds/firebase-action@master
-        # with:
-        #   args: deploy
-        # env:
-        #   # FIREBASEにアクセスするためのトークン
-        #   # firebaseのトークンの取得はfirebaseの以下のコマンドを実行して取得し、このワークフローが動作するプロジェクトの Secrets に FIREBASE_TOKEN という名前で保存しておく
-        #   # > firebase login:ci
-        #   FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_FOR_RECIPE }}
-        run: |
-            firebase deploy --token $FIREBASE_TOKEN
+        uses: w9jds/firebase-action@v2.0.0
+        with:
+          args: deploy
         env:
-            FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_FOR_RECIPE }}
+          # FIREBASEにアクセスするためのトークン
+          # firebaseのトークンの取得はfirebaseの以下のコマンドを実行して取得し、このワークフローが動作するプロジェクトの Secrets に FIREBASE_TOKEN という名前で保存しておく
+          # > firebase login:ci
+          #   FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_FOR_RECIPE }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_FOR_RECIPE }}
