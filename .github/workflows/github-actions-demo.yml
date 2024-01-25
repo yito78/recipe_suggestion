@@ -24,7 +24,7 @@ on:
   # developブランチへのpushイベントに対して実行
   push:
     branches:
-    - dummy
+      - dummy
 
 # 実行するワークフローを記述
 jobs:
