@@ -70,7 +70,7 @@ jobs:
         with:
           args: deploy
         env:
-          # FIREBASEにアクセスするためのトークン 
+          # FIREBASEにアクセスするためのトークン
           # firebaseのトークンの取得はfirebaseの以下のコマンドを実行して取得し、このワークフローが動作するプロジェクトの Secrets に FIREBASE_TOKEN という名前で保存しておく
           # > firebase login:ci
           #   FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_FOR_RECIPE }}
