@@ -19,7 +19,7 @@
 # GitHub Secrets については、 https://docs.github.com/ja/actions/security-guides/encrypted-secrets を参照
 name: push後にfirebaseにデプロイする
 
-# 実行のトリガーを設定
+# 実行のトリガーを設定 
 on:
   # developブランチへのpushイベントに対して実行
   push:
