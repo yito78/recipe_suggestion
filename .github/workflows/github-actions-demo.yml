@@ -77,7 +77,7 @@ jobs:
         uses: w9jds/firebase-action@v2.2.2
         with:
           args: deploy
-        env:
+        # env:
           # FIREBASEにアクセスするためのトークン 
           # firebaseのトークンの取得はfirebaseの以下のコマンドを実行して取得し、このワークフローが動作するプロジェクトの Secrets に FIREBASE_TOKEN という名前で保存しておく
           # > firebase login:ci
