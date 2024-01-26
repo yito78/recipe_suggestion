@@ -31,6 +31,11 @@ jobs:
   deploy:
     # ubuntuの最新版の上でこワークフローを動作させる
     runs-on: ubuntu-latest
+
+    # GCP登録用環境変数設定
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
     
     # 読み込むGitHubのEnvironment Secretsの名前を指定
     environment:
@@ -45,6 +50,9 @@ jobs:
       # https://github.com/marketplace/actions/checkout
       - name: ブランチを取り出す
         uses: actions/checkout@v3
+
+      - name: make GOOGLE_APPLICATION_CREDENTIALS
+        run: echo $GCLOUD_SERVICE_KEY | base64 -d > $GOOGLE_APPLICATION_CREDENTIALS
 
       # flutterコマンドを使用できる環境を整える
       # https://github.com/marketplace/actions/flutter-action
