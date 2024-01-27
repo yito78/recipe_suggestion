@@ -24,7 +24,7 @@ on:
   # developブランチへのpushイベントに対して実行
   push:
     branches:
-      - yito78/feature/#70_cd_github_actions
+      - main
 
 # 実行するワークフローを記述
 jobs:
