@@ -24,19 +24,13 @@ on:
   # developブランチへのpushイベントに対して実行
   push:
     branches:
-      - main
+      - yito78/feature/#70_cd_github_actions
 
 # 実行するワークフローを記述
 jobs:
   deploy:
     # ubuntuの最新版の上でこワークフローを動作させる
     runs-on: ubuntu-latest
-
-    # 読み込むGitHubのEnvironment Secretsの名前を指定
-    environment:
-      # Firebase_Deployという名前の Environment Secrets を使用する
-      # 1つの Environment Secrets に複数のSecrets(${{ secrets.XXXX }} でアクセス可能な変数)を格納することができる
-      name: Firebase_Deploy
 
     # ワークフローのステップを記述
     steps:
