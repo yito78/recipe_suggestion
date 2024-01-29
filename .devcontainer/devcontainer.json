@@ -22,14 +22,13 @@
 				"Dart-Code.flutter",
 				"DavidAnson.vscode-markdownlint",
 				"GitHub.copilot",
-				"bierner.emojisense",
-				"eamodio.gitlens",
-				"github.vscode-github-actions",
-				"mhutchie.git-graph",
-				"oderwat.indent-rainbow",
-				"streetsidesoftware.code-spell-checker",
-				"toba.vsfire",
-				"yzhang.markdown-all-in-one"
+				// "eamodio.gitlens",
+				// "github.vscode-github-actions",
+				// "mhutchie.git-graph",
+				// "oderwat.indent-rainbow",
+				// "streetsidesoftware.code-spell-checker",
+				// "toba.vsfire",
+				// "yzhang.markdown-all-in-one"
 			],
 			"settings": {
 				"dart.devToolsPort": 9100
