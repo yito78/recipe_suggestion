@@ -1,19 +1,5 @@
 # flutterのWebブラウザ用のコードをfirebaseにデプロイするワークフロー
 #
-# 補足
-# 
-# このワークフローを正常に動作させるためには、GitHubの設定で Firebase_Deploy という名前で  
-# Environment Secretsを作成し、その作成したEnvironment Secrets に、FIREBASE_TOKENという  
-# 名前でfirebaseにアクセスするためのトークンを格納する必要がある.
-# 
-# firebaseへのアクセストークンは、
-#
-# ```sh
-# firebase login:ci
-# ```
-#
-# コマンドを実行して取得する方法がある.
-# 
 # 参考
 #
 # GitHub Secrets については、 https://docs.github.com/ja/actions/security-guides/encrypted-secrets を参照
@@ -21,7 +7,7 @@ name: push後にfirebaseにデプロイする
 
 # 実行のトリガーを設定 
 on:
-  # developブランチへのpushイベントに対して実行
+  # mainブランチへのpushイベントに対して実行
   push:
     branches:
       - main
