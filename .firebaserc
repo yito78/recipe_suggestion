@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "recipe-aa942"
-  }
+  },
+  "targets": {
+    "recipe-aa942": {
+      "hosting": {
+        "recipe": [
+          "recipe-aa942"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
